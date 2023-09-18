@@ -1,11 +1,9 @@
-FROM node:16
+FROM cirrusci/flutter:2.5.0
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY front/mobileapp/ .
 
-RUN npm install
+RUN flutter build apk
 
-COPY . .
-
-CMD [ "npm", "run", "build" ]
+RUN mv build/app/outputs/flutter-apk/app-release.apk /shared/client.apk
