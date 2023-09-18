@@ -1,0 +1,36 @@
+version: '3'
+services:
+  server:
+    build: ./server
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server:/app
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - mongo
+
+  webapp:
+    build: ./front/webapp
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./front/webapp:/app
+    environment:
+      - NODE_ENV=development
+
+  mobileapp:
+    build: ./front/mobileapp
+    volumes:
+      - ./front/mobileapp:/app
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
