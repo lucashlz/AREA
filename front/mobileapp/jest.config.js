@@ -2,7 +2,7 @@ module.exports = {
     preset: "react-native",
     setupFilesAfterEnv: ["@testing-library/jest-native/extend-expect"],
     transform: {
-      "^.+\\.(js|jsx)$": "<rootDir>/node_modules/babel-jest",
+      "^.+\\.(js|jsx)$": "<rootDir>/front/mobileapp/node_modules/babel-jest",
       "\\.(ts|tsx)$": "ts-jest",
     },
     moduleFileExtensions: ["js", "jsx", "json", "node", "ts", "tsx"],
