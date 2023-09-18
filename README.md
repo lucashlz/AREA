@@ -18,7 +18,7 @@ application or mobile application.
 To initialize the project, you can run the following command in your terminal:
 ```
 npm install
-```.
+```
 
 ## Links
 
