@@ -7,7 +7,7 @@ The user is free to activate or deactivate the "Applets" he or she wishes, from 
 application or mobile application.
 
 * **The server** has been entirely developed in node JS with a MongoDB database.
-* **The web application** was developed in React using the "Material UI" library. 
+* **The web application** was developed in Flutter. 
 * **The mobile application** was developed in React Native with the "React Native Paper" library.
 
 
