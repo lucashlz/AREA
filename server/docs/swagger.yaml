@@ -1,0 +1,151 @@
+definitions:
+  models.User:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  routes.Error:
+    properties:
+      msg:
+        type: string
+    type: object
+  routes.ErrorResponse:
+    properties:
+      errors:
+        items:
+          $ref: '#/definitions/routes.Error'
+        type: array
+    type: object
+  routes.TokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /users/authentication/facebook:
+    get:
+      consumes:
+      - application/json
+      description: Authenticate user via Facebook and return a token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully authenticated user with a token
+          schema:
+            $ref: '#/definitions/routes.TokenResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      summary: Facebook Authentication
+      tags:
+      - Users
+  /users/authentication/facebook/callback:
+    get:
+      description: Handle callback from Facebook after user authentication
+      responses: {}
+      summary: Facebook Authentication Callback
+      tags:
+      - Users
+  /users/authentication/google:
+    get:
+      consumes:
+      - application/json
+      description: Authenticate user via Google and return a token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully authenticated user with a token
+          schema:
+            $ref: '#/definitions/routes.TokenResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      summary: Google Authentication
+      tags:
+      - Users
+  /users/authentication/google/callback:
+    get:
+      description: Handle callback from Google after user authentication
+      responses: {}
+      summary: Google Authentication Callback
+      tags:
+      - Users
+  /users/authentication/log_in:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and return a token
+      parameters:
+      - description: User authentication info (Email must be in valid format)
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully authenticated user with a token
+          schema:
+            $ref: '#/definitions/routes.TokenResponse'
+        "400":
+          description: Bad request or Invalid email format
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "401":
+          description: Invalid credentials or user doesn't exist
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      summary: User Login
+      tags:
+      - Users
+  /users/authentication/sign_up:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user to the system
+      parameters:
+      - description: User registration info (Email must be in valid format)
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully registered user with a token
+          schema:
+            $ref: '#/definitions/routes.TokenResponse'
+        "400":
+          description: Bad request or Invalid email format
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "409":
+          description: User with the given email already exists
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      summary: User Registration
+      tags:
+      - Users
+swagger: "2.0"
