@@ -1,25 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import { useContext } from 'react';
 import './App.css';
+import { UserContext } from './context/userContext';
+import AuthenticatedNavbar from './components/NavBars/AuthenticatedNavbar';
+import UnauthenticatedNavbar from './components/NavBars/UnauthenticatedNavbar';
+import Login from './components/pages/Login';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './components/pages/Home'
+import Create from './components/pages/Private/Create'
+import Account from './components/pages/Private/Account'
+import { useLocation } from 'react-router-dom';
+
 
 function App() {
+  const userContext = useContext(UserContext);
+  const token = userContext ? userContext.token : null;
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === '/') {
+      document.body.style.backgroundColor = '#1D1D1D';
+    } else {
+      document.body.style.backgroundColor = '#fff';
+    }
+  }, [location.pathname]);
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {token ? <AuthenticatedNavbar /> : <UnauthenticatedNavbar />}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/create" element={<Create />} />
+        <Route path="/account" element={<Account />} />
+      </Routes>
+    </>
   );
 }
 
