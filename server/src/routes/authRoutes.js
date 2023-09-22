@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
-const passport = require("../config/passeport");
 
 /**
  * @swagger
@@ -16,6 +15,9 @@ const passport = require("../config/passeport");
  *           schema:
  *             type: object
  *             properties:
+ *               username:
+ *                 type: string
+ *                 description: The username.
  *               email:
  *                 type: string
  *                 description: The user's email.
@@ -34,7 +36,7 @@ const passport = require("../config/passeport");
  *                   type: string
  *                   description: Success message.
  *       400:
- *         description: Bad request. This response can occur if the email format is invalid.
+ *         description: Bad request. This response can occur if the email format is invalid or empty password.
  *         content:
  *           application/json:
  *             schema:
@@ -119,6 +121,16 @@ router.get("/confirm/:token", authController.confirm);
  *                   description: The JWT token for user authentication.
  *       400:
  *         description: Invalid credentials or account not confirmed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   description: Error message.
+ *       401:
+ *         description: User does not exist
  *         content:
  *           application/json:
  *             schema:
