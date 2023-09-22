@@ -1,25 +1,36 @@
 const User = require("../models/user");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const emailService = require("../utils/emailServices");
 
 exports.register = async (req, res) => {
   try {
-    console.log("Request body:", req.body);
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!req.body.email || !emailRegex.test(req.body.email)) {
+      return res.status(400).json({ msg: "Invalid email format" });
+    }
+
+    if (!req.body.username) {
+      return res.status(400).json({ msg: "Username is required" });
+    }
 
     if (!req.body.oauthProvider && !req.body.password) {
       return res.status(400).json({ msg: "Password is required" });
     }
 
-    let user = await User.findOne({ email: req.body.email });
+    let user = await User.findOne({
+      email: req.body.email,
+      isGoogleAuth: false,
+      isFacebookAuth: false,
+    });
     if (user) {
-      return res.status(400).json({ msg: "User already exists" });
+      return res.status(409).json({ msg: "User already exists" });
     }
 
     user = new User(req.body);
-    console.log("New user object:", user);
 
+    user.username = req.body.username;
     if (req.body.password) {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(req.body.password, salt);
@@ -27,6 +38,8 @@ exports.register = async (req, res) => {
 
     const confirmationToken = crypto.randomBytes(20).toString("hex");
     user.confirmationToken = confirmationToken;
+    user.isGoogleAuth = false;
+    user.isFacebookAuth = false;
 
     await user.save();
 
@@ -59,9 +72,13 @@ exports.confirm = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({
+      email: req.body.email,
+      isGoogleAuth: false,
+      isFacebookAuth: false,
+    });
     if (!user) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+      return res.status(401).json({ msg: "User does not exist" });
     }
 
     const isMatch = await bcrypt.compare(req.body.password, user.password);
