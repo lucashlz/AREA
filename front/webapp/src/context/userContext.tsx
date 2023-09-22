@@ -4,6 +4,7 @@ import axios from 'axios';
 export interface IUserContext {
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => void;
   token: string | null;
 }
 
@@ -15,6 +16,8 @@ interface UserContextProviderProps {
 
 export function UserContextProvider({ children }: UserContextProviderProps) {
   const [token, setToken] = useState<string | null>(localStorage.getItem('userToken'));
+
+
   const signUp = async (email: string, password: string) => {
     try {
       const response = await axios.post('http://localhost:3000/auth/register', { email, password });
@@ -46,6 +49,11 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     }
   }
 
+  const signOut = () => {
+    localStorage.removeItem('userToken');
+    setToken(null);
+  };
+
   useEffect(() => {
     const storedToken = localStorage.getItem('userToken');
     if (storedToken && storedToken !== token) {
@@ -54,7 +62,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   }, [token]);
 
   return (
-    <UserContext.Provider value={{signUp, signIn, token}}>
+    <UserContext.Provider value={{signUp, signIn, signOut, token}}>
       {children}
     </UserContext.Provider>
   )

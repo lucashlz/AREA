@@ -1,0 +1,14 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* This ensures the container takes the full viewport height */
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Provides spacing between form elements */
+    width: 300px; /* You can adjust this as per your requirements */
+  }
+  

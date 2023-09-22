@@ -9,7 +9,7 @@
     border: none;
     cursor: pointer;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .btn-mobile {
@@ -31,18 +31,31 @@
 }
 
 .btn--medium {
-    padding: 8px 20px;
+    padding: 13px 37px;
     font-size: 20px;
 }
 
 .btn--large {
-    padding: 13px 37px;
-    font-size: 20px;
+    padding: 20px 57px;
+    font-size: 30px;
 }
 
 .btn--medium:hover,
 .btn--large:hover {
     background: #fff;
     color: #1D1D1D;
+    transition: all 0.3s ease-out;
+}
+
+.btn--primary-inverted {
+    background-color: #1D1D1D;
+    color: #fff;
+    border: 1px solid #1D1D1D;
+}
+
+.btn--primary-inverted:hover {
+    background-color: #1D1D1D;
+    color: #fff;
+    border: 1px solid white;
     transition: all 0.3s ease-out;
 }

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { UserContext } from "../../../context/userContext";
 import { Outlet, Navigate } from "react-router-dom";
 
-const Private: React.FC = () => {
+const Create: React.FC = () => {
   const userContext = useContext(UserContext);
 
   if (!userContext) {
@@ -26,4 +26,4 @@ const Private: React.FC = () => {
   );
 }
 
-export default Private;
+export default Create;
