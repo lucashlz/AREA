@@ -41,13 +41,13 @@ function Navbar() {
   }, []);
 
   const location = useLocation();
-  const isInverted = location.pathname === '/login' || location.pathname === '/register';
-  const logoSrc = isInverted ? `${process.env.PUBLIC_URL}/logo_black.png` : `${process.env.PUBLIC_URL}/logo_white.png`;
+  const isInverted = location.pathname === '/';
+  const logoSrc = isInverted ? `${process.env.PUBLIC_URL}/logo_white.png` : `${process.env.PUBLIC_URL}/logo_black.png`;
 
 
   return (
     <>
-      <nav className={`navbar ${isInverted ? 'navbar-inverted' : ''}`}>
+      <nav className={isInverted ? 'navbar' : 'navbar-inverted'}>
         <div className="navbar-logo-container">
           <Link to="/" className="navbar-logo">
             <img src={logoSrc} alt="Logo" className="logo" />
@@ -55,19 +55,19 @@ function Navbar() {
         </div>
 
         <div className="menu-icon" onClick={toggleMobileMenu}>
-          {mobileMenuOpen ? <FaTimes color={isInverted ? "#1D1D1D" : "white"} /> : <FaBars color={isInverted ? "#1D1D1D" : "white"} />}
+          {mobileMenuOpen ? <FaTimes color={isInverted ? "white" : "#1D1D1D"} /> : <FaBars color={isInverted ? "white" : "#1D1D1D"} />}
         </div>
 
         {mobileMenuOpen && (
           <ul className="nav-menu active">
             <li>
-              <Link to='/login' className='nav-links' onClick={closeMobileMenu}>
+              <Link to='/applets' className='nav-links' onClick={closeMobileMenu}>
                 My Applets
               </Link>
             </li>
             <li>
-              <Button linkTo="/account" type="button" buttonStyle={isInverted ? 'btn--primary-inverted' : 'btn--primary'} buttonSize="btn--medium">
-                Account
+              <Button linkTo="/account" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
+                Acccount
               </Button>
             </li>
           </ul>
@@ -77,7 +77,7 @@ function Navbar() {
           <Link to='/applets' className='nav-links'>
             My Applets
           </Link>
-          <Button linkTo="/account" type="button" buttonStyle={isInverted ? 'btn--primary-inverted' : 'btn--primary'} buttonSize="btn--medium">
+          <Button linkTo="/account" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
             Account
           </Button>
         </div>
