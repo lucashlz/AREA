@@ -1,17 +1,16 @@
 version: '3'
 
 services:
-  server:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    depends_on:
-      - mongo
     environment:
-      MONGO_URI: "mongodb://mongo:27017/area"
-
+      - MONGO_URI=mongodb://mongo:27017/area_db
+    links:
+      - mongo
   mongo:
     image: mongo:latest
     ports:
