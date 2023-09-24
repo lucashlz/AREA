@@ -2,10 +2,10 @@ FROM node:14
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY . .
 
 RUN npm install
 
-COPY . .
+RUN chmod 777 package.json 
 
 CMD ["npm", "start"]
