@@ -4,9 +4,9 @@ const authController = require("../controllers/authController");
 
 /**
  * @swagger
- * /auth/register:
+ * /auth/sign_up:
  *   post:
- *     summary: Register a new user
+ *     summary: sign up a new user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -26,7 +26,7 @@ const authController = require("../controllers/authController");
  *                 description: The user's password.
  *     responses:
  *       200:
- *         description: User registered successfully. Please confirm your email.
+ *         description: User sign up successfully. Please confirm your email.
  *         content:
  *           application/json:
  *             schema:
@@ -66,7 +66,7 @@ const authController = require("../controllers/authController");
  *                   type: string
  *                   description: Error message.
  */
-router.post("/register", authController.register);
+router.post("/register", authController.sign_up);
 
 /**
  * @swagger
@@ -91,7 +91,7 @@ router.get("/confirm/:token", authController.confirm);
 
 /**
  * @swagger
- * /auth/login:
+ * /auth/sign_in:
  *   post:
  *     summary: Login a user
  *     tags: [Auth]
@@ -110,7 +110,7 @@ router.get("/confirm/:token", authController.confirm);
  *                 description: The password of the user.
  *     responses:
  *       200:
- *         description: User logged in successfully
+ *         description: User sign in successfully
  *         content:
  *           application/json:
  *             schema:
@@ -150,6 +150,6 @@ router.get("/confirm/:token", authController.confirm);
  *                   type: string
  *                   description: Error message.
  */
-router.post("/login", authController.login);
+router.post("/login", authController.sign_in);
 
 module.exports = router;
