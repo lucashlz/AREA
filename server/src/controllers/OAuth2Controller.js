@@ -23,6 +23,7 @@ exports.googleOAuth2 = async (token, refreshToken, profile, done) => {
       const randomPassword = generateRandomPassword();
       const hashedPassword = await bcrypt.hash(randomPassword, 10);
       user = new User({
+        username: profile.displayName,
         email: profile.emails[0].value,
         password: hashedPassword,
         confirmed: true,
@@ -51,9 +52,9 @@ exports.facebookOAuth2 = async (token, refreshToken, profile, done) => {
   try {
     let user = await User.findOne({ email: profile.emails[0].value });
     if (user) {
-      user = new User({
-        email: profile.emails[0].value,
-        confirmed: true,
+      user.connectServices.set("facebook", {
+        access_token: token,
+        refresh_token: refreshToken,
         data: {
           id: profile.id,
           email: profile.emails[0].value,
@@ -65,6 +66,7 @@ exports.facebookOAuth2 = async (token, refreshToken, profile, done) => {
       const randomPassword = generateRandomPassword();
       const hashedPassword = await bcrypt.hash(randomPassword, 10);
       user = new User({
+        username: `${profile.name.givenName} ${profile.name.familyName}`,
         email: profile.emails[0].value,
         password: hashedPassword,
         confirmed: true,

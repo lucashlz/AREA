@@ -9,6 +9,8 @@ const { authMiddleware } = require('../middleware/middleware');
  *   get:
  *     summary: Retrieve a list of all users
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of users
@@ -42,6 +44,8 @@ router.get("/all", usersController.getAllUsers);
  *   delete:
  *     summary: Delete a specific user by ID
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: userId
@@ -57,6 +61,6 @@ router.get("/all", usersController.getAllUsers);
  *       500:
  *         description: Server error
  */
-router.delete("/:id", authMiddleware, usersController.deleteUser);
+router.delete("/:id", usersController.deleteUser);
 
 module.exports = router;
