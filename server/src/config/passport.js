@@ -1,7 +1,9 @@
 const passport = require("passport");
+const User = require('../models/user');
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GitHubStrategy = require("passport-github").Strategy;
+const SpotifyStrategy = require("passport-spotify").Strategy;
 const OAuth2Controller = require("../controllers/OAuth2Controller");
 const connectController = require("../controllers/connectController");
 
@@ -41,41 +43,5 @@ passport.use(
   )
 );
 
-passport.use(
-  "google-connect",
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/connect/google/callback",
-    },
-    connectController.connectGoogle
-  )
-);
-
-passport.use(
-  "facebook-connect",
-  new FacebookStrategy(
-    {
-      clientID: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-      callbackURL: "/connect/facebook/callback",
-      profileFields: ["id", "emails", "name"],
-    },
-    connectController.connectFacebook
-  )
-);
-
-passport.use(
-  "github-connect",
-  new GitHubStrategy(
-    {
-      clientID: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: "/connect/github/callback",
-    },
-    connectController.connectGitHub
-  )
-);
 
 module.exports = passport;
