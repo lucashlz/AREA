@@ -1,6 +1,7 @@
 const session = require("express-session");
 const passport = require("passport");
 const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
 
 function setupAppMiddleware(app) {
   app.use(
@@ -15,15 +16,26 @@ function setupAppMiddleware(app) {
   app.use(passport.session());
 }
 
-function isAuthenticated(req, res, next) {
-  if (req.user) {
+function authMiddleware(req, res, next) {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+
+  console.log("Received token:", token);
+
+  if (!token) return res.status(401).send("Access denied. No token provided.");
+
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_JWT);
+    console.log("Decoded JWT:", decoded);
+
+    req.user = decoded;
     next();
-  } else {
-    res.status(401).json({ message: "Not authenticated" });
+  } catch (ex) {
+    console.error("JWT Verification Error:", ex.message);
+    res.status(400).send("Invalid token.");
   }
 }
 
 module.exports = {
   setupAppMiddleware,
-  isAuthenticated,
+  authMiddleware,
 };
