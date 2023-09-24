@@ -1,6 +1,6 @@
 const User = require("../models/user");
 
-exports.getAllUsers = async (req, res) => {
+exports.getAllUsers = async (res) => {
   try {
     const users = await User.find().select("-password -confirmationToken");
     res.json(users);
@@ -11,7 +11,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
+    let user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -20,6 +20,7 @@ exports.deleteUser = async (req, res) => {
     await user.remove();
     res.json({ message: "User deleted successfully" });
   } catch (err) {
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const usersController = require("../controllers/usersController");
+const { authMiddleware } = require('../middleware/middleware');
 
 /**
  * @swagger
@@ -56,6 +57,6 @@ router.get("/all", usersController.getAllUsers);
  *       500:
  *         description: Server error
  */
-router.delete("/:id", usersController.deleteUser);
+router.delete("/:id", authMiddleware, usersController.deleteUser);
 
 module.exports = router;
