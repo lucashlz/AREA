@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const emailService = require("../utils/emailServices");
 
-exports.register = async (req, res) => {
+exports.sign_up = async (req, res) => {
   try {
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!req.body.email || !emailRegex.test(req.body.email)) {
@@ -70,7 +70,7 @@ exports.confirm = async (req, res) => {
   }
 };
 
-exports.login = async (req, res) => {
+exports.sign_in = async (req, res) => {
   try {
     const user = await User.findOne({
       email: req.body.email,
@@ -91,7 +91,7 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, process.env.SECRET_JWT, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
     res.status(200).json({ token });
   } catch (err) {

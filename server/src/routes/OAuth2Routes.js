@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const passport = require("../config/passeport");
+const passport = require("../config/passport");
 
 /**
  * @swagger
- * /auth/google:
+ * /OAuth2/google:
  *   get:
  *     summary: Authenticate using Google OAuth2
  *     tags: [OAuth2]
@@ -24,7 +24,7 @@ router.get(
 
 /**
  * @swagger
- * /auth/google/callback:
+ * /OAuth2/google/callback:
  *   get:
  *     summary: Callback route after Google authentication
  *     tags: [OAuth2]
@@ -40,7 +40,7 @@ router.get(
 
 /**
  * @swagger
- * /auth/facebook:
+ * /OAuth2/facebook:
  *   get:
  *     summary: Authenticate using Facebook OAuth2
  *     tags: [OAuth2]
@@ -55,7 +55,7 @@ router.get(
 
 /**
  * @swagger
- * /auth/facebook/callback:
+ * /OAuth2/facebook/callback:
  *   get:
  *     summary: Callback route after Facebook authentication
  *     tags: [OAuth2]

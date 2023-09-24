@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const { isAuthenticated } = require("../middleware/middleware");
 const profileController = require("../controllers/profileController");
 
 /**
@@ -36,12 +35,47 @@ const profileController = require("../controllers/profileController");
  *       500:
  *         description: Server error
  */
-router.get("/", isAuthenticated, profileController.getUserProfile);
+router.get("/", profileController.getUserProfile);
+
+/**
+ * @swagger
+ * /profile/email:
+ *   put:
+ *     summary: Update the email of the authenticated user
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Email updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+router.put("/email", profileController.updateEmail);
 
 /**
  * @swagger
  * /profile/username:
- *   post:
+ *   put:
  *     summary: Update the username of the authenticated user
  *     tags: [Profile]
  *     security:
@@ -71,12 +105,12 @@ router.get("/", isAuthenticated, profileController.getUserProfile);
  *       500:
  *         description: Server error
  */
-router.post("/username", isAuthenticated, profileController.updateUsername);
+router.put("/username", profileController.updateUsername);
 
 /**
  * @swagger
  * /profile/password:
- *   post:
+ *   put:
  *     summary: Update the password of the authenticated user
  *     tags: [Profile]
  *     security:
@@ -110,39 +144,6 @@ router.post("/username", isAuthenticated, profileController.updateUsername);
  *       500:
  *         description: Server error
  */
-router.post("/password", isAuthenticated, profileController.updatePassword);
-
-/**
- * @swagger
- * /profile/request_password_reset:
- *   post:
- *     summary: Request a password reset for a user
- *     tags: [Profile]
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 description: The email of the user requesting the password reset.
- *                 required: true
- *     responses:
- *       200:
- *         description: Reset email sent.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *       404:
- *         description: User not found.
- *       500:
- *         description: Server error.
- */
-router.post("/request_password_reset", profileController.requestPasswordReset);
+router.put("/password", profileController.updatePassword);
 
 module.exports = router;

@@ -23,6 +23,14 @@ const userSchema = new mongoose.Schema({
   password: { type: String },
   confirmed: { type: Boolean, default: false },
   confirmationToken: { type: String },
+  resetPasswordToken: {
+    type: String,
+    default: null,
+  },
+  resetPasswordExpires: {
+    type: Date,
+    default: null,
+  },
   isGoogleAuth: {
     type: Boolean,
     required: true,
