@@ -50,9 +50,13 @@ router.get("/", profileController.getUserProfile);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
  *             properties:
  *               email:
  *                 type: string
+ *                 description: New email address to set for the user.
+ *                 example: user@example.com
  *     responses:
  *       200:
  *         description: Email updated successfully
@@ -64,6 +68,15 @@ router.get("/", profileController.getUserProfile);
  *                 message:
  *                   type: string
  *                 email:
+ *                   type: string
+ *       400:
+ *         description: Bad Request (Invalid email format or Email is already in use)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
  *                   type: string
  *       404:
  *         description: User not found
