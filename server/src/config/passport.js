@@ -1,5 +1,5 @@
 const passport = require("passport");
-const User = require('../models/user');
+const User = require("../models/user");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GitHubStrategy = require("passport-github").Strategy;
@@ -43,5 +43,16 @@ passport.use(
   )
 );
 
+passport.use(
+  "google-connect",
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "/connect/google/callback",
+    },
+    connectController.connectGoogleOAuth2
+  )
+);
 
 module.exports = passport;
