@@ -66,7 +66,7 @@ const authController = require("../controllers/authController");
  *                   type: string
  *                   description: Error message.
  */
-router.post("/sign_up", authController.sign_up);
+router.post("/register", authController.sign_up);
 
 /**
  * @swagger
@@ -150,6 +150,6 @@ router.get("/confirm/:token", authController.confirm);
  *                   type: string
  *                   description: Error message.
  */
-router.post("/sign_in", authController.sign_in);
+router.post("/login", authController.sign_in);
 
 module.exports = router;
