@@ -2,13 +2,43 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* This ensures the container takes the full viewport height */
+    height: 100vh;
   }
-  
+
   form {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Provides spacing between form elements */
-    width: 300px; /* You can adjust this as per your requirements */
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    height: 100%;
+    margin-top: -30rem;
   }
   
+.input {
+  font-size: 2rem;
+  padding: 1rex;
+  border: 5px solid;
+  border-radius: 10px;
+  color: black;
+  border-color: lightgray;
+}
+
+::placeholder {
+  color: lightgray;
+}
+
+.login {
+  font-size: 4rem;
+  font-weight: 900;
+  margin-bottom: 10%;
+}
+
+.button {
+  background-color: black;
+}
+
+.oauth {
+  text-decoration-line: underline;
+  text-underline-position: under;
+}

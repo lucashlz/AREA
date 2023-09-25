@@ -4,7 +4,7 @@ const authController = require("../controllers/authController");
 
 /**
  * @swagger
- * /auth/sign_up:
+ * /auth/register:
  *   post:
  *     summary: sign up a new user
  *     tags: [Auth]
@@ -91,7 +91,7 @@ router.get("/confirm/:token", authController.confirm);
 
 /**
  * @swagger
- * /auth/sign_in:
+ * /auth/login:
  *   post:
  *     summary: Login a user
  *     tags: [Auth]

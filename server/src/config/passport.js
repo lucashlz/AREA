@@ -4,6 +4,7 @@ const FacebookStrategy = require("passport-facebook").Strategy;
 const GitHubStrategy = require("passport-github").Strategy;
 const OAuth2Controller = require("../controllers/OAuth2Controller");
 const connectController = require("../controllers/connectController");
+const User = require("../models/user");
 
 passport.serializeUser((user, done) => {
   done(null, user.id);

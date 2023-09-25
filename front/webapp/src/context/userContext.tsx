@@ -20,7 +20,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
 
   const signUp = async (email: string, password: string) => {
     try {
-      const response = await axios.post('http://localhost:3000/auth/register', { email, password });
+      const response = await axios.post('http://localhost:8080/auth/register', { email, password });
       if (response.data.token) {
         localStorage.setItem('userToken', response.data.token);
         setToken(response.data.token);
@@ -34,7 +34,11 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     console.log(`Attempting to sign in user with email: ${email}`);
 
     try {
-      const response = await axios.post('http://localhost:8080/auth/login', { email, password });
+      const response = await axios.post('http://localhost:8080/auth/login', { email, password }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       console.log('Received response from API:', response.data);
       if (response.data.token) {
