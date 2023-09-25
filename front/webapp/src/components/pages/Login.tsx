@@ -4,6 +4,7 @@ import { UserContext, IUserContext } from '../../context/userContext';
 import './Login.css';
 import { Button } from '../Button';
 import axios from 'axios';
+import Title from '../Title';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -46,7 +47,7 @@ const Login: React.FC = () => {
   return (
     <div className="login-container">
       <form>
-        <div className='login'>Log in</div>
+        <Title title="Log in" style={{margin: '10%'}}/>
         <div>
           <input
             type="email"
