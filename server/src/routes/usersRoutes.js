@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const usersController = require("../controllers/usersController");
+const { authMiddleware } = require('../middleware/middleware');
 
 /**
  * @swagger
@@ -8,6 +9,8 @@ const usersController = require("../controllers/usersController");
  *   get:
  *     summary: Retrieve a list of all users
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of users
@@ -41,6 +44,8 @@ router.get("/all", usersController.getAllUsers);
  *   delete:
  *     summary: Delete a specific user by ID
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: userId

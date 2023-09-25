@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const resetController = require("../controllers/resetController");
 
@@ -6,7 +6,7 @@ const resetController = require("../controllers/resetController");
  * @swagger
  * /reset/request_password_reset:
  *   post:
- *     summary: Request a password reset for a user
+ *     summary: Sends a password reset link to the user's email
  *     tags: [Reset]
  *     requestBody:
  *       content:
@@ -16,11 +16,11 @@ const resetController = require("../controllers/resetController");
  *             properties:
  *               email:
  *                 type: string
- *                 description: The email of the user requesting the password reset.
+ *                 description: The email of the user requesting a password reset.
  *                 required: true
  *     responses:
  *       200:
- *         description: Reset email sent.
+ *         description: Reset link email sent.
  *         content:
  *           application/json:
  *             schema:
@@ -34,15 +34,36 @@ const resetController = require("../controllers/resetController");
  *         description: Server error.
  */
 router.post("/request_password_reset", resetController.requestPasswordReset);
+/**
+ * @swagger
+ * /reset/password/{token}:
+ *   get:
+ *     summary: Display the form (or page) for the user to set a new password.
+ *     tags: [Reset]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token received in the email link.
+ *     responses:
+ *       200:
+ *         description: Successfully fetched the password reset form/page.
+ *       400:
+ *         description: Invalid or expired token.
+ *       500:
+ *         description: Server error.
+ */
+router.get("/password/:token", resetController.displayResetForm);
 
 /**
  * @swagger
  * /reset/password:
- *   put:
- *     summary: Process the password reset request for a user with a valid reset token
+ *   post:
+ *     summary: Updates the user's password using the provided token and new password.
  *     tags: [Reset]
  *     requestBody:
- *       required: true
  *       content:
  *         application/json:
  *           schema:
@@ -50,13 +71,15 @@ router.post("/request_password_reset", resetController.requestPasswordReset);
  *             properties:
  *               token:
  *                 type: string
- *                 description: The reset token sent to the user's email.
+ *                 description: The token received in the email link.
+ *                 required: true
  *               newPassword:
  *                 type: string
  *                 description: The new password the user wants to set.
+ *                 required: true
  *     responses:
  *       200:
- *         description: Password reset successfully.
+ *         description: Password updated successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -65,10 +88,10 @@ router.post("/request_password_reset", resetController.requestPasswordReset);
  *                 message:
  *                   type: string
  *       400:
- *         description: Invalid or expired reset token.
+ *         description: Bad Request (e.g., Missing token or new password).
  *       500:
  *         description: Server error.
  */
-router.post('/password', resetController.passwordReset);
+router.post("/reset/password", resetController.updatePassword);
 
 module.exports = router;

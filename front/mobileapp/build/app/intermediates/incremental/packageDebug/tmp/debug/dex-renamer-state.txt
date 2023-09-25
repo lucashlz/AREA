@@ -1,4 +1,0 @@
-#Thu Sep 21 17:29:39 CEST 2023
-base.0=/home/lholczinger/delivery/TEK3/area/front/mobileapp/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
-path.0=classes.dex
-renamed.0=classes.dex

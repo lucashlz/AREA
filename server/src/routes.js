@@ -14,8 +14,8 @@ module.exports = (app) => {
   app.use("/OAuth2", OAuth2Routes);
   app.use("/reset", resetRoutes);
   app.use('/profile', authMiddleware, profileRoutes);
-  app.use("/users", usersRoutes);
-  app.use("connect", connectRoutes);
+  app.use("/users", authMiddleware, usersRoutes);
+  app.use("/connect", authMiddleware, connectRoutes);
   app.use("/services", serviceRoutes);
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 

@@ -1,0 +1,49 @@
+**************************************************
+********************* AREA **********************
+**************************************************
+
+Related documentation sources:
+
+- Swagger: /api-docs (on webapp)
+- UML schema: /documentation/diagram (in project)
+- User Guide: In development ...
+
+
+**Architecture:**
+
+- docker-compose.yml
+- documentation
+- front
+  - mobileapp ------------ Flutter Mobile Application 
+  - webapp  -------------- React Typescript Web Application (Dependencies: npm install)
+- package.json
+- package-lock.json
+- README.md
+- server ------------------ Node JS (Express) Server (Dependencies: npm install)
+
+
+**Docker:**
+
+In the Area Project, you can find a `docker-compose.yml` at the root. This `docker-compose.yml` will run the 3 parts of this project:
+
+1. **server** (`server/Dockerfile`)
+   - The server service is linked to a mongo subservice which is a dockerization for a MongoDB database linked to a persistent volume: `mongo-data`
+
+2. **mobileapp** (`front/mobileapp/Dockerfile`)
+
+3. **webapp** (`front/webapp/Dockerfile`)
+
+
+**To BUILD:**
+
+- Whole project: `docker-compose up --build /`
+- Server: `docker-compose up --build /server`
+- Mobile App: `docker build --tag name:your_mobileapp_image_name .`
+- Web App: `docker build --tag name:your_webapp_image_name .`
+
+**To RUN:**
+
+- Whole project: The `docker-compose up --build /` command automatically runs the entire project.
+- Server: The `docker-compose up --build /server` command automatically runs the server.
+- Mobile App: The build command creates an image you can run with: `docker run --privileged -p 8081:8081 -e NODE_ENV=development -v "$(pwd)/front/webapp:/app" <image_name>`
+- Web App: In development ...

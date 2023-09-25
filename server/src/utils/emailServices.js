@@ -13,7 +13,7 @@ exports.sendConfirmationMail = (email, confirmationToken) => {
   const mailOptions = {
     from: process.env.EMAIL,
     to: email,
-    subject: "Please confirm your email",
+    subject: "[AREA] Please confirm your email",
     text: `Click this link to confirm your email: http://localhost:8080/auth/confirm/${confirmationToken}`,
   };
 
@@ -30,10 +30,10 @@ exports.sendPasswordResetMail = (email, resetToken) => {
   const mailOptions = {
     from: process.env.EMAIL,
     to: email,
-    subject: "Password Reset Request",
+    subject: "[AREA] Password Reset Request",
     text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
     Please click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\n
-    http://localhost:8080/profile/reset/${resetToken}\n\n
+    http://localhost:8080/reset/password/${resetToken}\n\n
     If you did not request this, please ignore this email and your password will remain unchanged.\n`,
   };
 
