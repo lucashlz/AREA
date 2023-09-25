@@ -5,6 +5,7 @@ export interface IUserContext {
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
+  getUserInfo: () => Promise<{username: string, email: string, password: string}>;
   token: string | null;
 }
 
@@ -29,6 +30,8 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       console.error("Error signing up:", error);
     }
   }
+
+
 
   const signIn = async (email: string, password: string) => {
     console.log(`Attempting to sign in user with email: ${email}`);
@@ -58,6 +61,21 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     setToken(null);
   };
 
+
+  const getUserInfo = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/profile', {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+    }
+  };
+
   useEffect(() => {
     const storedToken = localStorage.getItem('userToken');
     if (storedToken && storedToken !== token) {
@@ -66,7 +84,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   }, [token]);
 
   return (
-    <UserContext.Provider value={{signUp, signIn, signOut, token}}>
+    <UserContext.Provider value={{signUp, signIn, signOut, token, getUserInfo}}>
       {children}
     </UserContext.Provider>
   )

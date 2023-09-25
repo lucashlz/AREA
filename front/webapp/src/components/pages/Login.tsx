@@ -27,7 +27,7 @@ const Login: React.FC = () => {
   };
 
   if (token) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/applets" replace />;
   }
 
   if (oauth && url.length > 0) {

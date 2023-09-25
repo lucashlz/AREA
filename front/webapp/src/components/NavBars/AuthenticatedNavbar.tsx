@@ -67,7 +67,7 @@ function Navbar() {
             </li>
             <li>
               <Button linkTo="/account" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
-                Acccount
+                Account
               </Button>
             </li>
           </ul>

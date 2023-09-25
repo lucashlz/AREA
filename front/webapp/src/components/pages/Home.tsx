@@ -1,5 +1,5 @@
 import React from 'react';
-import './Home.css'; // Import the CSS file
+import './Home.css';
 import { Button } from '../Button';
 
 export default function Home() {
