@@ -14,8 +14,8 @@ jobs:
 
       - name: Create branch for task
         run: |
-          PREFIX=$(echo ${{ github.event.issue.title }} | awk -F '[][]' '{print $4}')
-          BRANCH_NAME=$(echo ${{ github.event.issue.title }} | awk -F '[][]' '{print $6}' | tr ' ' '_')
+          PREFIX=$(echo "${{ github.event.issue.title }}" | awk -F '[][]' '{print $4}')
+          BRANCH_NAME=$(echo "${{ github.event.issue.title }}" | sed -E 's/\[AUTOBRANCH\]\[[A-Z]+\] //g' | tr ' ' '_')
           FINAL_BRANCH_NAME="${PREFIX}-${BRANCH_NAME}"
           git checkout -b $FINAL_BRANCH_NAME
           git push -u origin $FINAL_BRANCH_NAME
