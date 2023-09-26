@@ -4,10 +4,10 @@ const authController = require("../controllers/authController");
 
 /**
  * @swagger
- * /auth/register:
+ * /auth/sign_up:
  *   post:
  *     summary: sign up a new user
- *     tags: [Auth]
+ *     tags: [auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -32,7 +32,7 @@ const authController = require("../controllers/authController");
  *             schema:
  *               type: object
  *               properties:
- *                 msg:
+ *                 message:
  *                   type: string
  *                   description: Success message.
  *       400:
@@ -42,7 +42,7 @@ const authController = require("../controllers/authController");
  *             schema:
  *               type: object
  *               properties:
- *                 msg:
+ *                 message:
  *                   type: string
  *                   description: Error message.
  *       409:
@@ -52,7 +52,7 @@ const authController = require("../controllers/authController");
  *             schema:
  *               type: object
  *               properties:
- *                 msg:
+ *                 message:
  *                   type: string
  *                   description: Error message.
  *       500:
@@ -62,18 +62,18 @@ const authController = require("../controllers/authController");
  *             schema:
  *               type: object
  *               properties:
- *                 msg:
+ *                 message:
  *                   type: string
  *                   description: Error message.
  */
-router.post("/register", authController.sign_up);
+router.post("/sign_up", authController.sign_up);
 
 /**
  * @swagger
  * /auth/confirm/{token}:
  *   get:
  *     summary: Confirm a user's registration
- *     tags: [Auth]
+ *     tags: [auth]
  *     parameters:
  *       - in: path
  *         name: token
@@ -91,10 +91,10 @@ router.get("/confirm/:token", authController.confirm);
 
 /**
  * @swagger
- * /auth/login:
+ * /auth/sign_in:
  *   post:
  *     summary: Login a user
- *     tags: [Auth]
+ *     tags: [auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -126,7 +126,7 @@ router.get("/confirm/:token", authController.confirm);
  *             schema:
  *               type: object
  *               properties:
- *                 msg:
+ *                 message:
  *                   type: string
  *                   description: Error message.
  *       401:
@@ -136,7 +136,7 @@ router.get("/confirm/:token", authController.confirm);
  *             schema:
  *               type: object
  *               properties:
- *                 msg:
+ *                 message:
  *                   type: string
  *                   description: Error message.
  *       500:
@@ -146,10 +146,80 @@ router.get("/confirm/:token", authController.confirm);
  *             schema:
  *               type: object
  *               properties:
- *                 msg:
+ *                 message:
  *                   type: string
  *                   description: Error message.
  */
-router.post("/login", authController.sign_in);
+router.post("/sign_in", authController.sign_in);
+
+/**
+ * @swagger
+ * /auth/google:
+ *   get:
+ *     summary: Redirect the user to the Google authentication page
+ *     tags: [auth]
+ *     responses:
+ *       302:
+ *         description: Redirect to the Google authentication page.
+ */
+router.get("/google", authController.redirectToGoogle);
+
+/**
+ * @swagger
+ * /auth/google/callback:
+ *   get:
+ *     summary: Handle the callback from Google after user authentication
+ *     tags: [auth]
+ *     responses:
+ *       200:
+ *         description: Successfully authenticated and JWT token returned.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *       400:
+ *         description: Authentication failed.
+ *       500:
+ *         description: Server error.
+ */
+router.get("/google/callback", authController.handleGoogleCallback);
+
+/**
+ * @swagger
+ * /auth/facebook:
+ *   get:
+ *     summary: Redirect the user to the Facebook authentication page
+ *     tags: [auth]
+ *     responses:
+ *       302:
+ *         description: Redirect to the Facebook authentication page.
+ */
+router.get("/facebook", authController.redirectToFacebook);
+
+/**
+ * @swagger
+ * /auth/facebook/callback:
+ *   get:
+ *     summary: Handle the callback from Facebook after user authentication
+ *     tags: [auth]
+ *     responses:
+ *       200:
+ *         description: Successfully authenticated and JWT token returned.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *       400:
+ *         description: Authentication failed.
+ *       500:
+ *         description: Server error.
+ */
+router.get("/facebook/callback", authController.handleFacebookCallback);
 
 module.exports = router;
