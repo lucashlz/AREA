@@ -1,9 +1,21 @@
-FROM cirrusci/flutter:2.5.0
+FROM mobiledevops/flutter-sdk-image:latest
 
-WORKDIR /usr/src/app
+USER root
 
-COPY front/mobileapp/ .
+RUN mkdir /apk
+
+WORKDIR /app
+
+RUN flutter create mobileapp
+
+WORKDIR /app/mobileapp
+
+COPY ./lib ./lib
+
+RUN flutter pub add http
+
+RUN flutter pub get
 
 RUN flutter build apk
 
-RUN mv build/app/outputs/flutter-apk/app-release.apk /shared/client.apk
+RUN mv build/app/outputs/apk/release/app-release.apk /apk/
