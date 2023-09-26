@@ -1,0 +1,32 @@
+name: Close Issue and Move to Done on Merge to Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  handle-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get issue number from branch name
+        id: get-issue
+        run: |
+          ISSUE_NUMBER=$(echo "${{ github.event.before }}" | grep -oE '[0-9]+')
+          echo "::set-output name=issue::$ISSUE_NUMBER"
+
+      - name: Close Issue
+        run: |
+          gh issue close ${{ steps.get-issue.outputs.issue }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Move closed issue to Done
+        uses: alex-page/gh-project-move@v2.0.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          project-url: 'https://github.com/your_username/your_repo/projects/1'
+          column-name: 'Done'
