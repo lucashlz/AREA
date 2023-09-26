@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-exports.sendConfirmationMail = (email, confirmationToken) => {
+const sendConfirmationMail = async (email, confirmationToken) => {
   const mailOptions = {
     from: process.env.EMAIL,
     to: email,
@@ -26,7 +26,7 @@ exports.sendConfirmationMail = (email, confirmationToken) => {
   });
 };
 
-exports.sendPasswordResetMail = (email, resetToken) => {
+const sendPasswordResetMail = async (email, resetToken) => {
   const mailOptions = {
     from: process.env.EMAIL,
     to: email,
@@ -44,4 +44,9 @@ exports.sendPasswordResetMail = (email, resetToken) => {
       console.log("Email sent: " + info.response);
     }
   });
+};
+
+module.exports = {
+  sendConfirmationMail,
+  sendPasswordResetMail,
 };
