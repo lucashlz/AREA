@@ -1,31 +1,30 @@
-const User = require("../models/user");
+const User = require("../models/userModels");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const emailService = require("../utils/emailServices");
+const passport = require("passport");
+const emailService = require("../utils/emailUtils");
 
 exports.sign_up = async (req, res) => {
   try {
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!req.body.email || !emailRegex.test(req.body.email)) {
-      return res.status(400).json({ msg: "Invalid email format" });
+      return res.status(400).json({ message: "Invalid email format" });
     }
 
     if (!req.body.username) {
-      return res.status(400).json({ msg: "Username is required" });
+      return res.status(400).json({ message: "Username is required" });
     }
 
-    if (!req.body.oauthProvider && !req.body.password) {
-      return res.status(400).json({ msg: "Password is required" });
+    if (!req.body.authProvider && !req.body.password) {
+      return res.status(400).json({ message: "Password is required" });
     }
 
     let user = await User.findOne({
       email: req.body.email,
-      isGoogleAuth: false,
-      isFacebookAuth: false,
     });
     if (user) {
-      return res.status(409).json({ msg: "User already exists" });
+      return res.status(409).json({ message: "User already exists" });
     }
 
     user = new User(req.body);
@@ -38,8 +37,6 @@ exports.sign_up = async (req, res) => {
 
     const confirmationToken = crypto.randomBytes(20).toString("hex");
     user.confirmationToken = confirmationToken;
-    user.isGoogleAuth = false;
-    user.isFacebookAuth = false;
 
     await user.save();
 
@@ -47,10 +44,10 @@ exports.sign_up = async (req, res) => {
 
     res
       .status(200)
-      .json({ msg: "User registered. Please confirm your email." });
+      .json({ message: "User registered. Please confirm your email." });
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ msg: "Server error" });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -58,15 +55,15 @@ exports.confirm = async (req, res) => {
   try {
     const user = await User.findOne({ confirmationToken: req.params.token });
     if (!user) {
-      return res.status(400).json({ msg: "Invalid token" });
+      return res.status(400).json({ message: "Invalid token" });
     }
     user.confirmed = true;
     user.confirmationToken = undefined;
     await user.save();
-    res.status(200).json({ msg: "Account confirmed successfully" });
+    res.status(200).json({ message: "Account confirmed successfully" });
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ msg: "Server error" });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -74,20 +71,20 @@ exports.sign_in = async (req, res) => {
   try {
     const user = await User.findOne({
       email: req.body.email,
-      isGoogleAuth: false,
-      isFacebookAuth: false,
     });
     if (!user) {
-      return res.status(401).json({ msg: "User does not exist" });
+      return res.status(401).json({ message: "User does not exist" });
     }
 
     const isMatch = await bcrypt.compare(req.body.password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ msg: "Invalid credentials" });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     if (!user.confirmed) {
-      return res.status(400).json({ msg: "Please confirm your account first" });
+      return res
+        .status(400)
+        .json({ message: "Please confirm your account first" });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.SECRET_JWT, {
@@ -96,6 +93,64 @@ exports.sign_in = async (req, res) => {
     res.status(200).json({ token });
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ msg: "Server error" });
+    res.status(500).json({ message: "Server error" });
   }
+};
+
+exports.redirectToGoogle = passport.authenticate("google", {
+  scope: ["profile", "email"],
+});
+
+exports.handleGoogleCallback = (req, res, next) => {
+  passport.authenticate("google", async (err, user, info) => {
+    if (err) {
+      console.error(err.message);
+      return res
+        .status(500)
+        .json({ message: "Server error during authentication." });
+    }
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: info.message || "Authentication failed." });
+    }
+    try {
+      const token = jwt.sign({ id: user._id }, process.env.SECRET_JWT, {
+        expiresIn: "24h",
+      });
+      res.status(200).json({ token });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: "Server error generating token." });
+    }
+  })(req, res, next);
+};
+
+exports.redirectToFacebook = passport.authenticate("facebook", {
+  scope: ["email"],
+});
+
+exports.handleFacebookCallback = (req, res, next) => {
+  passport.authenticate("facebook", async (err, user, info) => {
+    if (err) {
+      console.error(err.message);
+      return res
+        .status(500)
+        .json({ message: "Server error during authentication." });
+    }
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: info.message || "Authentication failed." });
+    }
+    try {
+      const token = jwt.sign({ id: user._id }, process.env.SECRET_JWT, {
+        expiresIn: "24h",
+      });
+      res.status(200).json({ token });
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).json({ message: "Server error generating token." });
+    }
+  })(req, res, next);
 };

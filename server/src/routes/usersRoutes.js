@@ -1,58 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const usersController = require("../controllers/usersController");
-const { authMiddleware } = require('../middleware/middleware');
 
 /**
  * @swagger
- * /users/all:
- *   get:
- *     summary: Retrieve a list of all users
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: A list of users
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   username:
- *                     type: string
- *                   email:
- *                     type: string
- *                   confirmed:
- *                     type: boolean
- *                   isGoogleAuth:
- *                     type: boolean
- *                   isFacebookAuth:
- *                     type: boolean
- *                   connectServices:
- *                     type: object
- *       500:
- *         description: Server error
- */
-router.get("/all", usersController.getAllUsers);
-
-/**
- * @swagger
- * /users/{userId}:
+ * /users/delete:
  *   delete:
- *     summary: Delete a specific user by ID
- *     tags: [Users]
+ *     summary: Delete the logged-in user
+ *     tags: [users]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: userId
- *         schema:
- *           type: string
- *         required: true
- *         description: The user ID
  *     responses:
  *       200:
  *         description: User deleted successfully
@@ -61,6 +18,6 @@ router.get("/all", usersController.getAllUsers);
  *       500:
  *         description: Server error
  */
-router.delete("/:id", usersController.deleteUser);
+router.delete("/delete", usersController.deleteLoggedInUser);
 
 module.exports = router;
