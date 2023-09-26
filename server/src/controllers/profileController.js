@@ -1,5 +1,9 @@
-const User = require("../models/user");
-const bcrypt = require("bcrypt");
+const User = require("../models/userModels");
+const {
+  hasAuthService,
+  updateUserEmail,
+  updateUserPassword,
+} = require("../utils/profileUtils");
 
 exports.getUserProfile = async (req, res) => {
   try {
@@ -15,76 +19,44 @@ exports.getUserProfile = async (req, res) => {
   }
 };
 
-exports.updateEmail = async (req, res) => {
-  const { email } = req.body;
-  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({ message: "Invalid email format" });
-  }
-  const existingUser = await User.findOne({ email });
-  if (existingUser && String(existingUser._id) !== String(req.user.id)) {
-    return res.status(400).json({ message: "Email is already in use" });
-  }
+exports.updateProfile = async (req, res) => {
   try {
+    const { email, username, oldPassword, newPassword } = req.body;
     const user = await User.findById(req.user.id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const hasGoogleAuth = hasAuthService(user, "google");
+    const hasFacebookAuth = hasAuthService(user, "facebook");
+
+    if (username) user.username = username;
+
+    if (email) {
+      if (hasGoogleAuth || hasFacebookAuth) {
+        return res.status(403).json({
+          message:
+            "You've previously logged in using an external service. You cannot change your email.",
+        });
+      }
+
+      await updateUserEmail(user, email);
     }
-    user.email = email;
+
+    if (oldPassword && newPassword) {
+      if (hasGoogleAuth || hasFacebookAuth) {
+        return res.status(403).json({
+          message:
+            "You've previously logged in using an external service. You cannot change your password.",
+        });
+      }
+
+      await updateUserPassword(user, oldPassword, newPassword);
+    }
+
     await user.save();
-    res.json({
-      message: "Email updated successfully",
-      email: user.email,
-    });
+    res.json({ message: "Profile updated successfully" });
   } catch (err) {
-    console.error("Error updating email:", err.message);
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-exports.updateUsername = async (req, res) => {
-  const { username } = req.body;
-
-  const user = await User.findById(req.user.id);
-  try {
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    user.username = username;
-    await user.save();
-
-    res.json({
-      message: "Username updated successfully",
-      username: user.username,
-    });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-exports.updatePassword = async (req, res) => {
-  const { oldPassword, newPassword } = req.body;
-
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Old password is incorrect" });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-
-    user.password = hashedPassword;
-    await user.save();
-
-    res.json({ message: "Password updated successfully" });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    console.error(err);
+    res.status(500).json({ message: err.message || "Server error" });
   }
 };
