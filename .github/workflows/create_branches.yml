@@ -14,7 +14,9 @@ jobs:
 
       - name: Create branch for task
         run: |
-          BRANCH_NAME=${{ github.event.issue.title }}
+          # Extract the task name from the issue title, replace spaces with underscores
+          TASK_NAME=$(echo "${{ github.event.issue.title }}" | sed 's/\[AUTOBRANCH\] //g' | tr ' ' '_')
+          BRANCH_NAME=feature/$TASK_NAME
           git checkout -b $BRANCH_NAME
           git push -u origin $BRANCH_NAME
         env:
