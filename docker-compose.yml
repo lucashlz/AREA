@@ -1,6 +1,15 @@
 version: '3'
 
 services:
+  mobileapp:
+    privileged: true
+    image: mobileapp:latest
+    build:
+      context: ./front/mobileapp
+      dockerfile: ./Dockerfile
+    volumes:
+      - apk-volume:/apk/
+
   server:
     build: ./server/
     ports:
@@ -21,6 +30,10 @@ services:
       - type: bind
         source: ./front/webapp
         target: /app
+      - apk-volume:/apk/
+    depends_on:
+      - mobileapp
+      - server
 
   mongo:
     image: mongo:latest
@@ -31,3 +44,4 @@ services:
 
 volumes:
   mongo-data:
+  apk-volume:
