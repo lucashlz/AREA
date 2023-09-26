@@ -7,7 +7,7 @@ const resetController = require("../controllers/resetController");
  * /reset/request_password_reset:
  *   post:
  *     summary: Sends a password reset link to the user's email
- *     tags: [Reset]
+ *     tags: [reset]
  *     requestBody:
  *       content:
  *         application/json:
@@ -28,18 +28,46 @@ const resetController = require("../controllers/resetController");
  *               properties:
  *                 message:
  *                   type: string
+ *                   example: Reset link email sent
+ *       400:
+ *         description: User authenticated with OAuth2 and hasn't set a password.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: You authenticated using OAuth2 and haven't set a password on this account. Please login using your OAuth2 service.
  *       404:
  *         description: User not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User not found
  *       500:
  *         description: Server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Server error
  */
 router.post("/request_password_reset", resetController.requestPasswordReset);
+
 /**
  * @swagger
  * /reset/password/{token}:
  *   get:
  *     summary: Display the form (or page) for the user to set a new password.
- *     tags: [Reset]
+ *     tags: [reset]
  *     parameters:
  *       - in: path
  *         name: token
@@ -62,7 +90,7 @@ router.get("/password/:token", resetController.displayResetForm);
  * /reset/password:
  *   post:
  *     summary: Updates the user's password using the provided token and new password.
- *     tags: [Reset]
+ *     tags: [reset]
  *     requestBody:
  *       content:
  *         application/json:
