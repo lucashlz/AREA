@@ -10,12 +10,18 @@ jobs:
     if: contains(github.event.issue.title, '[AUTOBRANCH]')
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
+
       - name: Create branch for task
         run: |
-          # Extract the task name from the issue title, replace spaces with underscores
-          TASK_NAME=$(echo "${{ github.event.issue.title }}" | sed 's/\[AUTOBRANCH\] //g' | tr ' ' '_')
-          BRANCH_NAME=$TASK_NAME
+          TITLE="${{ github.event.issue.title }}"
+          
+          # Extract prefix and branch name
+          PREFIX=$(echo "$TITLE" | grep -oP '\[AUTOBRANCH\]\[\K[^]]+')
+          BRANCH_NAME_PART=$(echo "$TITLE" | sed -e 's/\[AUTOBRANCH\]\[\([^]]*\)\] //')
+          
+          # Construct final branch name
+          BRANCH_NAME="${PREFIX}-${BRANCH_NAME_PART}"
           git checkout -b $BRANCH_NAME
           git push -u origin $BRANCH_NAME
         env:
