@@ -1,22 +1,20 @@
 name: Create Feature Branches
 
 on:
-  workflow_dispatch:
-    inputs:
-      taskName:
-        description: "Task Name"
-        required: true
+  issue:
+    types: [opened]
 
 jobs:
   createBranch:
     runs-on: ubuntu-latest
+    if: contains(github.event.issue.title, '[AUTOBRANCH]')
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Create branch for task
         run: |
-          BRANCH_NAME=feature/${{ github.event.inputs.taskName }}
+          BRANCH_NAME=feature/${{ github.event.issue.number }}-${{ github.event.issue.title }}
           git checkout -b $BRANCH_NAME
           git push -u origin $BRANCH_NAME
         env:
