@@ -1,1 +1,23 @@
+name: Create Feature Branches
 
+on:
+  workflow_dispatch:
+    inputs:
+      taskName:
+        description: "Task Name"
+        required: true
+
+jobs:
+  createBranch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create branch for task
+        run: |
+          BRANCH_NAME=feature/${{ github.event.inputs.taskName }}
+          git checkout -b $BRANCH_NAME
+          git push -u origin $BRANCH_NAME
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
