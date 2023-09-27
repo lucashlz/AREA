@@ -97,12 +97,12 @@ exports.sign_in = async (req, res) => {
   }
 };
 
-exports.redirectToGoogle = passport.authenticate("google", {
+exports.redirectToGoogle = passport.authenticate("google-auth", {
   scope: ["profile", "email"],
 });
 
 exports.handleGoogleCallback = (req, res, next) => {
-  passport.authenticate("google", async (err, user, info) => {
+  passport.authenticate("google-auth", async (err, user, info) => {
     if (err) {
       console.error(err.message);
       return res
@@ -126,12 +126,12 @@ exports.handleGoogleCallback = (req, res, next) => {
   })(req, res, next);
 };
 
-exports.redirectToFacebook = passport.authenticate("facebook", {
+exports.redirectToFacebook = passport.authenticate("facebook-auth", {
   scope: ["email"],
 });
 
 exports.handleFacebookCallback = (req, res, next) => {
-  passport.authenticate("facebook", async (err, user, info) => {
+  passport.authenticate("facebook-auth", async (err, user, info) => {
     if (err) {
       console.error(err.message);
       return res
