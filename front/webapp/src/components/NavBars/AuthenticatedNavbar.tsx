@@ -66,6 +66,11 @@ function Navbar() {
               </Link>
             </li>
             <li>
+              <Button linkTo="/create" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
+                Create
+              </Button>
+            </li>
+            <li>
               <Button linkTo="/account" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
                 Account
               </Button>
@@ -77,6 +82,9 @@ function Navbar() {
           <Link to='/applets' className='nav-links'>
             My Applets
           </Link>
+          <Button linkTo="/create" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
+            Create
+          </Button>
           <Button linkTo="/account" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
             Account
           </Button>
