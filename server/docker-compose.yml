@@ -11,8 +11,6 @@ services:
       - MONGO_URI=mongodb://mongo:27017/area_db
     links:
       - mongo
-    depends_on:
-      - mongo
   mongo:
     image: mongo:latest
     ports:

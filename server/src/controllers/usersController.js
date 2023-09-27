@@ -1,25 +1,18 @@
-const User = require("../models/user");
+const User = require("../models/userModels");
 
-exports.getAllUsers = async (req, res) => {
+exports.deleteLoggedInUser = async (req, res) => {
   try {
-    const users = await User.find().select("-password -confirmationToken");
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
+    const userId = req.user.id;
 
-exports.deleteUser = async (req, res) => {
-  try {
-    let user = await User.findById(req.params.id);
+    const deleted = await User.deleteOne({ _id: userId });
 
-    if (!user) {
+    if (deleted.n === 0) {
       return res.status(404).json({ message: "User not found" });
     }
-    await User.deleteOne({ _id: req.params.id });
+
     res.json({ message: "User deleted successfully" });
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };

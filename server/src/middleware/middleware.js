@@ -8,9 +8,10 @@ function setupAppMiddleware(app) {
     session({
       secret: "your_secret_key",
       resave: false,
-      saveUninitialized: true,
+      saveUninitialized: false,
     })
   );
+
   app.use(bodyParser.json());
   app.use(passport.initialize());
   app.use(passport.session());

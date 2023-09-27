@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
-const User = require("../models/user");
-const { sendPasswordResetMail } = require("../utils/emailServices");
+const User = require("../models/userModels");
+const { sendPasswordResetMail } = require("../utils/emailUtils");
 
 exports.requestPasswordReset = async (req, res) => {
   try {
@@ -9,10 +9,18 @@ exports.requestPasswordReset = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    if (!user.password) {
+      return res
+        .status(400)
+        .json({
+          message:
+            "You authenticated using OAuth2 and haven't set a password on this account. Please login using your OAuth2 service.",
+        });
+    }
 
     const resetToken = crypto.randomBytes(20).toString("hex");
     user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    user.resetPasswordExpires = Date.now() + 3600000;
 
     await user.save();
 

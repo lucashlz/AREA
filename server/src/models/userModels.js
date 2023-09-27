@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const { Schema } = mongoose;
 
 const ServiceSchema = new Schema({
@@ -17,6 +16,14 @@ const ServiceSchema = new Schema({
   },
 });
 
+const ExternalAuthServiceSchema = new Schema(
+  {
+    service: String,
+    serviceId: String,
+  },
+  { _id: false }
+);
+
 const userSchema = new mongoose.Schema({
   username: { type: String, default: "" },
   email: { type: String, required: true },
@@ -31,21 +38,12 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
-  isGoogleAuth: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
-  isFacebookAuth: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
   connectServices: {
     type: Map,
     of: ServiceSchema,
     default: {},
   },
+  externalAuth: [ExternalAuthServiceSchema],
 });
 
 module.exports = mongoose.model("User", userSchema);

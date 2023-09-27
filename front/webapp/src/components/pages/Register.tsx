@@ -1,13 +1,24 @@
+import axios from 'axios';
 import Title from '../Title'
 import './Register.css'
+import { Navigate } from 'react-router-dom';
+import { useState } from 'react';
 
 export default function Register() {
 
+    const [loginPage, setLoginPage] = useState(false);
+    const [SignInPage, setSignInPage] = useState(false);
+
+    if (loginPage) {
+        return <Navigate to='/login'/>
+    }
     const fetchOAuth = () => {
         try {
-
+            const res = axios.get("http://localhost:8080/auth/google")
+            return res;
         } catch(e) {
-        console.error("Error connecting to google :", e);
+            console.error("Error connecting to google :", e);
+        }
     }
 
     return (
@@ -21,7 +32,7 @@ export default function Register() {
                 <img src={`${process.env.PUBLIC_URL}/logo_google.png`} className='icon' />
                 Continue with Google
             </button>
-            <div style={{fontSize: 25, fontWeight: 500}}>Or use your email to <span className='underline-text'>sign up</span> or <span className='underline-text'>log in</span></div>
+            <div style={{fontSize: 25, fontWeight: 500}}>Or use your email to <span className='underline-text' onClick={() => setSignInPage(true)}>sign up</span> or <span className='underline-text' onClick={() => setLoginPage(true)}>log in</span></div>
         </div>
     )
 }

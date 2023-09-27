@@ -34,16 +34,8 @@ In the Area Project, you can find a `docker-compose.yml` at the root. This `dock
 3. **webapp** (`front/webapp/Dockerfile`)
 
 
-**To BUILD:**
+**To BUILD & RUN:**
 
-- Whole project: `docker-compose up --build /`
-- Server: `docker-compose up --build /server`
-- Mobile App: `docker build --tag name:your_mobileapp_image_name .`
-- Web App: `docker build --tag name:your_webapp_image_name .`
-
-**To RUN:**
-
-- Whole project: The `docker-compose up --build /` command automatically runs the entire project.
-- Server: The `docker-compose up --build /server` command automatically runs the server.
-- Mobile App: The build command creates an image you can run with: `docker run --privileged -p 8081:8081 -e NODE_ENV=development -v "$(pwd)/front/webapp:/app" <image_name>`
-- Web App: In development ...
+- Whole project: `docker-compose up --build (root)`
+- Server Only: `docker-compose up --build (/server)`
+After a docker-compose up command, the containers are automatically running
