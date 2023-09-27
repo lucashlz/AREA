@@ -37,7 +37,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     console.log(`Attempting to sign in user with email: ${email}`);
 
     try {
-      const response = await axios.post('http://localhost:8080/auth/login', { email, password }, {
+      const response = await axios.post('http://localhost:8080/auth/sign_in', { email, password }, {
         headers: {
           'Content-Type': 'application/json'
         }
