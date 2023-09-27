@@ -1,7 +1,6 @@
 const passport = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
 const User = require("../models/userModels");
-const { serialize, deserialize } = require("../config/passportConfig");
 const {
   findUserByExternalId,
   updateUserConnectionService,
@@ -9,6 +8,7 @@ const {
 } = require("../utils/authUtils");
 
 passport.use(
+  "facebook-auth",
   new FacebookStrategy(
     {
       clientID: process.env.FACEBOOK_CLIENT_ID,
