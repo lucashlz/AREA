@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class LoginInput extends StatelessWidget {
+class MyInput extends StatelessWidget {
   final String hint;
   final bool obscureText;
   final TextEditingController? controller;
 
-  const LoginInput({
+  const MyInput({
     required this.hint,
     this.obscureText = false,
     this.controller,
