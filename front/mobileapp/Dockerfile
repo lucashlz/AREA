@@ -12,6 +12,10 @@ WORKDIR /app/mobileapp
 
 COPY ./lib ./lib
 
+COPY ./assets ./assets
+
+COPY ./fonts ./fonts
+
 RUN flutter pub add http
 
 RUN flutter pub get

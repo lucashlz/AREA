@@ -21,10 +21,33 @@
     display: flex;
     align-items: center;
   }
+
+  .get-apk-button {
+    margin-top: -2%;
+    height: 6vh;
+    width: 12vw;
+    background-color: lightgreen;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1vh;
+    min-width: 35%;
+    min-height: 100%;
+    border: none;
+    outline: none;
+    font-size: 75%;
+    margin-left: 2vw;
+    padding-left: 1%;
+    padding-right: 1%;
+  } 
   
+  .get-apk-button:hover {
+    cursor: pointer;
+  }
+
   .logo {
-    height: 40px;
-    width: auto;
+    height: 40%;
+    width: 90%;
   }
   
   .navbar-container {
@@ -69,8 +92,7 @@
   
   .nav-menu.active {
     display: flex;
-  }
-  
+  } 
   
   @media screen and (max-width: 960px) {
     .menu-icon {
