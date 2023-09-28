@@ -5,6 +5,7 @@ import 'home_screen.dart';
 import 'register_screen.dart';
 import '../components/my_button.dart';
 import '../components/my_input.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -44,6 +45,8 @@ Future<void> login() async {
   if (response.statusCode == 200) {
     final Map<String, dynamic> data = json.decode(response.body);
     final token = data['token'];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
     navigateToHome();
   } else if(response.statusCode == 400) {
     setState(() {
@@ -108,7 +111,7 @@ Future<void> login() async {
     const SizedBox(height: 35),
     Padding(
       padding: const EdgeInsets.only(top: 24),
-      child: MyButton(onPressed: login),
+      child: MyButton(onPressed: login, fontSize: 30,),
     ),
     RichText(
       textAlign: TextAlign.center,

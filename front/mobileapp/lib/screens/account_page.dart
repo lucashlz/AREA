@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import './login_screen.dart';
+import '../components/my_button.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({Key? key}) : super(key: key);
@@ -9,71 +12,90 @@ class AccountPage extends StatefulWidget {
   AccountPageState createState() => AccountPageState();
 }
 
-
 class AccountPageState extends State<AccountPage> {
-
   String? _username;
 
   @override
   void initState() {
     super.initState();
-    _loadUsername();
+    _loadProfileFromAPI();
   }
 
-  _loadUsername() async {
+  void navigateToLogin() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  }
+
+  Future<void> _loadProfileFromAPI() async {
+    const String url = 'http://10.0.2.2:8080/profile';
+    
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _username = prefs.getString('username');
+    String? token = prefs.getString('token');
+    
+    if (token == null) {
+      navigateToLogin();
+      return;
+    }
+
+    final response = await http.get(Uri.parse(url), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
     });
-  }
 
-  _changeEmail() {
-    // Implement the change email functionality
-  }
-
-  _changePassword() {
-    // Implement the change password functionality
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      setState(() {
+        _username = data['username'];
+      });
+    } else {
+      print('Error fetching profile: ${response.statusCode}');
+    }
   }
 
   _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+    navigateToLogin();
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1D1D1D),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 50.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Welcome, $_username!',
-              style: const TextStyle(color: Colors.white, fontSize: 24),
-            ),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: _changeEmail,
-              child: const Text('Change Email'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _changePassword,
-              child: const Text('Change Password'),
-            ),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: _logout,
-              style: ElevatedButton.styleFrom(
-                // ignore: deprecated_member_use
-                primary: Colors.red,
+        padding: const EdgeInsets.symmetric(horizontal: 20.0,),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Welcome, $_username!',
+                style: const TextStyle(color: Colors.white, fontSize: 30),
               ),
-              child: const Text('Logout'),
-            ),
-          ],
+              const SizedBox(height: 80),
+              MyButton(
+                onPressed: () {},
+                label: 'Change Email',
+                fontSize: 24,
+              ),
+              const SizedBox(height: 30),
+              MyButton(
+                onPressed: () {},
+                label: 'Change Password',
+                fontSize: 24,
+              ),
+              const SizedBox(height: 130),
+              MyButton(
+                onPressed: _logout,
+                label: 'Logout',
+                color: Colors.red,
+                fontSize: 24,
+              ),
+            ],
+          ),
         ),
       ),
     );
