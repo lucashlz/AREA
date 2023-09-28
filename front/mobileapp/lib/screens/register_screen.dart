@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../components/my_input.dart';
 import '../components/my_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   );
 }
 
-  Future<void> register() async {
+Future<void> register() async {
   if (passwordController.text != confirmPasswordController.text) {
     setState(() {
       errorMessage = 'Passwords do not match!';
@@ -52,14 +53,23 @@ class RegisterScreenState extends State<RegisterScreen> {
 
   if (response.statusCode == 200) {
     final Map<String, dynamic> data = json.decode(response.body);
-    final token = data['token'];
-  navigateToLogin();
-} else {
-  setState(() {
-    errorMessage = 'Error registering. Please try again.';
-  });
-}
-
+    if (data.containsKey('token')) {
+      final token = data['token'];
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+      navigateToLogin();
+    } else if (data.containsKey('message')) {
+        navigateToLogin();
+    } else {
+      setState(() {
+        errorMessage = 'Error registering. Please try again.';
+      });
+    }
+  } else {
+    setState(() {
+      errorMessage = 'Error registering. Please try again.';
+    });
+  }
 }
 
   @override
@@ -117,6 +127,7 @@ class RegisterScreenState extends State<RegisterScreen> {
             MyButton(
             onPressed: register,
             label: 'Sign Up',
+            fontSize: 30,
           ),
           RichText(
       textAlign: TextAlign.center,
