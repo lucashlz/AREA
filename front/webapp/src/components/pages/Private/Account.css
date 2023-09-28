@@ -42,11 +42,11 @@ form {
     width: 450px;
     max-width: 500px;
     padding: 15px;
-    outline: none; /* Remove default outline */
+    outline: none;
 }
 
 .input:focus {
-    border-color: #1D1D1D; /* Border color when input is focused */
+    border-color: #1D1D1D;
 }
 
 .input-title {
@@ -54,4 +54,16 @@ form {
     font-size: 20px;
     color: #1D1D1D;
     margin-bottom: 6px;
+}
+
+.button {
+  background-color: black;
+}
+
+.api-response-message {
+    font-size: 30px;
+    font-weight: 900;
+    text-align: center;
+    max-width: 600px;
+    color: rgb(0, 179, 0)
 }
