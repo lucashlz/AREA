@@ -29,7 +29,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 1vh;
+    border-radius: 60px;
     min-width: 35%;
     min-height: 100%;
     border: none;
@@ -84,9 +84,9 @@
     position: absolute;
     top: 110px;
     left: 0;
-    background-color: #1D1D1D; /* Match the navbar color */
+    background-color: #1D1D1D;
     z-index: 10;
-    padding-top: 20px; /* Spacing from the top */
+    padding-top: 20px;
   }
   
   .nav-menu.active {
