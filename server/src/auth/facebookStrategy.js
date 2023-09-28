@@ -23,7 +23,7 @@ passport.use(
         if (existingUser) {
           await updateUserConnectionService(existingUser, "facebook", {
             access_token: accessToken,
-            data: profile,
+            data: profile._json,
           });
           return done(null, existingUser);
         }
@@ -58,7 +58,7 @@ passport.use(
           profile.id,
           {
             access_token: accessToken,
-            data: profile,
+            data: profile._json,
           }
         );
         return done(null, newUser);
