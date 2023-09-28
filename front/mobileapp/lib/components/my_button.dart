@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class LoginButton extends StatelessWidget {
+class MyButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String label;
 
-  const LoginButton({required this.onPressed, this.label = 'Login', Key? key}) : super(key: key);
+  const MyButton({required this.onPressed, this.label = 'Login', Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
