@@ -1,6 +1,6 @@
 const passport = require("passport");
 
-exports.connectGoogleAccount = passport.authenticate("google", {
+exports.connectGoogleAccount = passport.authenticate("google-connect", {
   scope: ["profile", "email"],
 });
 
@@ -37,7 +37,7 @@ exports.connectGoogleCallback = (req, res, next) => {
   })(req, res, next);
 };
 
-exports.connectFacebookAccount = passport.authenticate("facebook", {
+exports.connectFacebookAccount = passport.authenticate("facebook-connect", {
   scope: ["email"],
 });
 
