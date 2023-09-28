@@ -3,12 +3,14 @@ const { setupAppMiddleware } = require("./src/middleware/middleware");
 const setupRoutes = require("./src/routes.js");
 const connectDB = require("./src/config/dbConfig");
 const cors = require('cors');
+require('./src/auth/googleStrategy');
+require('./src/auth/facebookStrategy');
+require('./src/connection/googleStrategy');
+require('./src/connection/facebookStrategy');
 require("dotenv").config();
 
 const app = express();
 app.use(cors());
-
-const cors = require("cors");
 
 app.use(cors());
 app.all('/*', function(req, res, next) {
