@@ -1,0 +1,174 @@
+.applets-container {
+  width: 60%;
+  height: 100%;
+  margin-left: 20%;
+  margin-right: 20%;
+}
+
+@media screen and (max-width: 960px) {
+  .applets-container {
+    margin-left: 10%;
+    margin-right: 10%;
+    width: 80%;
+  }
+}
+
+.applets-msg-holder {
+  margin-top: 7%;
+  justify-content: center;
+  display: flex;
+}
+
+.applets-msg {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 3.11111111rem;
+}
+
+@media screen and (max-width: 960px) {
+  .applets-msg {
+    font-size: 2rem;
+  }
+}
+
+@media screen and (max-width: 960px) {
+  .applets-section-elem {
+    font-size: 1rem;
+  }
+}
+
+.applets-searchbar-holder {
+  margin-top: 5% !important;
+  width: 55%;
+  height: 5.5vh;
+  border: 0.25rem solid black;
+  padding: 1.5%;
+  border-radius: 0.5rem;
+  display: flex;
+  margin: auto;
+  justify-content: center; 
+}
+
+@media screen and (max-width: 960px) {
+  .applets-searchbar-holder {
+    width: 100%;
+    margin-top: 10% !important;
+    margin-bottom: 7% !important;
+  }
+}
+
+.applets-searchbar {
+  height: 110%;
+  width: 100%;
+  border: 0;
+  color: black;
+  outline: none;
+}
+
+.applets-searchbar::placeholder {
+  opacity: 0.5;
+  color: black;
+}
+
+.applets-searchbar-image {
+  height: 100%;
+  width: auto;
+  opacity: 0.4;
+  margin-right: 5%;
+}
+
+.applets-holder {
+  padding: 5%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+}
+
+.applet-content-holder {
+  border-radius: 20px;
+  flex-grow: 1;
+  flex-basis: auto;
+  box-sizing: border-box;
+  margin: 2%;
+  height: 20vh;
+  width: 60%;
+  max-width: 30vh;
+}
+
+.applet-content-container {
+  width: 100%;
+  height: 20%;
+  display: flex;
+  flex-direction: row;
+  margin: 3%;
+  margin-left: 5%;
+  margin-bottom: 0%;
+}
+
+.applet-logo-holder {
+  width: 15%;
+  overflow: hidden;
+  border-radius: 100%;
+  padding: 3%;
+}
+
+.applet-logo {
+  width: 100%;
+  height: 100%;
+}
+
+.applet-description {
+  font-weight: bolder;
+  font-size: 1.1rem;
+  color: white;
+  width: 88%;
+  height: 100%;
+  margin-left: 5%;
+  overflow: auto;
+  height: 50%;
+}
+
+.applet-status-on {
+  width: 12%;
+  height: 10%;
+  background-color: #41CB00;
+  border: none;
+  outline: none;
+  border-radius: 60px;
+  bottom: 0;
+  margin-left: 80%;
+  margin-top: 2%;
+  padding: 0.8%;
+}
+
+.status {
+  transform: translateX(100px); /* Adjust as needed */
+}
+
+.applet-status-off {
+  width: 12%;
+  height: 10%;
+  background-color: #D2D2D2;
+  border: none;
+  outline: none;
+  border-radius: 60px;
+  bottom: 0;
+  margin-left: 80%;
+  margin-top: 2%;
+  padding: 0.8%;
+}
+
+.applet-status-ball {
+  width: 45%;
+  height: 100%;
+  background-color: white;
+  border-radius: 100%;
+  transition: transform 0.3s ease;
+}
+
+.translated {
+  transform: translateX(120%);
+}
