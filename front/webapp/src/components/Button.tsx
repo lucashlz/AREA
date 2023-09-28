@@ -9,6 +9,7 @@ type ButtonProps = {
     buttonStyle: 'btn--primary' | 'btn--outline' | 'btn--primary-inverted';
     buttonSize: 'btn--medium' | 'btn--large';
     linkTo?: string;
+    color?: string;
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -17,11 +18,17 @@ export const Button: React.FC<ButtonProps> = ({
     onClick,
     buttonStyle = 'btn--primary',
     buttonSize = 'btn--medium',
-    linkTo
+    linkTo,
+    color
 }) => {
+    const btnStyle = {
+        backgroundColor: color,
+        borderColor: color
+    };
+
     if (linkTo) {
         return (
-            <Link to={linkTo} className={`btn ${buttonStyle} ${buttonSize}`}>
+            <Link to={linkTo} className={`btn ${buttonStyle} ${buttonSize}`} style={btnStyle}>
                 {children}
             </Link>
         );
@@ -31,6 +38,7 @@ export const Button: React.FC<ButtonProps> = ({
                 className={`btn ${buttonStyle} ${buttonSize}`}
                 onClick={onClick}
                 type={type}
+                style={btnStyle}
             >
                 {children}
             </button>

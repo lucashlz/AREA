@@ -1,7 +1,5 @@
 FROM node:16
 
-RUN mkdir /apk
-
 WORKDIR /app
 
 COPY package*.json ./

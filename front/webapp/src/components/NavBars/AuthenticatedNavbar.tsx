@@ -4,7 +4,7 @@ import { Button } from '../Button';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { useContext } from 'react';
 import { UserContext } from '../../context/userContext';
-import './UnauthenticatedNavbar.css';
+import './AuthenticatedNavbar.css';
 
 function Navbar() {
   const [click, setClick] = useState(false);
@@ -52,6 +52,7 @@ function Navbar() {
           <Link to="/" className="navbar-logo">
             <img src={logoSrc} alt="Logo" className="logo" />
           </Link>
+          <button className="get-apk-button" onClick={() => window.location.href=`${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download</button>
         </div>
 
         <div className="menu-icon" onClick={toggleMobileMenu}>

@@ -8,6 +8,7 @@ const {
 } = require("../utils/authUtils");
 
 passport.use(
+  "google-auth",
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
