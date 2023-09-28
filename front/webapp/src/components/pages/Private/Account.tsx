@@ -8,6 +8,7 @@ const AccountPage: React.FC = () => {
   const userContext = useContext(UserContext);
   const [error, setError] = useState('');
   const [message, setMessage] = useState<string | null>(null);
+  const [statusCode, setStatusCode] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -51,14 +52,12 @@ const AccountPage: React.FC = () => {
     console.log("SUBMIT")
     e.preventDefault();
 
-    try {
-      const response = await updateInfo(formData.email, formData.username, formData.oldPassword, formData.newPassword);
-      console.log(response)
-      setMessage(response);
-    } catch (err) {
-      setError('Failed to update infos.');
-    }
+    const response = await updateInfo(formData.email, formData.username, formData.oldPassword, formData.newPassword);
+    console.log(response.message)
+    setMessage(response.message);
+    setStatusCode(response.status);
   };
+
 
   return (
     <div className="account-container">
@@ -110,7 +109,10 @@ const AccountPage: React.FC = () => {
             onChange={handleInputChange}
           />
         </div>
-        {message && <div className="api-response-message">{message}</div>}
+        <div className={`api-response-message ${statusCode === 200 ? 'success-message' : 'error-message'}`}>
+          {message}
+        </div>
+
         <button type="button" className="btn btn--primary-inverted btn--large" onClick={handleSubmit}>Update Infos</button>
       </form>
     </div>

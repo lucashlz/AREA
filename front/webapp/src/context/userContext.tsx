@@ -6,7 +6,7 @@ export interface IUserContext {
   signIn: (email: string, password: string) => Promise<any>;
   signOut: () => void;
   getUserInfo: () => Promise<{username: string, email: string, password: string}>;
-  updateInfo: (email: string, username: string, oldPassword: string, newPassword: string) => Promise<string>;
+  updateInfo: (email: string, username: string, oldPassword: string, newPassword: string) => Promise<any>;
   token: string | null;
 }
 
@@ -53,13 +53,20 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
         console.log('No token received in response.');
       }
 
-      return response.data; // Return the data from the response
+      return response.data;
 
     } catch (error) {
       console.error("Error signing in:", error);
-      throw error; // Re-throw the error so it can be caught by the calling function
+
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Server responded with:", error.response.data);
+        return error.response.data;
+      } else {
+        throw error;
+      }
     }
   }
+
 
 
   const signOut = () => {
@@ -94,11 +101,21 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       });
 
       console.log('Received response from API:', response.data);
-      return response.data.message
+      return { status: response.status, message: response.data.message };
     } catch (error) {
       console.error("Error updating infos:", error);
+
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Server responded with:", error.response.data);
+        return { status: error.response.status, message: error.response.data.message };
+      } else {
+        throw error;
+      }
     }
-  }
+};
+
+
+
 
   useEffect(() => {
     const storedToken = localStorage.getItem('userToken');

@@ -17,16 +17,15 @@ const Login: React.FC = () => {
 
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("SUBMIT")
+    console.log("SUBMIT");
     e.preventDefault();
-
     try {
       const response = await signIn(email, password);
-      if (response.data.message) {
-        setMessage(response.data.message);
+      if (response.message) {
+        setMessage(response.message);
       }
     } catch (err) {
-      setError('Failed to update infos.');
+      setError('Failed to login.');
     }
   };
 
