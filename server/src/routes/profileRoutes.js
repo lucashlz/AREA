@@ -49,6 +49,7 @@ router.get("/", profileController.getUserProfile);
  *             properties:
  *               email:
  *                 type: string
+ *                 description: When a new email is provided, a confirmation link will be sent to this address.
  *               username:
  *                 type: string
  *               oldPassword:
@@ -57,7 +58,7 @@ router.get("/", profileController.getUserProfile);
  *                 type: string
  *     responses:
  *       200:
- *         description: Profile updated successfully
+ *         description: Profile updated successfully. If email was changed, a confirmation link has been sent to the new address.
  *         content:
  *           application/json:
  *             schema:
