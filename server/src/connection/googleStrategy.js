@@ -1,11 +1,6 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/userModels");
-const {
-  findUserByExternalId,
-  updateUserConnectionService,
-  createNewExternalUser,
-} = require("../utils/authUtils");
 
 passport.use(
   "google-connect",
@@ -36,17 +31,13 @@ passport.use(
               refresh_token: refreshToken,
               data: profile._json,
             };
-            console.log("Google profile data:", profile._json);
-            console.log("DATA:", googleService.data);
             loggedInUser.connectServices.set("google", googleService);
-            try {
-              const savedUser = await loggedInUser.save();
-              console.log("User saved successfully:", savedUser);
-              return done(null, loggedInUser, { accessToken, refreshToken });
-            } catch (err) {
-              console.error("Mongoose save error:", err);
-              return done(err);
-            }
+            await loggedInUser.save();
+            return done(null, loggedInUser, {
+              accessToken,
+              refreshToken,
+              data: profile._json,
+            });
           }
         }
         return done(
