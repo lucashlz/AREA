@@ -10,6 +10,7 @@ import Home from './components/pages/Home'
 import Create from './components/pages/Private/Create'
 import Account from './components/pages/Private/Account'
 import { useLocation } from 'react-router-dom';
+import Applets from './components/pages/Applets';
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/create" element={<Create />} />
         <Route path="/account" element={<Account />} />
+        <Route path="/applets" element={<Applets />} />
       </Routes>
     </>
   );
