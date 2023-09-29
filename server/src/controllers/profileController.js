@@ -7,7 +7,7 @@ const {
 
 exports.getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select(
+    const user = await User.findById(req.user.id).select(
       "-password -confirmationToken"
     );
     if (!user) {
