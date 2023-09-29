@@ -1,5 +1,7 @@
 const User = require("../models/userModels");
+const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
+const { sendEmailChangeConfirmationMail } = require("./emailUtils");
 
 const hasAuthService = (user, serviceName) =>
   user.externalAuth &&
@@ -20,7 +22,12 @@ const updateUserEmail = async (user, newEmail) => {
     throw new Error("Email is already in use");
   }
 
-  user.email = newEmail;
+  const emailChangeToken = crypto.randomBytes(32).toString("hex");
+
+  user.pendingEmail = newEmail;
+  user.emailChangeToken = emailChangeToken;
+
+  await sendEmailChangeConfirmationMail(newEmail, emailChangeToken);
 };
 
 const updateUserPassword = async (user, oldPassword, newPassword) => {
