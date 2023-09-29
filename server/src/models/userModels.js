@@ -10,6 +10,10 @@ const ServiceSchema = new Schema({
     type: String,
     default: "",
   },
+  expires_in: {
+    type: Number,
+    default: null,
+  },
   data: {
     type: Object,
     default: {},
@@ -28,6 +32,8 @@ const userSchema = new mongoose.Schema({
   username: { type: String, default: "" },
   email: { type: String, required: true },
   password: { type: String },
+  pendingEmail: { type: String },
+  emailChangeToken: { type: String },
   confirmed: { type: Boolean, default: false },
   confirmationToken: { type: String },
   resetPasswordToken: {
