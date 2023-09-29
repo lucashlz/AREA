@@ -89,6 +89,29 @@ router.post("/sign_up", authController.sign_up);
  */
 router.get("/confirm/:token", authController.confirm);
 
+
+/**
+ * @swagger
+ * /auth/confirm-email-change/{token}:
+ *   get:
+ *     summary: Confirm a user's email change
+ *     tags: [auth]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         description: Email change confirmation token
+ *     responses:
+ *       200:
+ *         description: Email changed successfully
+ *       400:
+ *         description: Invalid token
+ *       500:
+ *         description: Server error
+ */
+router.get('/auth/confirm-email-change/:token', authController.confirmEmailChange);
+
+
 /**
  * @swagger
  * /auth/sign_in:
