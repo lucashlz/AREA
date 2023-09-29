@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import './login_screen.dart';
+import './change_mail_page.dart';
+import './change_password_page.dart';
 import '../components/my_button.dart';
 
 class AccountPage extends StatefulWidget {
@@ -19,6 +21,20 @@ class AccountPageState extends State<AccountPage> {
   void initState() {
     super.initState();
     _loadProfileFromAPI();
+  }
+
+  void navigateToChangeMail() {
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const ChangeMailPage()),
+    );
+  }
+
+  void navigateToChangePassword() {
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const ChangePasswordPage()),
+    );
   }
 
   void navigateToLogin() {
@@ -60,6 +76,69 @@ class AccountPageState extends State<AccountPage> {
     navigateToLogin();
   }
 
+  void _showErrorSnackbar(String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+      duration: const Duration(seconds: 3),
+    ),
+  );
+}
+
+  Future<void> deleteUser() async {
+    const String url = 'http://10.0.2.2:8080/users/delete';
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    if (token == null) {
+      navigateToLogin();
+      return;
+    }
+
+    final response = await http.delete(Uri.parse(url), headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    if (response.statusCode == 200) {
+      print("User deleted");
+      navigateToLogin();
+    } else {
+      print('Server Error');
+      _showErrorSnackbar("Error during deleting user");
+    }
+  }
+
+  Future<void> _showDeleteConfirmation() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Deletion'),
+          content: const Text('Are you sure you want to delete your account?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await deleteUser();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,17 +156,24 @@ class AccountPageState extends State<AccountPage> {
               ),
               const SizedBox(height: 80),
               MyButton(
-                onPressed: () {},
+                onPressed: navigateToChangeMail,
                 label: 'Change Email',
                 fontSize: 24,
               ),
               const SizedBox(height: 30),
               MyButton(
-                onPressed: () {},
+                onPressed: navigateToChangePassword,
                 label: 'Change Password',
                 fontSize: 24,
               ),
-              const SizedBox(height: 130),
+              const SizedBox(height: 30),
+              MyButton(
+              onPressed: _showDeleteConfirmation,
+              label: 'Delete User',
+              color: Colors.orange,
+              fontSize: 24,
+            ),
+            const SizedBox(height: 90),
               MyButton(
                 onPressed: _logout,
                 label: 'Logout',
