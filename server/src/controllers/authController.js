@@ -4,6 +4,8 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const emailService = require("../utils/emailUtils");
+require("../auth/googleStrategy");
+require("../auth/facebookStrategy");
 
 exports.sign_up = async (req, res) => {
   try {
@@ -61,6 +63,27 @@ exports.confirm = async (req, res) => {
     user.confirmationToken = undefined;
     await user.save();
     res.status(200).json({ message: "Account confirmed successfully" });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.confirmEmailChange = async (req, res) => {
+  try {
+    const user = await User.findOne({ emailChangeToken: req.params.token });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid token" });
+    }
+
+    if (user.pendingEmail) {
+      user.email = user.pendingEmail;
+      user.pendingEmail = undefined;
+    }
+
+    user.emailChangeToken = undefined;
+    await user.save();
+    res.status(200).json({ message: "Email changed successfully" });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: "Server error" });
