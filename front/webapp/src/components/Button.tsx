@@ -6,7 +6,7 @@ type ButtonProps = {
     children: React.ReactNode;
     type: "button" | "submit" | "reset";
     onClick?: () => void;
-    buttonStyle: 'btn--primary' | 'btn--outline' | 'btn--primary-inverted';
+    buttonStyle: 'btn--primary' | 'btn--outline' | 'btn--primary-inverted' | 'bordered-button';
     buttonSize: 'btn--medium' | 'btn--large';
     linkTo?: string;
     color?: string;
