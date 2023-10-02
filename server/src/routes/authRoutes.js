@@ -4,7 +4,7 @@ const authController = require("../controllers/authController");
 
 /**
  * @swagger
- * /auth/sign_up:
+ * /auth/sign-up:
  *   post:
  *     summary: sign up a new user
  *     tags: [auth]
@@ -66,7 +66,7 @@ const authController = require("../controllers/authController");
  *                   type: string
  *                   description: Error message.
  */
-router.post("/sign_up", authController.sign_up);
+router.post("/sign-up", authController.sign_up);
 
 /**
  * @swagger
@@ -114,7 +114,7 @@ router.get('/auth/confirm-email-change/:token', authController.confirmEmailChang
 
 /**
  * @swagger
- * /auth/sign_in:
+ * /auth/sign-in:
  *   post:
  *     summary: Login a user
  *     tags: [auth]
@@ -173,7 +173,7 @@ router.get('/auth/confirm-email-change/:token', authController.confirmEmailChang
  *                   type: string
  *                   description: Error message.
  */
-router.post("/sign_in", authController.sign_in);
+router.post("/sign-in", authController.sign_in);
 
 /**
  * @swagger
