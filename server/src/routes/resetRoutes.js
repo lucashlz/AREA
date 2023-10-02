@@ -4,7 +4,7 @@ const resetController = require("../controllers/resetController");
 
 /**
  * @swagger
- * /reset/request_password_reset:
+ * /reset/request-password-reset:
  *   post:
  *     summary: Sends a password reset link to the user's email
  *     tags: [reset]
@@ -60,7 +60,7 @@ const resetController = require("../controllers/resetController");
  *                   type: string
  *                   example: Server error
  */
-router.post("/request_password_reset", resetController.requestPasswordReset);
+router.post("/request-password-reset", resetController.requestPasswordReset);
 
 /**
  * @swagger
