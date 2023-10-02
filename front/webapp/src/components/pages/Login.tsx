@@ -50,7 +50,7 @@ const Login: React.FC = () => {
     <div className="login-container">
       <form>
         <div className='login'>Log in</div>
-        <div>
+        <div className='field-container'>
           <input
             type="email"
             className='input'
@@ -60,7 +60,7 @@ const Login: React.FC = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <div>
+        <div className='field-container'>
           <input
             type="password"
             className='input'

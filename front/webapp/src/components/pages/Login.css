@@ -14,10 +14,15 @@
     height: 100%;
     margin-top: -30rem;
   }
+
+.field-container {
+  display: flex;
+  justify-content: center;
+}
   
 .input {
   font-size: 2rem;
-  padding: 1rex;
+  padding: 1rem;
   border: 5px solid;
   border-radius: 10px;
   color: black;
@@ -49,4 +54,14 @@
   text-align: center;
   max-width: 600px;
   color: red;
+}
+
+@media screen and (max-width: 550px) {
+  .input {
+    width: 90%;
+    padding: 0.3rem;
+  }
+  .login {
+    font-size: 3rem;
+  }
 }

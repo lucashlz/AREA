@@ -72,7 +72,7 @@ const AccountPage: React.FC = () => {
           <input
             type="text"
             name="username"
-            className='input'
+            className='account-input'
             value={formData.username}
             required
             onChange={handleInputChange}
@@ -83,7 +83,7 @@ const AccountPage: React.FC = () => {
           <input
             type="email"
             name="email"
-            className='input'
+            className='account-input'
             value={formData.email}
             required
             onChange={handleInputChange}
@@ -94,7 +94,7 @@ const AccountPage: React.FC = () => {
           <input
             type="password"
             name="oldPassword"
-            className='input'
+            className='account-input'
             required
             onChange={handleInputChange}
           />
@@ -104,7 +104,7 @@ const AccountPage: React.FC = () => {
           <input
             type="password"
             name="newPassword"
-            className='input'
+            className='account-input'
             required
             onChange={handleInputChange}
           />
