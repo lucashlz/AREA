@@ -3,6 +3,8 @@ const profileRoutes = require("./routes/profileRoutes");
 const resetRoutes = require("./routes/resetRoutes");
 const usersRoutes = require("./routes/usersRoutes");
 const connectRoutes = require("./routes/connectRoutes");
+const areaRoutes = require("./routes/areaRoutes");
+const aboutRoutes = require("./routes/aboutRoutes");
 const swaggerUi = require("swagger-ui-express");
 const specs = require("./config/swaggerConfig");
 const { authMiddleware } = require("./middleware/middleware");
@@ -13,5 +15,7 @@ module.exports = (app) => {
   app.use("/profile", authMiddleware, profileRoutes);
   app.use("/users", authMiddleware, usersRoutes);
   app.use("/connect", authMiddleware, connectRoutes);
+  app.use("/areas", authMiddleware, areaRoutes);
+  app.use("/about", authMiddleware, aboutRoutes);
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 };
