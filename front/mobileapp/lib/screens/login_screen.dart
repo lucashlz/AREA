@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'home_screen.dart';
-import '../components/login_button.dart';
-import '../components/login_input.dart';
+import '../main_container.dart';
+import 'register_screen.dart';
+import '../components/my_button.dart';
+import '../components/my_input.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -20,7 +22,7 @@ class LoginScreenState extends State<LoginScreen> {
 void navigateToHome() {
   Navigator.pushReplacement(
     context,
-    MaterialPageRoute(builder: (context) => const HomeScreen()),
+    MaterialPageRoute(builder: (context) => const MainContainer()),
   );
 }
 
@@ -43,15 +45,19 @@ Future<void> login() async {
   if (response.statusCode == 200) {
     final Map<String, dynamic> data = json.decode(response.body);
     final token = data['token'];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
     navigateToHome();
-  } else {
+  } else if(response.statusCode == 400) {
+    setState(() {
+    errorMessage = 'Please verify your mail is verified and your password and email are corrects.';
+    });
+    } else {
     setState(() {
       errorMessage = 'Invalid email or password';
     });
   }
 }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -61,11 +67,11 @@ Future<void> login() async {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            const SizedBox(height: 80),
+            const SizedBox(height: 40),
             Center(
               child: Image.asset('assets/logo_ifttt.png'),
             ),
-            const SizedBox(height: 150),
+            const SizedBox(height: 60),
             Column(
   mainAxisAlignment: MainAxisAlignment.center,
   children: [
@@ -85,31 +91,64 @@ Future<void> login() async {
       ),
     ),
     const SizedBox(height: 20),
-    LoginInput(
+    MyInput(
           hint: "Username",
           controller: emailController,
         ),
         const SizedBox(height: 20),
-        LoginInput(
+        MyInput(
           hint: "Password",
           obscureText: true,
           controller: passwordController,
         ),
         const SizedBox(height: 20),
-        if (errorMessage != null) // Display error if it exists
-          Text(
-            errorMessage!,
-            style: const TextStyle(color: Colors.red),
-          ),
-        const SizedBox(height: 50),
-        Padding(
-          padding: const EdgeInsets.only(top: 24),
-          child: LoginButton(onPressed: login), // Change the onPressed action
-        ),
-      ],
-            ),
-          ],
+        
+    if (errorMessage != null)
+      Text(
+        errorMessage!,
+        style: const TextStyle(color: Colors.red),
       ),
+    const SizedBox(height: 35),
+    Padding(
+      padding: const EdgeInsets.only(top: 24),
+      child: MyButton(onPressed: login, fontSize: 30,),
+    ),
+    RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        style: const TextStyle(
+          color: Color(0xFF8E949A),
+          fontFamily: 'Cabin',
+          fontSize: 18,
+          fontWeight: FontWeight.w400,
+          height: 1.465,
+        ),
+        children: [
+          const TextSpan(text: "Don't have an account? "),
+          WidgetSpan(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                );
+              },
+              child: const Text(
+                "Sign up",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  ],
+),
+          ],
+        ),
     ),
     );
   }

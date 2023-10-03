@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 
-class LoginInput extends StatelessWidget {
+class MyInput extends StatefulWidget {
   final String hint;
   final bool obscureText;
   final TextEditingController? controller;
+  final TextInputType keyboardType;
 
-  const LoginInput({
+  const MyInput({
     required this.hint,
     this.obscureText = false,
     this.controller,
+    this.keyboardType = TextInputType.text,
     Key? key,
   }) : super(key: key);
+
+  @override
+  MyInputState createState() => MyInputState();
+}
+
+class MyInputState extends State<MyInput> {
+  bool _passwordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +31,11 @@ class LoginInput extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: TextField(
-        controller: controller,
-        obscureText: obscureText,
+        controller: widget.controller,
+        obscureText: widget.obscureText && !_passwordVisible,
+        keyboardType: widget.keyboardType,
         decoration: InputDecoration(
-          hintText: hint,
+          hintText: widget.hint,
           hintStyle: const TextStyle(
             color: Color(0xFFA4A9AE),
             fontFamily: 'Archivo',
@@ -38,6 +48,19 @@ class LoginInput extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             borderSide: BorderSide.none,
           ),
+          suffixIcon: widget.obscureText
+              ? IconButton(
+                  icon: Icon(
+                    _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: const Color(0xFFA4A9AE),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _passwordVisible = !_passwordVisible;
+                    });
+                  },
+                )
+              : null,
         ),
       ),
     );

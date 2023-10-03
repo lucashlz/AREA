@@ -22,7 +22,7 @@ passport.use(
         await updateUserConnectionService(existingUser, "google", {
           access_token: accessToken,
           refresh_token: refreshToken,
-          data: profile,
+          data: profile._json,
         });
         return done(null, existingUser);
       }
@@ -59,7 +59,7 @@ passport.use(
           {
             access_token: accessToken,
             refresh_token: refreshToken,
-            data: profile,
+            data: profile._json,
           }
         );
         return done(null, newUser);

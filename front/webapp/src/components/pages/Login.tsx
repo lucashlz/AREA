@@ -10,18 +10,21 @@ const Login: React.FC = () => {
   const [error, setError] = useState('');
   const [oauth, setOauth] = useState(false);
   const [url, setUrl] = useState('');
+  const [message, setMessage] = useState<string | null>(null);
 
   const { signIn, token } = useContext(UserContext) as IUserContext;
 
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("SUBMIT")
+    console.log("SUBMIT");
     e.preventDefault();
-
     try {
-      await signIn(email, password);
+      const response = await signIn(email, password);
+      if (response.message) {
+        setMessage(response.message);
+      }
     } catch (err) {
-      setError('Failed to sign in.');
+      setError('Failed to login.');
     }
   };
 
@@ -66,6 +69,7 @@ const Login: React.FC = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+        {message && <div className="login-response-message">{message}</div>}
         {error && <p>{error}</p>}
         <button type="button" className="btn btn--primary-inverted btn--large" onClick={handleSubmit}>Log in</button>
         <div style={{fontWeight: 500, fontSize: 25, marginTop: '10%'}} >Continue with <a className='underline-text'>Google</a> or <a className='underline-text'>Facebook</a></div>

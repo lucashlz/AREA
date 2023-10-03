@@ -6,21 +6,26 @@ import './Account.css';
 
 const AccountPage: React.FC = () => {
   const userContext = useContext(UserContext);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState<string | null>(null);
+  const [statusCode, setStatusCode] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password: '',
+    oldPassword: '',
+    newPassword: '',
   });
 
   useEffect(() => {
-    if (!formData.username && !formData.email && !formData.password && userContext?.getUserInfo) {
+    if (!formData.username && !formData.email && userContext?.getUserInfo) {
       userContext.getUserInfo().then(data => {
         if (data) {
           console.log(data);
           setFormData({
             username: data.username,
             email: data.email,
-            password: data.password
+            oldPassword: '',
+            newPassword: '',
           });
         }
       });
@@ -32,7 +37,7 @@ const AccountPage: React.FC = () => {
     throw new Error("AccountPage must be used within a UserContextProvider");
   }
 
-  const { token, signOut } = userContext;
+  const { token, signOut, updateInfo } = userContext;
 
   if (!token) {
     return <Navigate to="/" />;
@@ -43,24 +48,30 @@ const AccountPage: React.FC = () => {
     setFormData(prevState => ({ ...prevState, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    console.log("SUBMIT")
     e.preventDefault();
-    console.log(formData);
-    // Here, you'd send the data to your backend to be updated
+
+    const response = await updateInfo(formData.email, formData.username, formData.oldPassword, formData.newPassword);
+    console.log(response.message)
+    setMessage(response.message);
+    setStatusCode(response.status);
   };
+
 
   return (
     <div className="account-container">
       <form>
       <div className="account-main-text">Account settings</div>
-        <Button onClick={signOut} type="button" buttonStyle="btn--primary-inverted" buttonSize="btn--medium">
-          Logout
-        </Button>
+      <Button color="red" type="button" buttonStyle='btn--outline' buttonSize="btn--medium" onClick={signOut}>
+        Logout
+      </Button>
+
         <div className="account-input-titles">
           <label htmlFor="username" className="input-title">Username</label>
           <input
             type="text"
-            name="username"  // <-- Add this
+            name="username"
             className='input'
             value={formData.username}
             required
@@ -71,7 +82,7 @@ const AccountPage: React.FC = () => {
           <label htmlFor="username" className="input-title">Email</label>
           <input
             type="email"
-            name="email"  // <-- Add this
+            name="email"
             className='input'
             value={formData.email}
             required
@@ -79,21 +90,31 @@ const AccountPage: React.FC = () => {
           />
         </div>
         <div className="account-input-titles">
-          <label htmlFor="username" className="input-title">Password</label>
+          <label htmlFor="username" className="input-title">Old Password</label>
           <input
             type="password"
-            name="password"
+            name="oldPassword"
             className='input'
-            value={formData.password}
             required
             onChange={handleInputChange}
           />
         </div>
-        <Button onClick={signOut} type="button" buttonStyle="btn--primary-inverted" buttonSize="btn--large">
-          Update infos
-        </Button>
-      </form>
+        <div className="account-input-titles">
+          <label htmlFor="username" className="input-title">New Password</label>
+          <input
+            type="password"
+            name="newPassword"
+            className='input'
+            required
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className={`api-response-message ${statusCode === 200 ? 'success-message' : 'error-message'}`}>
+          {message}
+        </div>
 
+        <button type="button" className="btn btn--primary-inverted btn--large" onClick={handleSubmit}>Update Infos</button>
+      </form>
     </div>
   );
 };

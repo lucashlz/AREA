@@ -8,7 +8,6 @@ async function authenticateUser(email: string, password: string): Promise<string
         });
 
         if (response.status === 200 && response.data.token) {
-            // Store the token
             localStorage.setItem('userToken', response.data.token);
             return response.data.token;
         }

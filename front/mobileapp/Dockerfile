@@ -1,18 +1,16 @@
-FROM mobiledevops/flutter-sdk-image:latest
+FROM instrumentisto/flutter
 
 USER root
 
+RUN flutter --version
+
 RUN mkdir /apk
-
-WORKDIR /app
-
-RUN flutter create mobileapp
 
 WORKDIR /app/mobileapp
 
-COPY ./lib ./lib
+COPY ./ ./
 
-RUN flutter pub add http
+RUN flutter --version
 
 RUN flutter pub get
 

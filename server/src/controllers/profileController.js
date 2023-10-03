@@ -57,6 +57,15 @@ exports.updateProfile = async (req, res) => {
     res.json({ message: "Profile updated successfully" });
   } catch (err) {
     console.error(err);
+    if (
+      [
+        "Invalid email format",
+        "Email is already in use",
+        "Old password is incorrect",
+      ].includes(err.message)
+    ) {
+      return res.status(400).json({ message: err.message });
+    }
     res.status(500).json({ message: err.message || "Server error" });
   }
 };

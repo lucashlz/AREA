@@ -11,10 +11,27 @@ const transporter = nodemailer.createTransport({
 
 const sendConfirmationMail = async (email, confirmationToken) => {
   const mailOptions = {
-    from: process.env.EMAIL,
+    from: `"AREA" <${process.env.EMAIL}>`,
     to: email,
     subject: "[AREA] Please confirm your email",
     text: `Click this link to confirm your email: http://localhost:8080/auth/confirm/${confirmationToken}`,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+};
+
+const sendEmailChangeConfirmationMail = async (email, emailChangeToken) => {
+  const mailOptions = {
+    from: `"AREA" <${process.env.EMAIL}>`,
+    to: email,
+    subject: "[AREA] Please confirm your email change",
+    text: `Click this link to confirm your email change: http://localhost:8080/auth/confirm-email-change/${emailChangeToken}`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -47,6 +64,7 @@ const sendPasswordResetMail = async (email, resetToken) => {
 };
 
 module.exports = {
+  sendEmailChangeConfirmationMail,
   sendConfirmationMail,
   sendPasswordResetMail,
 };
