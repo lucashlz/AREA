@@ -7,7 +7,7 @@ const findUserByExternalId = async (service, serviceId) => {
     });
 };
 
-const updateUserConnectionService = async (user, data) => {
+const updateUserConnectionService = async (user, serviceName, data) => {
     user.connectServices.set(serviceName, {
         access_token: data.access_token,
         data: data.data,
