@@ -41,9 +41,6 @@
   margin-top: 5% !important;
   width: 55%;
   height: 5.5vh;
-  border: 0.25rem solid black;
-  padding: 1.5%;
-  border-radius: 0.5rem;
   display: flex;
   margin: auto;
   justify-content: center; 
@@ -68,13 +65,16 @@
 .applets-searchbar::placeholder {
   opacity: 0.5;
   color: black;
+  font-size: medium;
 }
 
 .applets-searchbar-image {
-  height: 100%;
+  align-self: center;
+  height: 80%;
   width: auto;
   opacity: 0.4;
-  margin-right: 5%;
+  margin-right: 4%;
+  margin-left: 1%;
 }
 
 .applets-holder {

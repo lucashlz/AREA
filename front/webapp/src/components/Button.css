@@ -31,7 +31,7 @@
 }
 
 .btn--medium {
-    padding: 13px 37px;
+    padding: 15px 37px;
     font-size: 20px;
 }
 
@@ -57,4 +57,20 @@
     color: #fff;
     border: 1px solid white;
     transition: all 0.3s ease-out;
+}
+
+.bordered-button {
+    border: 2px solid;
+    color: black;
+}
+
+@media screen and (max-width: 960px) {
+    .btn--large {
+        font-size: 20px;
+    }
+
+    .btn--medium {
+        font-size: 15px;
+        padding: 23px 37px;
+    }
 }
