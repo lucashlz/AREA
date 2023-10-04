@@ -32,7 +32,7 @@
   height: 80px;
 }
 
-.nav-links {
+.unauth-nav-links {
   color: #fff;
   display: flex;
   align-items: center;

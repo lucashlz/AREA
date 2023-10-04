@@ -52,7 +52,7 @@ function Navbar() {
           <Link to="/" className="navbar-logo">
             <img src={logoSrc} alt="Logo" className="logo" />
           </Link>
-          <button className="get-apk-button" onClick={() => window.location.href=`${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download</button>
+          {button ? <button className="get-apk-button" onClick={() => window.location.href=`${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
         </div>
 
         <div className="menu-icon" onClick={toggleMobileMenu}>
@@ -71,11 +71,14 @@ function Navbar() {
                 Get started
               </Button>
             </li>
+            <li>
+              {!button ? <button className="get-apk-button" onClick={() => window.location.href=`${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
+            </li>
           </ul>
         )}
 
         <div className="navbar-container">
-          <Link to='/login' className='nav-links'>
+          <Link to='/login' className='unauth-nav-links'>
             Log in
           </Link>
           <Button linkTo="/register" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">

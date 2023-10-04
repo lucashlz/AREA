@@ -15,6 +15,7 @@ export default function Register() {
     const fetchOAuth = () => {
         try {
             const res = axios.get("http://localhost:8080/auth/google")
+            console.log("request ok\n");
             return res;
         } catch(e) {
             console.error("Error connecting to google :", e);

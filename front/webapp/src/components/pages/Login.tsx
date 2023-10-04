@@ -48,8 +48,8 @@ const Login: React.FC = () => {
   return (
     <div className="login-container">
       <form>
-        <Title title="Log in" style={{margin: '10%'}}/>
-        <div>
+        <div className='login'>Log in</div>
+        <div className='field-container'>
           <input
             type="email"
             className='input'
@@ -59,7 +59,7 @@ const Login: React.FC = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <div>
+        <div className='field-container'>
           <input
             type="password"
             className='input'

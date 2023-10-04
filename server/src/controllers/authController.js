@@ -125,6 +125,7 @@ exports.redirectToGoogle = passport.authenticate("google-auth", {
 });
 
 exports.handleGoogleCallback = (req, res, next) => {
+  console.log("google OK");
   passport.authenticate("google-auth", async (err, user, info) => {
     if (err) {
       console.error(err.message);
