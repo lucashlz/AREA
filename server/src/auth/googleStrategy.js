@@ -21,7 +21,7 @@ passport.use(
             if (existingUser) {
                 await updateUserConnectionService(existingUser, "google", {
                     access_token: accessToken,
-                    refresh_token: refreshToken,
+                    // refresh_token: refreshToken,
                     data: profile._json,
                 });
                 return done(null, existingUser);

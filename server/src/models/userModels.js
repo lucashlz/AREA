@@ -1,17 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const ServiceInfoSchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    color: {
-        type: String,
-        required: true,
-    },
-});
-
 const ServiceSchema = new Schema({
     access_token: {
         type: String,
@@ -28,10 +17,6 @@ const ServiceSchema = new Schema({
     data: {
         type: Object,
         default: {},
-    },
-    serviceInfo: {
-        type: ServiceInfoSchema,
-        required: true,
     },
 });
 

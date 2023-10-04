@@ -7,11 +7,10 @@ const findUserByExternalId = async (service, serviceId) => {
     });
 };
 
-const updateUserConnectionService = async (user, service, data) => {
+const updateUserConnectionService = async (user, data) => {
     user.connectServices.set(serviceName, {
         access_token: data.access_token,
         data: data.data,
-        serviceInfo: data.serviceInfo,
     });
     await user.save();
 };
@@ -32,7 +31,6 @@ const createNewExternalUser = async (service, email, serviceId, profileData) => 
             [service]: {
                 access_token: profileData.access_token,
                 data: profileData.data,
-                serviceInfo: profileData.serviceInfo,
             },
         },
     });
