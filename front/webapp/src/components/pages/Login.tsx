@@ -3,6 +3,7 @@ import { Navigate} from 'react-router-dom';
 import { UserContext, IUserContext } from '../../context/userContext';
 import './Login.css';
 import Title from '../Title';
+import Input from '../Input';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -49,30 +50,12 @@ const Login: React.FC = () => {
     <div className="login-container">
       <form>
         <div className='login'>Log in</div>
-        <div className='field-container'>
-          <input
-            type="email"
-            className='input'
-            placeholder='Email'
-            value={email}
-            required
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className='field-container'>
-          <input
-            type="password"
-            className='input'
-            placeholder='Password'
-            value={password}
-            required
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+        <Input onChange={(e) => setEmail(e.target.value)} placeholder='Email' type='email' value={email}/>
+        <Input onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='password' value={password}/>
         {message && <div className="login-response-message">{message}</div>}
         {error && <p>{error}</p>}
         <button type="button" className="btn btn--primary-inverted btn--large" onClick={handleSubmit}>Log in</button>
-        <div style={{fontWeight: 500, fontSize: 25, marginTop: '10%'}} >Continue with <a className='underline-text'>Google</a> or <a className='underline-text'>Facebook</a></div>
+        <div style={{fontWeight: 500, fontSize: 25, marginTop: '10%'}} >Continue with <a href="http://localhost:8080/auth/google" className='underline-text'>Google</a> or <a href="http://localhost:8080/auth/facebook" className='underline-text'>Facebook</a></div>
       </form>
     </div>
   );

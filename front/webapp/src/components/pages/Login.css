@@ -20,15 +20,6 @@
   display: flex;
   justify-content: center;
 }
-  
-.input {
-  font-size: 2rem;
-  padding: 1rem;
-  border: 5px solid;
-  border-radius: 10px;
-  color: black;
-  border-color: lightgray;
-}
 
 ::placeholder {
   color: lightgray;
@@ -58,10 +49,6 @@
 }
 
 @media screen and (max-width: 550px) {
-  .input {
-    width: 90%;
-    padding: 0.3rem;
-  }
   .login {
     font-size: 3rem;
   }

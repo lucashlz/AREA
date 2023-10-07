@@ -4,6 +4,7 @@ import axios from 'axios';
 export interface IUserContext {
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<any>;
+  createUser: (username: string, email: string, password: string, setError: (e: any) => void) => Promise<any>;
   signOut: () => void;
   getUserInfo: () => Promise<{username: string, email: string, password: string}>;
   updateInfo: (email: string, username: string, oldPassword: string, newPassword: string) => Promise<any>;
@@ -67,7 +68,22 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     }
   }
 
-
+  const createUser = async (username: string, email: string, password: string, setError: (e: any) => void) => {
+    try {
+        const res = await axios.post(`http://localhost:8080/auth/sign-up`, {username, email, password});
+        if (res.data.token) {
+          localStorage.setItem('userToken', res.data.token);
+          setToken(res.data.token);
+          console.log('User successfully signed in and token saved.');
+        } else {
+          console.log('No token received in response.');
+        }
+        return res;
+    } catch(e: any) {
+        setError(e.response.data.message);
+        console.log(e);
+    }
+  }
 
   const signOut = () => {
     localStorage.removeItem('userToken');
@@ -125,7 +141,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   }, [token]);
 
   return (
-    <UserContext.Provider value={{signUp, signIn, signOut, token, getUserInfo, updateInfo}}>
+    <UserContext.Provider value={{signUp, signIn, createUser ,signOut, token, getUserInfo, updateInfo}}>
       {children}
     </UserContext.Provider>
   )

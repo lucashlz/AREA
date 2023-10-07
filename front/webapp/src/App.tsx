@@ -12,7 +12,8 @@ import Account from './components/pages/Private/Account'
 import { useLocation } from 'react-router-dom';
 import Register from './components/pages/Register';
 import Applets from './components/pages/Applets';
-
+import 'react-notifications-component/dist/theme.css';
+import { ReactNotifications } from 'react-notifications-component';
 
 function App() {
   const userContext = useContext(UserContext);
@@ -30,6 +31,7 @@ function App() {
 
   return (
     <>
+      <ReactNotifications/>
       {token ? <AuthenticatedNavbar /> : <UnauthenticatedNavbar />}
       <Routes>
         <Route path="/" element={<Home />} />

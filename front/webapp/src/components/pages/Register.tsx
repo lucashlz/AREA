@@ -1,39 +1,60 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import Title from '../Title'
 import './Register.css'
-import { Navigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Navigate, redirect } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import Input from '../Input';
+import { Button } from '../Button';
+import { IUserContext, UserContext } from '../../context/userContext';
+import { Store } from 'react-notifications-component';
 
 export default function Register() {
 
-    const [loginPage, setLoginPage] = useState(false);
-    const [SignInPage, setSignInPage] = useState(false);
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [login, setLogin] = useState(false);
+    const [res, setRes] = useState()
 
-    if (loginPage) {
-        return <Navigate to='/login'/>
-    }
-    const fetchOAuth = () => {
-        try {
-            const res = axios.get("http://localhost:8080/auth/google")
-            console.log("request ok\n");
-            return res;
-        } catch(e) {
-            console.error("Error connecting to google :", e);
-        }
-    }
+  const {createUser, token} = useContext(UserContext) as IUserContext;
 
+  if (login) {
+    return <Navigate to={"/login"} />
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    try {
+        e.preventDefault();
+        const res = await createUser(username, email, password, setError);
+        if (res.status && res.status == 200) {
+            setLogin(true);
+            Store.addNotification({
+            title: "Account created succesfully",
+            message: "Please verify your email to log in",
+            type: "success",
+            insert: "top",
+            container: "top-right",
+            animationIn: ["animate__animated", "animate__fadeIn"],
+            animationOut: ["animate__animated", "animate__fadeOut"],
+            dismiss: {
+              duration: 5000,
+              onScreen: true
+            },
+          })};
+    } catch(e: any) {
+        console.error("Error creating user : ", e);
+    }
+  }
     return (
         <div className="get-started">
-            <Title title='Get started' />
-            <button style={{backgroundColor: '#3b5998', color: "white"}} className='button' >
-                <img className='icon' src={`${process.env.PUBLIC_URL}/logo_facebook.png`} />
-                <div style={{marginLeft: '5%'}}>Continue with Facebook</div>
-            </button>
-            <button style={{border: "1px black solid", backgroundColor: 'white'}} className='button' onClick={fetchOAuth} >
-                <img src={`${process.env.PUBLIC_URL}/logo_google.png`} className='icon' />
-                Continue with Google
-            </button>
-            <div style={{fontSize: 25, fontWeight: 500}}>Or use your email to <span className='underline-text' onClick={() => setSignInPage(true)}>sign up</span> or <span className='underline-text' onClick={() => setLoginPage(true)}>log in</span></div>
+            <Title title='Sign up' />
+            {error && <div style={{color: 'red', fontSize: 25}} >{error}</div>}
+            <Input onChange={(e) => setUsername(e.target.value)} placeholder='Username' type='username' value={username}/>
+            <Input onChange={(e) => setEmail(e.target.value)} placeholder='Email' type='email' value={email}/>
+            <Input onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='password' value={password}/>
+            <Button buttonSize='btn--medium' type='button' buttonStyle='btn--primary-inverted' onClick={handleSubmit} >Get started</Button>
+            <a href="http://localhost:8080/auth/google"><img src={`${process.env.PUBLIC_URL}/logo_google.png`} style={{height: 50, width: 'auto'}} /></a>
         </div>
     )
 }
