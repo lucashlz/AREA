@@ -113,7 +113,7 @@ const AccountPage: React.FC = () => {
           {message}
         </div>
 
-        <button type="button" className="btn btn--primary-inverted btn--large" onClick={handleSubmit}>Update Infos</button>
+        <Button buttonSize='btn--large' buttonStyle='btn--primary-inverted' type='button' onClick={handleSubmit} >Update Infos</Button><span></span>
       </form>
     </div>
   );

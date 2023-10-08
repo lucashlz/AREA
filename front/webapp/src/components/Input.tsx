@@ -1,23 +1,28 @@
 import './Input.css';
 
 type InputProps = {
-    placeholder: string,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-    value: string,
-    type: string
+  placeholder: string,
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  value: string,
+  type: string,
+  icon?: string,
 }
 
 export default function Input(props: InputProps) {
-    return (
-        <div className='field-container'>
-          <input
-            type={props.type}
-            className='input'
-            placeholder={props.placeholder}
-            value={props.value}
-            required
-            onChange={props.onChange}
-          />
-        </div>
-    )
+  return (
+    <div className='field-container'>
+      <div className='input-icon-container'>
+        {props.icon && <img src={props.icon} alt="Icon" className='input-icon' />}
+        <input
+          type={props.type}
+          className='input'
+          style={props.icon ? {paddingLeft: '60px'} : {}}
+          placeholder={props.placeholder}
+          value={props.value}
+          required
+          onChange={props.onChange}
+        />
+      </div>
+    </div>
+  )
 }
