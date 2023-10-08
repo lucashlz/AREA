@@ -29,15 +29,17 @@
   .applets-msg {
     font-size: 2rem;
   }
-}
-
-@media screen and (max-width: 960px) {
   .applets-section-elem {
     font-size: 1rem;
   }
+  .top-searchbar-holder {
+    width: 100%;
+    margin-top: 10% !important;
+    margin-bottom: 7% !important;
+  }
 }
 
-.applets-searchbar-holder {
+.top-searchbar-holder {
   margin-top: 5% !important;
   width: 55%;
   height: 5.5vh;
@@ -46,15 +48,7 @@
   justify-content: center; 
 }
 
-@media screen and (max-width: 960px) {
-  .applets-searchbar-holder {
-    width: 100%;
-    margin-top: 10% !important;
-    margin-bottom: 7% !important;
-  }
-}
-
-.applets-searchbar {
+.top-searchbar {
   height: 110%;
   width: 100%;
   border: 0;
@@ -62,13 +56,13 @@
   outline: none;
 }
 
-.applets-searchbar::placeholder {
+.top-searchbar::placeholder {
   opacity: 0.5;
   color: black;
   font-size: medium;
 }
 
-.applets-searchbar-image {
+.top-searchbar-image {
   align-self: center;
   height: 80%;
   width: auto;

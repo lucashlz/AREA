@@ -16,6 +16,7 @@ const Applet: React.FC<AppletProps> = ({ logo_paths, applet_desc, onoff }) => {
   }
   return (
     <>
+      
       <div className="applet-content-holder" style={{ backgroundColor: status === "on" ? "#0066FF" : "#565656" }}>
         <div className='applet-content-container'>
           {logo_paths.map((item, index) => (
@@ -45,8 +46,8 @@ export default function Applets() {
         <p className="applets-msg">My Applets</p>
       </div>
 
-      <div className="applets-searchbar-holder">
-        <img className="applets-searchbar-image" src={`${process.env.PUBLIC_URL}/search.png`}></img>
+      <div className="top-searchbar-holder">
+        <img className="top-searchbar-image" src={`${process.env.PUBLIC_URL}/search.png`}></img>
         <input
             type="searchInput"
             className='input'

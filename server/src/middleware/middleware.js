@@ -2,6 +2,7 @@ const session = require("express-session");
 const passport = require("passport");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
+const url = require("url");
 
 exports.setupAppMiddleware = async (app) => {
     app.use(
@@ -18,7 +19,12 @@ exports.setupAppMiddleware = async (app) => {
 };
 
 exports.authMiddleware = async (req, res, next) => {
-    const token = req.header("Authorization")?.replace("Bearer ", "");
+    let token = req.header("Authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+        const parsedUrl = url.parse(req.url, true);
+        token = parsedUrl.query.token;
+    }
 
     console.log("Received token:", token);
 
