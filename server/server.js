@@ -7,6 +7,7 @@ const { checkAndReact } = require("./src/core/areaTrigger");
 require("dotenv").config();
 
 const app = express();
+
 app.use(cors());
 
 app.all("/*", function (req, res, next) {

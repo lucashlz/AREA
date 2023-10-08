@@ -1,0 +1,15 @@
+.input {
+    font-size: 2rem;
+    padding: 1rem;
+    border: 5px solid;
+    border-radius: 10px;
+    color: black;
+    border-color: lightgray;
+}
+
+@media screen and (max-width: 550px) {
+    .input {
+      width: 60%;
+      padding: 0.3rem;
+    }
+}
