@@ -13,3 +13,16 @@
       padding: 0.3rem;
     }
 }
+
+.input-icon-container {
+  display: flex;
+  align-items: center;
+  position: relative; /* Relative positioning for the icon */
+}
+
+.input-icon {
+  position: absolute; /* Absolute positioning for the icon */
+  left: 20px; /* Adjust this value to control the icon's left position */
+  width: 30px; /* Adjust the icon's width as needed */
+  height: 30px; /* Adjust the icon's height as needed */
+}
