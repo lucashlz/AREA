@@ -10,7 +10,7 @@ import Home from './components/pages/Home'
 import Create from './components/pages/Private/Create'
 import Account from './components/pages/Private/Account'
 import { useLocation } from 'react-router-dom';
-import Register from './components/pages/Register';
+import Register from './components/Register';
 import Applets from './components/pages/Applets';
 import 'react-notifications-component/dist/theme.css';
 import { ReactNotifications } from 'react-notifications-component';

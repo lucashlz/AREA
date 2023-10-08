@@ -1,11 +1,11 @@
 import axios, { AxiosError } from 'axios';
-import Title from '../Title'
+import Title from './Title'
 import './Register.css'
 import { Navigate, redirect } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
-import Input from '../Input';
-import { Button } from '../Button';
-import { IUserContext, UserContext } from '../../context/userContext';
+import Input from './Input';
+import { Button } from './Button';
+import { IUserContext, UserContext } from '../context/userContext';
 import { Store } from 'react-notifications-component';
 
 export default function Register() {
@@ -22,6 +22,33 @@ export default function Register() {
   if (login) {
     return <Navigate to={"/login"} />
   }
+
+  const handleGoogleSignIn = () => {
+    const googleOAuthURL = 'http://localhost:8080/auth/google';
+    // Add the message event listener before opening the popup
+    window.addEventListener('message', message => {
+      console.log('Message received:', message.data);
+    });
+    // Open the popup window
+    const newWindow = window.open(googleOAuthURL, 'mywindow', 'location=1, status=1, scrollbars=1, width=800, height=800');
+  };
+
+  const receiveMessage = (event: MessageEvent<any>) => {
+    // Do we trust the sender of this message? (might be
+    // different from what we originally opened, for example).
+    console.log("event origin : ", event.origin);
+    if (event.origin !== "http://localhost:8080/auth/google") {
+      return;
+    }
+    const { data } = event;
+    // if we trust the sender and the source is our popup
+    if (data.source === 'lma-login-redirect') {
+      // get the URL params and redirect to our server to use Passport to auth/login
+      const { payload } = data;
+      const redirectUrl = `/auth/google/login${payload}`;
+      window.location.pathname = redirectUrl;
+    }
+   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     try {
@@ -54,7 +81,7 @@ export default function Register() {
             <Input onChange={(e) => setEmail(e.target.value)} placeholder='Email' type='email' value={email}/>
             <Input onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='password' value={password}/>
             <Button buttonSize='btn--medium' type='button' buttonStyle='btn--primary-inverted' onClick={handleSubmit} >Get started</Button>
-            <a href="http://localhost:8080/auth/google"><img src={`${process.env.PUBLIC_URL}/logo_google.png`} style={{height: 50, width: 'auto'}} /></a>
+            <a href='http://localhost:8080/auth/google' ><img src={`${process.env.PUBLIC_URL}/logo_google.png`} style={{height: 50, width: 'auto'}} /></a>
         </div>
     )
 }

@@ -9,6 +9,8 @@ export interface IUserContext {
   getUserInfo: () => Promise<{username: string, email: string, password: string}>;
   updateInfo: (email: string, username: string, oldPassword: string, newPassword: string) => Promise<any>;
   token: string | null;
+  getGoogleToken: () => Promise<any>;
+  setToken: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const UserContext = createContext<IUserContext | undefined>(undefined);
@@ -38,7 +40,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     console.log(`Attempting to sign in user with email: ${email}`);
 
     try {
-      const response = await axios.post('http://localhost:8080/auth/sign_in', { email, password }, {
+      const response = await axios.post('http://localhost:8080/auth/sign-in', { email, password }, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -90,6 +92,21 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     setToken(null);
   };
 
+  const getGoogleToken = async () => {
+    try {
+          const res = await axios.get("http://localhost:8080/auth/google/callback");
+          if (res.data.token) {
+            localStorage.setItem('userToken', res.data.token);
+            setToken(res.data.token);
+            console.log("User successfully connected to google and token saved.");
+          } else {
+            console.log("No token received in response.");
+          }
+          return res;
+    } catch (error) {
+      console.error("Error while getting google token : ", error);
+    }
+  }
 
   const getUserInfo = async () => {
     try {
@@ -141,7 +158,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   }, [token]);
 
   return (
-    <UserContext.Provider value={{signUp, signIn, createUser ,signOut, token, getUserInfo, updateInfo}}>
+    <UserContext.Provider value={{signUp, signIn, createUser ,signOut, getGoogleToken ,token, getUserInfo, updateInfo, setToken}}>
       {children}
     </UserContext.Provider>
   )
