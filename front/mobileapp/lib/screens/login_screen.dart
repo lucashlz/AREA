@@ -27,7 +27,7 @@ void navigateToHome() {
 }
 
 Future<void> login() async {
-  const String url = 'http://10.0.2.2:8080/auth/sign_in';
+  const String url = 'http://10.0.2.2:8080/auth/sign-in';
   final response = await http.post(
     Uri.parse(url),
     headers: {
