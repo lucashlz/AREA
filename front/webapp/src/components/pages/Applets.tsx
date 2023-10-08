@@ -4,6 +4,7 @@ import { Button } from '../Button';
 import { Navigate, redirect } from 'react-router-dom';
 import { IUserContext, UserContext } from '../../context/userContext';
 import axios from 'axios';
+import Input from '../Input';
 
 interface AppletProps {
   logo_paths: string[];
@@ -75,15 +76,7 @@ export default function Applets() {
       </div>
 
       <div className="applets-searchbar-holder">
-        <img className="applets-searchbar-image" src={`${process.env.PUBLIC_URL}/search.png`}></img>
-        <input
-            type="searchInput"
-            className='input'
-            placeholder='Search'
-            value={searchInput}
-            required
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
+        <Input onChange={(e) => setSearchInput(e.target.value)} placeholder='Search' type='searchInput' value={searchInput} icon={`${process.env.PUBLIC_URL}/search.png`} />
       </div>
       <div className="applets-holder">
         <Applet logo_paths={[`${process.env.PUBLIC_URL}/search.png`, `${process.env.PUBLIC_URL}/search.png`]} applet_desc="Une description vraiiiiiiment" onoff="off" />

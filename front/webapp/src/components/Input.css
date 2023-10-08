@@ -7,9 +7,29 @@
     border-color: lightgray;
 }
 
+.input-icon {
+  position: absolute;
+  left: 20px;
+  width: 30px;
+  height: 30px;
+}
+
 @media screen and (max-width: 550px) {
     .input {
       width: 60%;
       padding: 0.3rem;
     }
+    .input-icon {
+      position: absolute;
+      left: 80px;
+      width: 30px;
+      height: 30px;
+    }
+}
+
+.input-icon-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  justify-content: center;
 }
