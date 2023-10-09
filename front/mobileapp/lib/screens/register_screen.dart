@@ -161,6 +161,30 @@ Future<void> register() async {
         ],
       ),
     ),
+    const SizedBox(height: 35),
+RichText(
+  textAlign: TextAlign.center,
+  text: const TextSpan(
+    style: TextStyle(
+      color: Color(0xFF8E949A),
+      fontFamily: 'Archivo',
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      height: 1.465,
+    ),
+    children: [TextSpan(text: "or continue with"),],
+  ),
+),
+const SizedBox(height: 20),
+Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Image.asset('assets/google_icon.png', height: 40, width: 40,),
+    const SizedBox(width: 20.0),
+    Image.asset('assets/facebook_icon.png', height: 40, width: 40,),
+  ],
+),
+const SizedBox(height: 20),
           ],
         ),
       ),

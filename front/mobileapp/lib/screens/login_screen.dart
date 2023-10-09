@@ -6,6 +6,7 @@ import 'register_screen.dart';
 import '../components/my_button.dart';
 import '../components/my_input.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_web_auth/flutter_web_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -24,6 +25,42 @@ void navigateToHome() {
     context,
     MaterialPageRoute(builder: (context) => const MainContainer()),
   );
+}
+
+Future<void> connectWithGoogle(BuildContext context) async {
+    final result = await FlutterWebAuth.authenticate(
+      url: 'http://10.0.2.2:8080/connect/google',
+      callbackUrlScheme: 'yourappscheme',
+    );
+
+    final token = Uri.parse(result).queryParameters['token'];
+
+    if (token != null && token.isNotEmpty) {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:8080/connect/google/callback'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      print('Google connection successful: ${data['message']}');
+      // Store user data
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userData', json.encode(data));
+      
+      navigateToHome();
+    } else {
+      print('Authentication failed: ${response.body}');
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Authentication failed.')));
+    }
+  } else {
+    print('Authentication canceled or failed');
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Authentication canceled or failed.')));
+    }
+  }
 }
 
 Future<void> login() async {
@@ -145,7 +182,37 @@ Future<void> login() async {
         ],
       ),
     ),
+    const SizedBox(height: 35),
+    RichText(
+      textAlign: TextAlign.center,
+      text: const TextSpan(
+        style: TextStyle(
+          color: Color(0xFF8E949A),
+          fontFamily: 'Archivo',
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          height: 1.465,
+        ),
+        children: [TextSpan(text: "or continue with"),],
+      ),
+    ),
+  const SizedBox(height: 41),
+    Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    GestureDetector(
+  onTap: (() => 
+    connectWithGoogle(context)),
+  child: Image.asset('assets/google_icon.png', height: 40, width: 40,),
+),
+
+    const SizedBox(width: 20.0),
+    Image.asset('assets/facebook_icon.png', height: 40, width: 40,),
   ],
+),
+    const SizedBox(height: 20),
+  ],
+
 ),
           ],
         ),
