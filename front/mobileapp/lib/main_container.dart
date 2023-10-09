@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'account_page.dart';
-import 'home_view.dart';
-import 'add_page.dart';
+import 'screens/account_page.dart';
+import 'screens/home_view.dart';
+import 'screens/add_page.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class MainContainer extends StatefulWidget {
+  const MainContainer({Key? key}) : super(key: key);
 
   @override
-  HomeScreenState createState() => HomeScreenState();
+  MainContainerState createState() => MainContainerState();
 }
 
-class HomeScreenState extends State<HomeScreen> {
+class MainContainerState extends State<MainContainer> {
   int _currentIndex = 0;
   final List<Widget> _children = [
     const HomeView(),

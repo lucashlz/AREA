@@ -3,6 +3,8 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
+    "axios": "^1.5.1",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
@@ -11,15 +13,20 @@
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
+    "google-auth-library": "^9.0.0",
+    "googleapis": "^105.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.2",
     "nodemailer": "^6.9.5",
     "passport": "^0.6.0",
+    "passport-discord": "^0.1.4",
     "passport-facebook": "^3.0.0",
     "passport-github": "^1.1.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-instagram": "^1.0.0",
     "passport-spotify": "^2.0.0",
+    "passport-twitch-new": "0.0.2",
+    "spotify-web-api-node": "^5.0.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
   }

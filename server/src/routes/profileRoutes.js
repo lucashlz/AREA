@@ -18,14 +18,12 @@ const profileController = require("../controllers/profileController");
  *             schema:
  *               type: object
  *               properties:
+ *                 _id:
+ *                   type: string
  *                 username:
  *                   type: string
  *                 email:
  *                   type: string
- *                 confirmed:
- *                   type: boolean
- *                 connectServices:
- *                   type: object
  *       404:
  *         description: User not found
  *       500:
@@ -49,6 +47,7 @@ router.get("/", profileController.getUserProfile);
  *             properties:
  *               email:
  *                 type: string
+ *                 description: When a new email is provided, a confirmation link will be sent to this address.
  *               username:
  *                 type: string
  *               oldPassword:
@@ -57,7 +56,7 @@ router.get("/", profileController.getUserProfile);
  *                 type: string
  *     responses:
  *       200:
- *         description: Profile updated successfully
+ *         description: Profile updated successfully. If email was changed, a confirmation link has been sent to the new address.
  *         content:
  *           application/json:
  *             schema:

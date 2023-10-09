@@ -6,7 +6,7 @@
   
   .navbar {
     background: #1D1D1D;
-    height: 110px;
+    height: 10%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -23,23 +23,27 @@
 
   .get-apk-button {
     margin-top: -2%;
-    height: 6vh;
-    width: 12vw;
+    height: 3.3rem;
+    width: 9.5rem;
     background-color: lightgreen;
-    display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 1vh;
-    min-width: 35%;
-    min-height: 100%;
+    border-radius: 60px;
     border: none;
     outline: none;
     font-size: 75%;
     margin-left: 2vw;
-    padding-left: 1%;
-    padding-right: 1%;
-  } 
-  
+    font-weight: 600;
+  }
+
+  @media screen and (max-width: 960px) {
+    .get-apk-button {
+      margin-top: 2rem;
+      align-self: center;
+      margin-left: 0;
+    }
+  }
+
   .get-apk-button:hover {
     cursor: pointer;
   }
@@ -63,8 +67,15 @@
     padding: 0.5rem 1rem;
     height: 100%;
     font-weight: 700;
-    font-size: 20px;
-    margin-right: 20px;
+    margin-right: 1rem;
+  }
+
+  @media screen and (max-width: 960px) {
+    .nav-links {
+      margin-bottom: 3rem;
+      margin-right: 0%;
+      justify-content: center;
+    }
   }
   
   .menu-icon {
@@ -84,14 +95,14 @@
     position: absolute;
     top: 110px;
     left: 0;
-    background-color: #1D1D1D; /* Match the navbar color */
+    background-color: #1D1D1D;
     z-index: 10;
-    padding-top: 20px; /* Spacing from the top */
+    padding-top: 20px;
   }
   
   .nav-menu.active {
     display: flex;
-  } 
+  }
   
   @media screen and (max-width: 960px) {
     .menu-icon {
@@ -110,7 +121,7 @@
     width: 100%;
     flex-direction: column;
     position: absolute;
-    top: 110px;
+    top: 10%;
     left: 0;
     background-color: #1D1D1D;
     z-index: 10;

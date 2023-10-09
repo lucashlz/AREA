@@ -4,6 +4,8 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const emailService = require("../utils/emailUtils");
+require("../auth/googleStrategy");
+require("../auth/facebookStrategy");
 
 exports.sign_up = async (req, res) => {
   try {
@@ -67,6 +69,27 @@ exports.confirm = async (req, res) => {
   }
 };
 
+exports.confirmEmailChange = async (req, res) => {
+  try {
+    const user = await User.findOne({ emailChangeToken: req.params.token });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid token" });
+    }
+
+    if (user.pendingEmail) {
+      user.email = user.pendingEmail;
+      user.pendingEmail = undefined;
+    }
+
+    user.emailChangeToken = undefined;
+    await user.save();
+    res.status(200).json({ message: "Email changed successfully" });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 exports.sign_in = async (req, res) => {
   try {
     const user = await User.findOne({
@@ -102,9 +125,9 @@ exports.redirectToGoogle = passport.authenticate("google-auth", {
 });
 
 exports.handleGoogleCallback = (req, res, next) => {
-  passport.authenticate("google-auth", async (err, user, info) => {
+  passport.authenticate("google-auth", (err, user, info) => {
     if (err) {
-      console.error(err.message);
+      console.error("error : ", err.message);
       return res
         .status(500)
         .json({ message: "Server error during authentication." });
@@ -118,9 +141,10 @@ exports.handleGoogleCallback = (req, res, next) => {
       const token = jwt.sign({ id: user._id }, process.env.SECRET_JWT, {
         expiresIn: "24h",
       });
-      res.status(200).json({ token });
+      // add condition if mobile to redirect to desired path, ex : if req.query.from === 'mobile', res.redirect("myapp://account")
+      res.status(200).redirect(`http://localhost:8081/applets?token=${token}`);
     } catch (error) {
-      console.error(error.message);
+      console.error("try: ", error.message);
       res.status(500).json({ message: "Server error generating token." });
     }
   })(req, res, next);

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'home_screen.dart';
+import '../main_container.dart';
 import 'register_screen.dart';
 import '../components/my_button.dart';
 import '../components/my_input.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -21,12 +22,12 @@ class LoginScreenState extends State<LoginScreen> {
 void navigateToHome() {
   Navigator.pushReplacement(
     context,
-    MaterialPageRoute(builder: (context) => const HomeScreen()),
+    MaterialPageRoute(builder: (context) => const MainContainer()),
   );
 }
 
 Future<void> login() async {
-  const String url = 'http://10.0.2.2:8080/auth/sign_in';
+  const String url = 'http://10.0.2.2:8080/auth/sign-in';
   final response = await http.post(
     Uri.parse(url),
     headers: {
@@ -44,10 +45,12 @@ Future<void> login() async {
   if (response.statusCode == 200) {
     final Map<String, dynamic> data = json.decode(response.body);
     final token = data['token'];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
     navigateToHome();
   } else if(response.statusCode == 400) {
     setState(() {
-    errorMessage = 'Please validate your email before login.';
+    errorMessage = 'Please verify your mail is verified and your password and email are corrects.';
     });
     } else {
     setState(() {
@@ -108,7 +111,7 @@ Future<void> login() async {
     const SizedBox(height: 35),
     Padding(
       padding: const EdgeInsets.only(top: 24),
-      child: MyButton(onPressed: login),
+      child: MyButton(onPressed: login, fontSize: 30,),
     ),
     RichText(
       textAlign: TextAlign.center,
