@@ -114,7 +114,7 @@ class ChangeMailPageState extends State<ChangeMailPage> {
       title: const Text(
         'Change your email',
         style: TextStyle(
-          fontSize: 30,
+          fontSize: 25,
           fontFamily: 'Archivo',
           color: Colors.white,
         ),
