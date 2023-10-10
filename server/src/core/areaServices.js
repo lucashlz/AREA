@@ -14,7 +14,31 @@ const {
     everyDayOfTheWeekAt,
     everyMonthOnThe,
     everyYearOn,
-} = require("../area/dateTimeArea")
+} = require("../area/dateTimeArea");
+
+const {
+    anyNewCommit,
+    anyNewIssue,
+    newIssueAssignedToYou,
+    newRepositoryByUserOrOrg,
+    createIssue,
+} = require("../area/githubArea");
+
+const {
+    streamGoingLiveForChannel,
+    youFollowNewChannel,
+    userFollowedChannel,
+    newFollowerOnYourChannel,
+} = require("../area/twitchArea");
+
+const {
+    newLikedVideo,
+    newVideoByChannel,
+    newSubscription,
+    likeVideo,
+} = require("../area/youtubeArea");
+
+const { sendEmail, sendEmailToSelf } = require("../area/gmailArea");
 
 class Area {
     constructor(triggers, actions, color) {
@@ -93,6 +117,46 @@ const SPOTIFY_ACTIONS = [
     ),
 ];
 
+const GITHUB_TRIGGERS = [
+    new Trigger(
+        "any_new_commit",
+        "Triggers every time a new commit in a repo is created on Github",
+        [{ name: "repository_name", input: "Repository name" }],
+        anyNewCommit
+    ),
+    new Trigger(
+        "any_new_issue",
+        "Triggers every time any new issue is opened in a repository you own or collaborate on",
+        [],
+        anyNewIssue
+    ),
+    new Trigger(
+        "new_issue_assigned_to_you",
+        "Triggers every time a new issue is assigned to you",
+        [],
+        newIssueAssignedToYou
+    ),
+    new Trigger(
+        "new_repository_by_user_or_org",
+        "Triggers every time a new repository is created by the username or organization you specify",
+        [{ name: "user_or_org_name", input: "Username or organization name" }],
+        newRepositoryByUserOrOrg
+    ),
+];
+
+const GITHUB_ACTIONS = [
+    new Action(
+        "create_issue",
+        "This Action will create a new issue for the repository you specify",
+        [
+            { name: "repository", input: "Repository name" },
+            { name: "title", input: "Issue title" },
+            { name: "body", input: "Issue body (description)" },
+        ],
+        createIssue
+    ),
+];
+
 const DATETIME_TRIGGERS = [
     new Trigger(
         "every_day_at",
@@ -144,9 +208,101 @@ const DATETIME_TRIGGERS = [
 
 const DATETIME_ACTIONS = [];
 
+const TWITCH_TRIGGERS = [
+    new Trigger(
+        "stream_going_live_for_channel",
+        "Triggers every time a stream is going live for the specified Channel that you follow",
+        [{ name: "channel_name", input: "Which channel?" }],
+        streamGoingLiveForChannel
+    ),
+    new Trigger(
+        "you_follow_new_channel",
+        "This trigger fires every time you follow a new channel on Twitch",
+        [],
+        youFollowNewChannel
+    ),
+    new Trigger(
+        "user_followed_channel",
+        "This trigger fires every time the specified user starts following a channel on Twitch",
+        [{ name: "user_name", input: "Which user?" }],
+        userFollowedChannel
+    ),
+    new Trigger(
+        "new_follower_on_your_channel",
+        "This trigger fires every time there is a new follower of your channel",
+        [],
+        newFollowerOnYourChannel
+    ),
+];
+
+const TWITCH_ACTIONS = [];
+
+const YOUTUBE_TRIGGERS = [
+    new Trigger(
+        "new_liked_video",
+        "Triggers every time you like a video on YouTube",
+        [],
+        newLikedVideo
+    ),
+    new Trigger(
+        "new_video_by_channel",
+        "Triggers every time a specific channel publishes a video",
+        [{ name: "channel_id", input: "Enter the Channel ID" }],
+        newVideoByChannel
+    ),
+    new Trigger(
+        "new_subscription",
+        "This trigger fires when a new subscription is made by a specific channel",
+        [{ name: "channel_id", input: "Channel id" }],
+        newSubscription
+    ),
+];
+
+const YOUTUBE_ACTIONS = [
+    new Action(
+        "like_video",
+        "Likes a specified video",
+        [{ name: "video_id", input: "YouTube Video ID to like" }],
+        likeVideo
+    ),
+];
+
+const GMAIL_ACTIONS = [
+    new Action(
+        "send_email",
+        "This Action will send an email to up to 20 recipients from your Gmail account.",
+        [
+            { name: "to_address", input: "To address" },
+            { name: "cc_address", input: "CC address (optional)" },
+            { name: "bcc_address", input: "BCC address (optional)" },
+            { name: "subject", input: "Subject" },
+            { name: "body", input: "Body (Some HTML ok)" },
+            { name: "attachment_url", input: "Attachment URL (optional)" },
+        ],
+        sendEmail
+    ),
+
+    new Action(
+        "send_email_to_self",
+        "This action will send yourself an email. HTML, images and links are supported.",
+        [
+            { name: "subject", input: "Subject" },
+            { name: "body", input: "Body (Some HTML ok)" },
+            { name: "attachment_url", input: "Attachment URL (optional)" },
+        ],
+        sendEmailToSelf
+    ),
+];
+
+const GMAIL_TRIGGERS = [];
+
 const AREAS = {
-    spotify: new Area(SPOTIFY_TRIGGERS, SPOTIFY_ACTIONS, "#3CC339"),
     dateTime: new Area(DATETIME_TRIGGERS, DATETIME_ACTIONS, "#000000"),
+    spotify: new Area(SPOTIFY_TRIGGERS, SPOTIFY_ACTIONS, "#3CC339"),
+    github: new Area(GITHUB_TRIGGERS, GITHUB_ACTIONS, "#282828"),
+    twitch: new Area(TWITCH_TRIGGERS, TWITCH_ACTIONS, "#5865F2"),
+    youtube: new Area(YOUTUBE_TRIGGERS, YOUTUBE_ACTIONS, "#FF0000"),
+    gmail: new Area(GMAIL_TRIGGERS, GMAIL_ACTIONS, "#94BAF5"),
 };
 
 module.exports = AREAS;
