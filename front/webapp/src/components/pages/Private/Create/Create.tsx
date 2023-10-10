@@ -2,32 +2,33 @@ import { Outlet } from "react-router-dom";
 import './Create.css';
 import { Button } from '../../../Button';
 import React, { useEffect, useState } from 'react';
-import { PostArea } from "../../../../interfaces/postArea";
-import { Service } from "../../../../interfaces/aboutDotJson";
+import { postService } from "../../../../interfaces/postArea";
+import { aboutService } from "../../../../interfaces/aboutDotJson";
 import axios from "axios";
 import { getBetterNames } from "./ServiceAction";
+import { Navigate } from 'react-router-dom';
 
 interface IftttProps {
   ifttt_name: string;
   is_current: boolean;
   setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
-  selectedArea: PostArea
+  selectedArea: postService
 }
 
 const IftttSquare: React.FC<IftttProps> = ({ ifttt_name, is_current, setCurrentPage, selectedArea }) => {
-  const [services, setServices] = useState<Service | undefined>();
+  const [services, setServices] = useState<aboutService | undefined>();
   var serviceName = ''
   var action = ''
   var color = ''
 
-  if (ifttt_name == "If This" && selectedArea.actionName.length > 0) {
-    serviceName = selectedArea.actionService
-    action = selectedArea.actionName
+  if (ifttt_name == "If This" && selectedArea.action && selectedArea.action.name.length > 0) {
+    serviceName = selectedArea.action.service
+    action = selectedArea.action.name
     ifttt_name = "If"
   }
-  if (ifttt_name == "Then That" && selectedArea.reactionName.length > 0) {
-    serviceName = selectedArea.reactionService
-    action = selectedArea.reactionName
+  if (ifttt_name == "Then That" && selectedArea.reactions && selectedArea.reactions[0].name.length > 0) {
+    serviceName = selectedArea.reactions[0].service
+    action = selectedArea.reactions[0].name
     ifttt_name = "Then"
   }
 
@@ -40,7 +41,7 @@ const IftttSquare: React.FC<IftttProps> = ({ ifttt_name, is_current, setCurrentP
         const response = await axios.get('http://localhost:8080/about/about.json', { headers: { Authorization: `Bearer ${token}` } });
         if (response.data) {
           let service = response.data.server.services;
-          const currentService = service.find((service: Service) => service.name === serviceName);
+          const currentService = service.find((service: aboutService) => service.name === serviceName);
           setServices(currentService);
         }
       } catch (error) {
@@ -88,7 +89,7 @@ interface CreateProps {
 
 const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
   const [current, setCurrent] = useState('this')
-  const [selectedArea, setSelectedArea] = useState<PostArea | undefined>()
+  const [selectedArea, setSelectedArea] = useState<postService | undefined>()
   const [reload, setReload] = useState(1)
 
   const resetCreation = () => {
@@ -96,22 +97,40 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
     window.location.reload();
   }
 
-  const setCreation = () => {
-    
+  const setCreation = async () => {
+    let area = localStorage.getItem('selectedArea')
+    let token = localStorage.getItem('userToken')
+
+    try {
+      const response = await axios.post('http://localhost:8080/areas', area, { headers: { Authorization: `Bearer ${token}` } });
+      if (response.status == 200) {
+          <Navigate to="/applets" replace />
+      } else {
+          console.log("error creating area: code[", response.status, "]")
+      }
+    } catch (error) {
+        console.error("Error creating areas");
+    }
   }
 
   useEffect(() => {
-    let selectedArea: PostArea = JSON.parse(localStorage.getItem('selectedArea') || 'null') || {
-      actionService: '',
-      reactionService: '',
-      actionName: '',
-      reactionName: '',
-      actionParameters: [],
-      reactionParameters: [],
+    let selectedArea: postService = JSON.parse(localStorage.getItem('selectedArea') || 'null') || {
+      action: {
+        name: '',
+        service: '',
+        parameters: [{name: '', input: ''}] 
+      },
+      reactions: [
+        {
+          name: '',
+          service: '',
+          parameters: [{name: '', input: ''}]
+        }
+      ]
     };
 
     setSelectedArea(selectedArea)
-    if (selectedArea && selectedArea.actionName.length > 0)
+    if (selectedArea.action && selectedArea.action.name.length > 0)
       setCurrent('that')
   }, [])
 
@@ -125,16 +144,16 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
         <IftttSquare ifttt_name='If This' selectedArea={selectedArea} is_current={current == 'this' ? true : false} setCurrentPage={setCurrentPage}></IftttSquare>
         <div className='ifttt-link-line'></div>
         <IftttSquare ifttt_name='Then That' selectedArea={selectedArea} is_current={current == 'that' ? true : false} setCurrentPage={setCurrentPage}></IftttSquare>
-        {selectedArea.reactionName.length > 0 ?
-            <div className={"ifttt-add-btn-link"} style={{justifyContent: 'space-around'}}>
-              <button className='add-action-btn' style={{marginLeft: 0, marginTop: '10%', border: '1px solid'}} onClick={() => { setCreation() }}>
-                Add
-              </button>
-              <button className='add-action-btn' style={{marginLeft: 0, marginTop: '10%', border: '1px solid'}} onClick={() => { resetCreation() }}>
-                Reset
-              </button>
-            </div>
-            : ''}
+        {selectedArea.reactions && selectedArea.reactions[0].name.length > 0 ?
+          <div className={"ifttt-add-btn-link"} style={{ justifyContent: 'space-around' }}>
+            <button className='add-action-btn' style={{ marginLeft: 0, marginTop: '10%', border: '1px solid' }} onClick={() => { setCreation() }}>
+              Add
+            </button>
+            <button className='add-action-btn' style={{ marginLeft: 0, marginTop: '10%', border: '1px solid' }} onClick={() => { resetCreation() }}>
+              Reset
+            </button>
+          </div>
+          : ''}
       </div>
     </div>
   );

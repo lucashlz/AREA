@@ -2,6 +2,9 @@ import { Button } from '../../../Button';
 import React, { useEffect, useState } from 'react';
 import './Services.css';
 import axios from 'axios';
+import { ServiceOAuthConstants } from '../../../../interfaces/serviceConnect';
+import { getServiceAuthorizeByName } from '../../../../interfaces/serviceConnect';
+import { servicesAuthorize } from '../../../../interfaces/serviceConnect';
 
 interface ServicesProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
@@ -13,40 +16,69 @@ interface ServiceProps<T> {
 }
 
 const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) => {
-    let initialName = serviceInfos.name
+    const [serviceOAuthConstants, setServiceOAuthConstants] = useState<ServiceOAuthConstants | null>(null);
+    let initialName = serviceInfos.name;
     const upperName = initialName[0].toUpperCase() + initialName.slice(1);
-    const image = require(`../../../../../public/servicesLogo/${initialName}.png`)
-    let token = localStorage.getItem('userToken');
+    const image = require(`../../../../../public/servicesLogo/${initialName}.png`);
+
+    useEffect(() => {
+
+        async function fetchServiceOAuthConstants() {
+            let serviceAuthorize = getServiceAuthorizeByName(initialName)
+            if (serviceAuthorize) {
+                const token = localStorage.getItem('userToken');
+                const headers = {
+                    Authorization: `Bearer ${token}`
+                };
+
+                try {
+                    const response = await axios.get(`http://localhost:8080/connect/get${upperName}OAuthConstants`, { headers: headers});
+                    if (response.status === 200) {
+                        setServiceOAuthConstants(response.data);
+                    }
+                } catch (error) {
+                    console.error("Error fetching Service OAuth constants:", error);
+                }
+            }
+        }
+
+        fetchServiceOAuthConstants();
+    }, []);
 
     const selectArea = async () => {
-        console.log(`http://localhost:8080/connect/${initialName}`)
-        try {
-            const response = await fetch(`http://localhost:8080/connect/${initialName}`, { headers: {Authorization: `Bearer ${token}`}});
-            if (response.status == 200) {
-                console.log("everything fine")
+        let serviceAuthorize = getServiceAuthorizeByName(initialName)
+        if (serviceOAuthConstants) {
+            if (serviceAuthorize) {
+                const serviceURL = new URL(serviceAuthorize);
+                serviceURL.searchParams.append("client_id", serviceOAuthConstants.clientId);
+                serviceURL.searchParams.append("response_type", "code");
+                serviceURL.searchParams.append("redirect_uri", serviceOAuthConstants.redirectUri);
+                serviceURL.searchParams.append("scope", serviceOAuthConstants.scopes.join(" "));
+                serviceURL.searchParams.append("state", serviceOAuthConstants.oAuthSessionId);
+                localStorage.setItem('selectedService', initialName)
+                window.location.href = serviceURL.href;
             } else {
-                console.log("everything not fine, code: ", response.status)
+                console.log("cannot get ", initialName, ' in array')
             }
-        } catch (error) {
-            console.error("Error connecting to: ", initialName);
+        } else {
+            setCurrentPage(initialName)
         }
     }
 
     return (
-        <a href={`http://localhost:8080/connect/${initialName}?token=${token}`}>
-            <button className='selection-button'>
-                <div className="service-content-holder" style={{ backgroundColor: serviceInfos.color }}>
-                    <div className="service-logo-holder">
-                        <img alt="logo" className="service-logo" src={image}></img>
-                    </div>
-                    <div className="service-description">
-                        <div>{upperName}</div>
-                    </div>
+        <button className='selection-button' onClick={selectArea}>
+            <div className="service-content-holder" style={{ backgroundColor: serviceInfos.color }}>
+                <div className="service-logo-holder">
+                    <img alt="logo" className="service-logo" src={image}></img>
                 </div>
-            </button>
-        </a>
+                <div className="service-description">
+                    <div>{upperName}</div>
+                </div>
+            </div>
+        </button>
     );
 }
+
 
 const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
     const [searchInput, setSearchInput] = useState('');

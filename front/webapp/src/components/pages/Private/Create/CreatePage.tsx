@@ -4,11 +4,12 @@ import { Outlet, Navigate, Link } from "react-router-dom";
 import Create from "./Create";
 import Services from "./Services";
 import ServiceActions from "./ServiceAction";
-import { PostArea } from "../../../../interfaces/postArea";
 
 export default function CreatePage() {
   const [currentPage, setCurrentPage] = useState('create')
   const userContext = useContext(UserContext);
+  let goto = localStorage.getItem('selectedService')
+  let area = localStorage.getItem('selectedArea')
 
   if (!userContext) {
     throw new Error("Private must be used within a UserContextProvider");
@@ -18,6 +19,11 @@ export default function CreatePage() {
 
   if (!token) {
     return <Navigate to="/" />;
+  }
+
+  if (goto) {
+    localStorage.removeItem('selectedService')
+    setCurrentPage(goto)
   }
 
   return (
