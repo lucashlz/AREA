@@ -62,8 +62,13 @@ function Navbar() {
         {mobileMenuOpen && (
           <ul className="nav-menu active">
             <li>
-              <Link to='/applets' className='nav-links' onClick={closeMobileMenu}>
+              <Link to='/applets' className='nav-links' style={{marginBottom: "-50px"}} onClick={closeMobileMenu}>
                 My Applets
+              </Link>
+            </li>
+            <li>
+              <Link to='/create' className='nav-links' onClick={closeMobileMenu}>
+                Create
               </Link>
             </li>
             <li>
@@ -83,6 +88,9 @@ function Navbar() {
           <Link to='/applets' className='nav-links'>
             My Applets
           </Link>
+          <Link to='/create' className='nav-links'>
+              Create
+            </Link>
           <Button linkTo="/account" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
             Account
           </Button>
