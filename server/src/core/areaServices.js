@@ -1,26 +1,30 @@
 const {
-    newRepositoryTrigger,
-    newFollowerTrigger,
-    createRepository,
-    createIssue,
-} = require("../area/githubArea");
-
-const {
-    newTopTrackTrigger,
-    newPlaylistTrigger,
-    addToPlaylist,
-    createPlaylist,
+    newSavedTrack,
+    newSavedAlbum,
+    newRecentlyPlayedTrack,
+    newTrackAddedToPlaylist,
+    followPlaylist,
+    saveTrack,
+    addToPlaylistById,
 } = require("../area/spotifyArea");
 
+const {
+    everyDayAt,
+    everyHourAt,
+    everyDayOfTheWeekAt,
+    everyMonthOnThe,
+    everyYearOn,
+} = require("../area/dateTimeArea")
+
 class Area {
-    constructor(actions, reactions, color) {
+    constructor(triggers, actions, color) {
+        this.triggers = triggers;
         this.actions = actions;
-        this.reactions = reactions;
         this.color = color;
     }
 }
 
-class TriggerAction {
+class Trigger {
     constructor(name, description, parameters, triggerFunction) {
         this.name = name;
         this.description = description;
@@ -29,7 +33,7 @@ class TriggerAction {
     }
 }
 
-class ReactionAction {
+class Action {
     constructor(name, description, parameters, actionFunction) {
         this.name = name;
         this.description = description;
@@ -38,86 +42,111 @@ class ReactionAction {
     }
 }
 
-const GITHUB_TRIGGERS = [
-    new TriggerAction(
-        "new_repository",
-        "Triggers when a new repository is created",
-        [], // No parameters
-        newRepositoryTrigger
-    ),
-    new TriggerAction(
-        "new_follower",
-        "Triggers when a user gains a new follower",
-        [], // No parameters
-        newFollowerTrigger
-    ),
-];
-
-const GITHUB_REACTIONS = [
-    new ReactionAction(
-        "create_repository",
-        "Creates a new repository on GitHub",
-        [
-            { name: "repo-name", input: "Name of the new repository" },
-            {
-                name: "input",
-                input: "Description of the new repository",
-            },
-            {
-                name: "is_private",
-                input: "Should the repository be private?",
-            },
-        ],
-        createRepository
-    ),
-    new ReactionAction(
-        "create_issue",
-        "Creates a new issue on a GitHub repository",
-        [
-            { name: "repo_name", input: "Name of the target repository" },
-            { name: "issue_title", input: "Title of the new issue" },
-            { name: "issue_body", input: "Body content of the new issue" },
-        ],
-        createIssue
-    ),
-];
-
 const SPOTIFY_TRIGGERS = [
-    new TriggerAction(
-        "new_top_track",
-        "Triggers when a new top track is detected",
-        [], // No parameters
-        newTopTrackTrigger
+    new Trigger(
+        "new_saved_track",
+        "Triggers every time you save a new track to Your Music on Spotify",
+        [],
+        newSavedTrack
     ),
-    new TriggerAction(
-        "new_playlist",
-        "Triggers when a new playlist is created",
-        [], // No parameters
-        newPlaylistTrigger
+    new Trigger(
+        "new_saved_album",
+        "Triggers every time you save a new album to Your Music on Spotify",
+        [],
+        newSavedAlbum
+    ),
+    new Trigger(
+        "new_recently_played_track",
+        "Triggers every time you have played a new track on Spotify",
+        [],
+        newRecentlyPlayedTrack
+    ),
+    new Trigger(
+        "new_track_added_to_playlist",
+        "Triggers every time a new track is added to a specified Spotify playlist",
+        [{ name: "playlist_name", input: "Name of the Spotify playlist to monitor" }],
+        newTrackAddedToPlaylist
     ),
 ];
 
-const SPOTIFY_REACTIONS = [
-    new ReactionAction(
-        "create_playlist",
-        "Creates a new playlist on Spotify",
-        [{ name: "playlist_name", input: "Name of the new playlist" }],
-        createPlaylist
+const SPOTIFY_ACTIONS = [
+    new Action(
+        "follow_playlist",
+        "Follows a specified Spotify playlist",
+        [{ name: "playlist_id", input: "Spotify Playlist ID to follow" }],
+        followPlaylist
     ),
-    new ReactionAction(
-        "add_track_to_playlist",
-        "Adds a track to a Spotify playlist",
+    new Action(
+        "save_track",
+        "Searches for a track and saves the first matching result to Spotify library",
+        [{ name: "track_name", input: "Name of the track to search and save" }],
+        saveTrack
+    ),
+    new Action(
+        "add_track_to_playlist_by_id",
+        "Adds a track to a playlist using TrackID",
         [
             { name: "playlist_name", input: "Name of the target playlist" },
-            { name: "trackId", input: "ID of the track to add" },
+            { name: "track_id", input: "Spotify Track ID to add to the playlist" },
         ],
-        addToPlaylist
+        addToPlaylistById
     ),
 ];
 
+const DATETIME_TRIGGERS = [
+    new Trigger(
+        "every_day_at",
+        "Triggers every single day at a specific time set by you",
+        [
+            { name: "target_hour", input: "Hour (0-23)" },
+            { name: "target_minute", input: "Minute (0-59)" },
+        ],
+        everyDayAt
+    ),
+    new Trigger(
+        "every_hour_at",
+        "Triggers once an hour at :00, :15, :30, or :45 minutes past the hour",
+        [{ name: "target_minute", input: "Minute (0, 15, 30, 45)" }],
+        everyHourAt
+    ),
+    new Trigger(
+        "every_day_of_the_week_at",
+        "Triggers only on specific days of the week at the time you provide",
+        [
+            { name: "days_array", input: "Array of days (e.g., ['Monday', 'Wednesday'])" },
+            { name: "target_hour", input: "Hour (0-23)" },
+            { name: "target_minute", input: "Minute (0-59)" },
+        ],
+        everyDayOfTheWeekAt
+    ),
+    new Trigger(
+        "every_month_on_the",
+        "Triggers every month on the day and time you specify",
+        [
+            { name: "target_day", input: "Day of the month (1-31)" },
+            { name: "target_hour", input: "Hour (0-23)" },
+            { name: "target_minute", input: "Minute (0-59)" },
+        ],
+        everyMonthOnThe
+    ),
+    new Trigger(
+        "every_year_on",
+        "Triggers once a year on the date and time you specify",
+        [
+            { name: "target_month", input: "Month (1-12)" },
+            { name: "target_day", input: "Day of the month (1-31)" },
+            { name: "target_hour", input: "Hour (0-23)" },
+            { name: "target_minute", input: "Minute (0-59)" },
+        ],
+        everyYearOn
+    ),
+];
+
+const DATETIME_ACTIONS = [];
+
 const AREAS = {
-    github: new Area(GITHUB_TRIGGERS, GITHUB_REACTIONS, "#282828"),
-    spotify: new Area(SPOTIFY_TRIGGERS, SPOTIFY_REACTIONS, "#3CC339"),
+    spotify: new Area(SPOTIFY_TRIGGERS, SPOTIFY_ACTIONS, "#3CC339"),
+    dateTime: new Area(DATETIME_TRIGGERS, DATETIME_ACTIONS, "#000000"),
 };
 
 module.exports = AREAS;
