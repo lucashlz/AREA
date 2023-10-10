@@ -23,7 +23,6 @@ exports.createArea = async (req, res) => {
         if (!triggerServiceObj) {
             return res.status(400).json({ message: "Invalid trigger service provided." });
         }
-
         const triggerObj = triggerServiceObj.triggers.find((t) => t.name === trigger.name);
         if (!triggerObj) {
             return res.status(400).json({ message: "Invalid trigger provided." });
@@ -31,7 +30,6 @@ exports.createArea = async (req, res) => {
         if (!(await checkParameters(req.user.id, trigger, actions))) {
             return res.status(400).json({ message: "Invalid parameters provided." });
         }
-
         const newArea = new Area({
             userId: user._id,
             triggers: [
