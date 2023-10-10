@@ -29,35 +29,26 @@
   .applets-msg {
     font-size: 2rem;
   }
-}
-
-@media screen and (max-width: 960px) {
   .applets-section-elem {
     font-size: 1rem;
   }
-}
-
-.applets-searchbar-holder {
-  margin-top: 5% !important;
-  width: 55%;
-  height: 5.5vh;
-  border: 0.25rem solid black;
-  padding: 1.5%;
-  border-radius: 0.5rem;
-  display: flex;
-  margin: auto;
-  justify-content: center; 
-}
-
-@media screen and (max-width: 960px) {
-  .applets-searchbar-holder {
+  .top-searchbar-holder {
     width: 100%;
     margin-top: 10% !important;
     margin-bottom: 7% !important;
   }
 }
 
-.applets-searchbar {
+.top-searchbar-holder {
+  margin-top: 5% !important;
+  width: 55%;
+  height: 5.5vh;
+  display: flex;
+  margin: auto;
+  justify-content: center; 
+}
+
+.top-searchbar {
   height: 110%;
   width: 100%;
   border: 0;
@@ -65,16 +56,19 @@
   outline: none;
 }
 
-.applets-searchbar::placeholder {
+.top-searchbar::placeholder {
   opacity: 0.5;
   color: black;
+  font-size: medium;
 }
 
-.applets-searchbar-image {
-  height: 100%;
+.top-searchbar-image {
+  align-self: center;
+  height: 80%;
   width: auto;
   opacity: 0.4;
-  margin-right: 5%;
+  margin-right: 4%;
+  margin-left: 1%;
 }
 
 .applets-holder {

@@ -1,21 +1,48 @@
 const express = require("express");
 const router = express.Router();
 const connectController = require("../controllers/connectController");
+const { ensureAuthenticated } = require("../middleware/middleware");
 
 /**
  * @swagger
- * /connect/google:
+ * /connect/getGoogleOAuthConstants:
  *   get:
  *     tags:
  *       - connect
  *     security:
  *       - bearerAuth: []
- *     description: Connect to Google account
+ *     description: Fetches Google OAuth constants
  *     responses:
  *       200:
- *         description: Redirect to Google authentication page.
+ *         description: Returns Google OAuth constants.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 clientId:
+ *                   type: string
+ *                   description: The client ID for Google API.
+ *                 redirectUri:
+ *                   type: string
+ *                   description: The redirect URI for Google authentication callback.
+ *                 scopes:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: The scopes required for Google authentication.
+ *                 oAuthSessionId:
+ *                   type: string
+ *                   description: The OAuth session ID for the current user.
+ *       500:
+ *         description: Failed to initiate OAuth session.
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: Failed to initiate OAuth session.
  */
-router.get("/google", connectController.connectGoogleAccount);
+router.get("/getGoogleOAuthConstants", ensureAuthenticated, connectController.getGoogleOAuthConstants);
 
 /**
  * @swagger
@@ -23,8 +50,6 @@ router.get("/google", connectController.connectGoogleAccount);
  *   get:
  *     tags:
  *       - connect
- *     security:
- *       - bearerAuth: []
  *     description: Callback from Google authentication
  *     responses:
  *       200:
@@ -61,83 +86,48 @@ router.get("/google", connectController.connectGoogleAccount);
  *                 message:
  *                   type: string
  */
-router.get("/google/callback", connectController.connectGoogleCallback);
+router.get("/google/callback", connectController.googleCallback);
 
 /**
  * @swagger
- * /connect/facebook:
+ * /connect/getGithubOAuthConstants:
  *   get:
  *     tags:
  *       - connect
  *     security:
  *       - bearerAuth: []
- *     description: Connect to Facebook account
+ *     description: Fetches Github OAuth constants
  *     responses:
  *       200:
- *         description: Redirect to Facebook authentication page.
- */
-router.get("/facebook", connectController.connectFacebookAccount);
-
-/**
- * @swagger
- * /connect/facebook/callback:
- *   get:
- *     tags:
- *       - connect
- *     security:
- *       - bearerAuth: []
- *     description: Callback from Facebook authentication
- *     responses:
- *       200:
- *         description: Facebook connection successful.
+ *         description: Returns Github OAuth constants.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 status:
+ *                 clientId:
  *                   type: string
- *                 message:
+ *                   description: The client ID for Github API.
+ *                 redirectUri:
  *                   type: string
- *       401:
- *         description: Authentication failed.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
+ *                   description: The redirect URI for Github authentication callback.
+ *                 scopes:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: The scopes required for Github authentication.
+ *                 oAuthSessionId:
  *                   type: string
- *                 message:
- *                   type: string
+ *                   description: The OAuth session ID for the current user.
  *       500:
- *         description: Internal server error or failed to save user data.
+ *         description: Failed to initiate OAuth session.
  *         content:
- *           application/json:
+ *           text/plain:
  *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                 message:
- *                   type: string
+ *               type: string
+ *               example: Failed to initiate OAuth session.
  */
-router.get("/facebook/callback", connectController.connectFacebookCallback);
-
-/**
- * @swagger
- * /connect/github:
- *   get:
- *     tags:
- *       - connect
- *     security:
- *       - bearerAuth: []
- *     description: Connect to GitHub account
- *     responses:
- *       200:
- *         description: Redirect to GitHub authentication page.
- */
-router.get("/github", connectController.connectGitHubAccount);
+router.get("/getGithubyOAuthConstants", ensureAuthenticated, connectController.getGithubOAuthConstants);
 
 /**
  * @swagger
@@ -145,8 +135,6 @@ router.get("/github", connectController.connectGitHubAccount);
  *   get:
  *     tags:
  *       - connect
- *     security:
- *       - bearerAuth: []
  *     description: Callback from GitHub authentication
  *     responses:
  *       200:
@@ -183,22 +171,48 @@ router.get("/github", connectController.connectGitHubAccount);
  *                 message:
  *                   type: string
  */
-router.get("/github/callback", connectController.connectGitHubCallback);
+router.get("/github/callback", connectController.githubCallback);
 
 /**
  * @swagger
- * /connect/spotify:
+ * /connect/getSpotifyOAuthConstants:
  *   get:
  *     tags:
  *       - connect
  *     security:
  *       - bearerAuth: []
- *     description: Connect to Spotify account
+ *     description: Fetches Spotify OAuth constants
  *     responses:
  *       200:
- *         description: Redirect to Spotify authentication page.
+ *         description: Returns Spotify OAuth constants.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 clientId:
+ *                   type: string
+ *                   description: The client ID for Spotify API.
+ *                 redirectUri:
+ *                   type: string
+ *                   description: The redirect URI for Spotify authentication callback.
+ *                 scopes:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: The scopes required for Spotify authentication.
+ *                 oAuthSessionId:
+ *                   type: string
+ *                   description: The OAuth session ID for the current user.
+ *       500:
+ *         description: Failed to initiate OAuth session.
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: Failed to initiate OAuth session.
  */
-router.get("/spotify", connectController.connectSpotifyAccount);
+router.get("/getSpotifyOAuthConstants", ensureAuthenticated, connectController.getSpotifyOAuthConstants);
 
 /**
  * @swagger
@@ -206,8 +220,6 @@ router.get("/spotify", connectController.connectSpotifyAccount);
  *   get:
  *     tags:
  *       - connect
- *     security:
- *       - bearerAuth: []
  *     description: Callback from Spotify authentication
  *     responses:
  *       200:
@@ -244,22 +256,48 @@ router.get("/spotify", connectController.connectSpotifyAccount);
  *                 message:
  *                   type: string
  */
-router.get("/spotify/callback", connectController.connectSpotifyCallback);
+router.get("/spotify/callback", connectController.spotifyCallback);
 
 /**
  * @swagger
- * /connect/discord:
+ * /connect/getDiscordOAuthConstants:
  *   get:
  *     tags:
  *       - connect
  *     security:
  *       - bearerAuth: []
- *     description: Connect to Discord account
+ *     description: Fetches Discord OAuth constants
  *     responses:
  *       200:
- *         description: Redirect to Discord authentication page.
+ *         description: Returns Discord OAuth constants.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 clientId:
+ *                   type: string
+ *                   description: The client ID for Discord API.
+ *                 redirectUri:
+ *                   type: string
+ *                   description: The redirect URI for Discord authentication callback.
+ *                 scopes:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: The scopes required for Discord authentication.
+ *                 oAuthSessionId:
+ *                   type: string
+ *                   description: The OAuth session ID for the current user.
+ *       500:
+ *         description: Failed to initiate OAuth session.
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: Failed to initiate OAuth session.
  */
-router.get("/discord", connectController.connectDiscordAccount);
+router.get("/getDiscordOAuthConstants", ensureAuthenticated, connectController.getDiscordOAuthConstants);
 
 /**
  * @swagger
@@ -267,8 +305,6 @@ router.get("/discord", connectController.connectDiscordAccount);
  *   get:
  *     tags:
  *       - connect
- *     security:
- *       - bearerAuth: []
  *     description: Callback from Discord authentication
  *     responses:
  *       200:
@@ -305,22 +341,48 @@ router.get("/discord", connectController.connectDiscordAccount);
  *                 message:
  *                   type: string
  */
-router.get("/discord/callback", connectController.connectDiscordCallback);
+router.get("/discord/callback", connectController.discordCallback);
 
 /**
  * @swagger
- * /connect/twitch:
+ * /connect/getTwitchOAuthConstants:
  *   get:
  *     tags:
  *       - connect
  *     security:
  *       - bearerAuth: []
- *     description: Connect to Twitch account
+ *     description: Fetches Twitch OAuth constants
  *     responses:
  *       200:
- *         description: Redirect to Twitch authentication page.
+ *         description: Returns Twitch OAuth constants.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 clientId:
+ *                   type: string
+ *                   description: The client ID for Twitch API.
+ *                 redirectUri:
+ *                   type: string
+ *                   description: The redirect URI for Twitch authentication callback.
+ *                 scopes:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: The scopes required for Twitch authentication.
+ *                 oAuthSessionId:
+ *                   type: string
+ *                   description: The OAuth session ID for the current user.
+ *       500:
+ *         description: Failed to initiate OAuth session.
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: Failed to initiate OAuth session.
  */
-router.get("/twitch", connectController.connectTwitchAccount);
+router.get("/getTwitchOAuthConstants", ensureAuthenticated, connectController.getTwitchOAuthConstants);
 
 /**
  * @swagger
@@ -328,8 +390,6 @@ router.get("/twitch", connectController.connectTwitchAccount);
  *   get:
  *     tags:
  *       - connect
- *     security:
- *       - bearerAuth: []
  *     description: Callback from Twitch authentication
  *     responses:
  *       200:
@@ -366,6 +426,6 @@ router.get("/twitch", connectController.connectTwitchAccount);
  *                 message:
  *                   type: string
  */
-router.get("/twitch/callback", connectController.connectTwitchCallback);
+router.get("/twitch/callback", connectController.twitchCallback);
 
 module.exports = router;

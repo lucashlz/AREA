@@ -49,10 +49,10 @@ function Navbar() {
     <>
       <nav className={isInverted ? 'navbar' : 'navbar-inverted'}>
         <div className="navbar-logo-container">
-          <Link to="/" className="navbar-logo">
+          <Link to="/applets" className="navbar-logo">
             <img src={logoSrc} alt="Logo" className="logo" />
           </Link>
-          <button className="get-apk-button" onClick={() => window.location.href=`${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download</button>
+          {button ? <button className="get-apk-button" onClick={() => window.location.href=`${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
         </div>
 
         <div className="menu-icon" onClick={toggleMobileMenu}>
@@ -67,9 +67,14 @@ function Navbar() {
               </Link>
             </li>
             <li>
-              <Button linkTo="/account" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
-                Account
-              </Button>
+              <div onClick={toggleMobileMenu}>
+                <Button linkTo="/account" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
+                  Account
+                </Button>
+              </div>
+            </li>
+            <li>
+              {!button ? <button className="get-apk-button" onClick={() => window.location.href=`${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
             </li>
           </ul>
         )}

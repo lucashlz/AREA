@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'home_screen.dart';
+import '../main_container.dart';
 import 'register_screen.dart';
 import '../components/my_button.dart';
 import '../components/my_input.dart';
@@ -22,12 +22,12 @@ class LoginScreenState extends State<LoginScreen> {
 void navigateToHome() {
   Navigator.pushReplacement(
     context,
-    MaterialPageRoute(builder: (context) => const HomeScreen()),
+    MaterialPageRoute(builder: (context) => const MainContainer()),
   );
 }
 
 Future<void> login() async {
-  const String url = 'http://10.0.2.2:8080/auth/sign_in';
+  const String url = 'http://10.0.2.2:8080/auth/sign-in';
   final response = await http.post(
     Uri.parse(url),
     headers: {
@@ -50,7 +50,7 @@ Future<void> login() async {
     navigateToHome();
   } else if(response.statusCode == 400) {
     setState(() {
-    errorMessage = 'Please validate your email before login.';
+    errorMessage = 'Please verify your mail is verified and your password and email are corrects.';
     });
     } else {
     setState(() {

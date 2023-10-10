@@ -4,7 +4,7 @@ const authController = require("../controllers/authController");
 
 /**
  * @swagger
- * /auth/sign_up:
+ * /auth/sign-up:
  *   post:
  *     summary: sign up a new user
  *     tags: [auth]
@@ -66,7 +66,7 @@ const authController = require("../controllers/authController");
  *                   type: string
  *                   description: Error message.
  */
-router.post("/sign_up", authController.sign_up);
+router.post("/sign-up", authController.sign_up);
 
 /**
  * @swagger
@@ -114,7 +114,7 @@ router.get('/auth/confirm-email-change/:token', authController.confirmEmailChang
 
 /**
  * @swagger
- * /auth/sign_in:
+ * /auth/sign-in:
  *   post:
  *     summary: Login a user
  *     tags: [auth]
@@ -173,7 +173,7 @@ router.get('/auth/confirm-email-change/:token', authController.confirmEmailChang
  *                   type: string
  *                   description: Error message.
  */
-router.post("/sign_in", authController.sign_in);
+router.post("/sign-in", authController.sign_in);
 
 /**
  * @swagger
@@ -209,40 +209,5 @@ router.get("/google", authController.redirectToGoogle);
  *         description: Server error.
  */
 router.get("/google/callback", authController.handleGoogleCallback);
-
-/**
- * @swagger
- * /auth/facebook:
- *   get:
- *     summary: Redirect the user to the Facebook authentication page
- *     tags: [auth]
- *     responses:
- *       302:
- *         description: Redirect to the Facebook authentication page.
- */
-router.get("/facebook", authController.redirectToFacebook);
-
-/**
- * @swagger
- * /auth/facebook/callback:
- *   get:
- *     summary: Handle the callback from Facebook after user authentication
- *     tags: [auth]
- *     responses:
- *       200:
- *         description: Successfully authenticated and JWT token returned.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 token:
- *                   type: string
- *       400:
- *         description: Authentication failed.
- *       500:
- *         description: Server error.
- */
-router.get("/facebook/callback", authController.handleFacebookCallback);
 
 module.exports = router;
