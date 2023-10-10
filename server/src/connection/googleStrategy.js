@@ -11,8 +11,9 @@ passport.use(
             callbackURL: "http://localhost:8080/connect/google/callback",
             passReqToCallback: true,
         },
-        async (req, accessToken, refreshToken, profile, done) => {
+        async (req, accessToken, refreshToken, expires_in, profile, done) => {
             try {
+                const user = req.user;
                 const existingUser = await User.findOne({
                     "externalAuth.serviceId": profile.id,
                 });
@@ -24,17 +25,16 @@ passport.use(
                         return done(new Error("User already connected with Google"));
                     }
                 } else {
-                    const loggedInUser = await User.findById(req.user.id);
-                    if (loggedInUser) {
-                        const googleService = {
-                            access_token: accessToken,
-                            refresh_token: refreshToken,
-                            data: profile._json,
-                        };
-                        loggedInUser.connectServices.set("google", googleService);
-                        await loggedInUser.save();
-                        return done(null, loggedInUser);
-                    }
+                    const googleService = {
+                        access_token: accessToken,
+                        refresh_token: refreshToken,
+                        expires_in: expires_in * 1000,
+                        tokenIssuedAt: Date.now(),
+                        data: profile._json,
+                    };
+                    user.connectServices.set("google", googleService);
+                    await user.save();
+                    return done(null, user);
                 }
                 return done(new Error("No associated user found for this Google account."));
             } catch (error) {
