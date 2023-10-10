@@ -1,21 +1,15 @@
-export interface ActionReactionParameters {
-    name: string;
-    input: string;
+import { TriggerReactionParameters } from "./postArea"
+
+export interface aboutService {
+    name: string
+    color: string
+    triggers: TriggerActions[]
+    actions: TriggerActions[]
 }
 
-export interface ActionReaction {
-    name: string;
-    description: string;
-    parameters: ActionReactionParameters[];
+export interface TriggerActions {
+    name: string
+    description: string
+    parameters: TriggerReactionParameters[]
 }
 
-export interface Service {
-    name: string;
-    color: string;
-    actions: ActionReaction[];
-    reactions: ActionReaction[];
-}
-
-export interface AboutDotJson {
-    services: Service[];
-}

@@ -1,15 +1,10 @@
 import './ServiceAction.css';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button } from '../../../Button';
-import { Color } from '@mui/material';
-import { AboutDotJson } from '../../../../interfaces/aboutDotJson';
-import { ActionReaction } from '../../../../interfaces/aboutDotJson';
-import { Service } from '../../../../interfaces/aboutDotJson';
-import { PostArea } from "../../../../interfaces/postArea";
-import { ActionReactionParameters } from '../../../../interfaces/aboutDotJson';
-import { json } from 'stream/consumers';
+import { aboutService } from '../../../../interfaces/aboutDotJson';
+import { postService } from "../../../../interfaces/postArea";
 import { Navigate } from 'react-router-dom';
+import { TriggerActions } from '../../../../interfaces/aboutDotJson';
 
 interface ServiceActionsProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>
@@ -18,15 +13,15 @@ interface ServiceActionsProps {
 
 interface ServiceActionProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>
-    actionInfos: ActionReaction
+    actionInfos: TriggerActions
     color: string
     currentPage: string
-    selectedArea: PostArea
+    selectedArea: postService
     setMode: React.Dispatch<React.SetStateAction<actionReactionInfos | undefined>>
 }
 
 interface actionReactionInfos {
-    infos: ActionReaction
+    infos: TriggerActions
     type: string
 }
 
@@ -43,25 +38,25 @@ export function getBetterNames(name: string) {
 
 const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedArea, actionInfos, setCurrentPage, currentPage }) => {
     let clearname = ''
-    let name_length = actionInfos.name.length
     let whatami = ''
 
     const handleSelectionClick = () => {
-        if (selectedArea.actionName.length > 0) {
-            selectedArea.reactionName = actionInfos.name;
-            selectedArea.reactionService = currentPage;
+        if (selectedArea.action && selectedArea.action.name.length > 0) {
+            selectedArea.reactions[0].service = currentPage
+            selectedArea.reactions[0].name = actionInfos.name
             whatami = 'reaction'
-        } else {
-            selectedArea.actionService = currentPage
-            selectedArea.actionName = actionInfos.name
-            whatami = 'action'
+        } else if (selectedArea.action) {
+            selectedArea.action.name = actionInfos.name;
+            selectedArea.action.service = currentPage;
+            whatami = 'trigger'
         }
     
         localStorage.setItem('selectedArea', JSON.stringify(selectedArea))
 
         if (selectedArea) {
-            if (selectedArea.actionParameters.length != actionInfos.parameters.length ||
-                selectedArea.reactionParameters.length != actionInfos.parameters.length) {
+            if (selectedArea.action && (selectedArea.action.parameters.length != actionInfos.parameters.length)) {
+                setMode({infos: actionInfos, type: whatami})
+            } else if (selectedArea.reactions && (selectedArea.reactions[0].parameters.length != actionInfos.parameters.length)) {
                 setMode({infos: actionInfos, type: whatami})
             } else {
                 setCurrentPage("create")
@@ -84,43 +79,37 @@ const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedA
 }
 
 const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, currentPage }) => {
-    const [services, setServices] = useState<Service | undefined>();
-    const [selectedArea, setSelectedArea] = useState<PostArea | undefined>()
+    const [services, setServices] = useState<aboutService | undefined>();
+    const [selectedArea, setSelectedArea] = useState<postService | undefined>()
     const [mode, setMode] = useState<actionReactionInfos | undefined>()
 
     let token = localStorage.getItem('userToken');
 
     const handleInputChange = (index: number, value: string, name: string) => {
-        if (mode?.type == "action" && selectedArea) {
-          selectedArea.actionParameters[index] = {name: name, input: value};
+        if (mode?.type == "trigger" && selectedArea) {
+          selectedArea.action.parameters[index] = {name: name, input: value };
         }
         if (mode?.type == "reaction" && selectedArea) {
-          selectedArea.reactionParameters[index] = {name: name, input: value};
+          selectedArea.reactions[0].parameters[index] = {name: name, input: value};
         }
-    }
-
-    const createArea = async (toPost: PostArea, setCurrentPage: React.Dispatch<React.SetStateAction<string>>) => {
-        try {
-            const response = await axios.post('http://localhost:8080/areas', toPost, { headers: { Authorization: `Bearer ${token}` } });
-            if (response.status == 200) {
-                <Navigate to="/applets" replace />
-            } else {
-                console.log("error creating area: code[", response.status, "]")
-            }
-        } catch (error) {
-            console.error("Error creating areas");
-        }
+        localStorage.setItem('selectedArea', JSON.stringify(selectedArea))
     }
 
     useEffect(() => {
         const fetchData = async () => {
-            let currArea: PostArea = JSON.parse(localStorage.getItem('selectedArea') || 'null') || {
-                actionService: '',
-                reactionService: '',
-                actionName: '',
-                reactionName: '',
-                actionParameters: [],
-                reactionParameters: [],
+            let currArea: postService = JSON.parse(localStorage.getItem('selectedArea') || 'null') || {
+                action: {
+                    name: '',
+                    service: '',
+                    parameters: [{name: '', input: ''}] 
+                },
+                reactions: [
+                    {
+                    name: '',
+                    service: '',
+                    parameters: [{name: '', input: ''}]
+                    }
+                ]
             };
             setSelectedArea(currArea)
 
@@ -128,7 +117,8 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                 const response = await axios.get('http://localhost:8080/about/about.json', { headers: { Authorization: `Bearer ${token}` } });
                 if (response.data) {
                     let service = response.data.server.services;
-                    const currentService = service.find((service: Service) => service.name === currentPage);
+                    const currentService = service.find((service: aboutService) => service.name === currentPage);
+                    
                     setServices(currentService);
                     console.log(service)
                 }
@@ -152,7 +142,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                         Back
                     </button>
                     <div className='service-txt' style={{ color: 'white' }}>
-                        <div>{selectedArea && selectedArea.actionName.length == 0 ? "Choose a trigger" : "Choose a reaction"}</div>
+                        <div>{selectedArea?.action?.name?.length == 0 ? "Choose a trigger" : "Choose a reaction"}</div>
                     </div>
                 </div>
                 <div className='thin-line' style={{ backgroundColor: 'white', opacity: 0.5 }}></div>
@@ -171,7 +161,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                     </div>
                 </div>
             </div>
-            {mode ? (
+            {mode && mode.infos.parameters.length > 0 ? (
                 <div className='action-parameters'>
                     <div className='action-parameters-name'>{getBetterNames(mode.infos.name)}</div>
                     {mode.infos.parameters.map((item, index) => (
@@ -188,19 +178,19 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
 
                         </>
                     ))}
-                    <button className='add-action-btn' style={{marginLeft: 0, marginTop: '10%', border: '1px solid'}} onClick={() => { if (selectedArea){createArea(selectedArea, setCurrentPage)} }}>
+                    <button className='add-action-btn' style={{marginLeft: 0, marginTop: '10%', border: '1px solid'}} onClick={() => { setCurrentPage("create") }}>
                         Add
                     </button>
                 </div>
             ) :
                 <div className="services-actions-holder">
-                    {selectedArea ? (selectedArea.actionName.length > 0 ? (
-                        services.reactions.map((item, index) => (
-                        <ServiceAction setMode={setMode} key={index} selectedArea={selectedArea} color={services.color} actionInfos={item} setCurrentPage={setCurrentPage} currentPage={currentPage}/>
+                    {selectedArea ? (selectedArea?.action?.name?.length > 0 ? (
+                        services.actions.map((item, index) => (
+                            <ServiceAction setMode={setMode} key={index} selectedArea={selectedArea} color={services.color} actionInfos={item} setCurrentPage={setCurrentPage} currentPage={currentPage}/>
                         ))
                     ) : (
-                        services.actions.map((item, index) => (
-                        <ServiceAction setMode={setMode} key={index} selectedArea={selectedArea} color={services.color} actionInfos={item} setCurrentPage={setCurrentPage} currentPage={currentPage}/>
+                        services.triggers.map((item, index) => (
+                            <ServiceAction setMode={setMode} key={index} selectedArea={selectedArea} color={services.color} actionInfos={item} setCurrentPage={setCurrentPage} currentPage={currentPage}/>
                         ))
                     )) : ''}
                 </div>

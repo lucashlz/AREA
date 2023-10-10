@@ -132,10 +132,7 @@ exports.spotifyCallback = async (req, res, next) => {
                     .status(401)
                     .json({ status: "failed", message: "Authentication failed." });
             }
-            res.json({
-                status: "success",
-                message: "Successfully connected with Spotify.",
-            });
+            res.redirect("http://localhost:8081/create");
         })(req, res, next);
     } catch (error) {
         return res.status(500).json({ status: "error", message: "Unexpected error occurred." });

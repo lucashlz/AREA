@@ -1,10 +1,15 @@
-import { ActionReactionParameters } from "./aboutDotJson"
+export interface TriggerReactionParameters {
+    name: string;
+    input: string;
+}
 
-export interface PostArea {
-    actionService: string,
-    reactionService: string,
-    actionName: string,
-    reactionName: string,
-    actionParameters: ActionReactionParameters[],
-    reactionParameters: ActionReactionParameters[],
+export interface TriggerReaction {
+    name: string;
+    service: string;
+    parameters: TriggerReactionParameters[];
+}
+
+export interface postService {
+    action: TriggerReaction;
+    reactions: TriggerReaction[];
 }
