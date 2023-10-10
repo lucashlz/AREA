@@ -2,7 +2,6 @@ const passport = require("passport");
 const { registerOAuthSession, verifyOAuthSession } = require("../utils/OAuthSessionUtils");
 require("../connection/googleStrategy");
 require("../connection/githubStrategy");
-require("../connection/discordStrategy");
 require("../connection/spotifyStrategy");
 require("../connection/twitchStrategy");
 
@@ -14,10 +13,17 @@ exports.getGoogleOAuthConstants = async (req, res) => {
     return res.json({
         clientId: process.env.GOOGLE_CLIENT_ID,
         redirectUri: "http://localhost:8080/connect/google/callback",
-        scope: ["profile", "email"],
+        scope: [
+            "profile",
+            "email",
+            "https://www.googleapis.com/auth/youtube",
+            "https://www.googleapis.com/auth/gmail.readonly",
+            "https://www.googleapis.com/auth/gmail.send"
+        ],
         oAuthSessionId: oAuthSessionId,
     });
 };
+
 
 exports.googleCallback = async (req, res, next) => {
     try {
@@ -132,49 +138,9 @@ exports.spotifyCallback = async (req, res, next) => {
                     .status(401)
                     .json({ status: "failed", message: "Authentication failed." });
             }
-            res.redirect("http://localhost:8081/create");
-        })(req, res, next);
-    } catch (error) {
-        return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
-    }
-};
-
-exports.getDiscordOAuthConstants = async (req, res) => {
-    const oAuthSessionId = await registerOAuthSession(req.user.id, "discord");
-    if (!oAuthSessionId) {
-        return res.status(500).send("Failed to initiate OAuth session.");
-    }
-    return res.json({
-        clientId: process.env.DISCORD_CLIENT_ID,
-        redirectUri: "http://localhost:8080/connect/discord/callback",
-        scope: ["identify", "email"],
-        oAuthSessionId: oAuthSessionId,
-    });
-};
-
-exports.discordCallback = async (req, res, next) => {
-    try {
-        const { state: oAuthSessionIdFromState } = req.query;
-        const { user } = await verifyOAuthSession(oAuthSessionIdFromState, "discord");
-
-        if (!user) {
-            return res
-                .status(400)
-                .json({ status: "error", message: "Invalid state or session expired" });
-        }
-        req.user = user;
-        passport.authenticate("discord-connect", (err, authenticatedUser) => {
-            if (err) {
-                return res.status(500).json({ status: "error", message: "Internal server error." });
-            }
-            if (!authenticatedUser) {
-                return res
-                    .status(401)
-                    .json({ status: "failed", message: "Authentication failed." });
-            }
             res.json({
                 status: "success",
-                message: "Successfully connected with Discord.",
+                message: "Successfully connected with Spotify.",
             });
         })(req, res, next);
     } catch (error) {

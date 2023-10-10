@@ -23,19 +23,15 @@ exports.checkAndReact = async () => {
             console.log("No service areas found.");
             return;
         }
-
         for (const areaEntry of activeServiceAreas) {
             const platformService = AREAS[areaEntry.triggers[0].service];
-
             if (!platformService) continue;
-
             const detectedTrigger = platformService.triggers.find(
                 (t) => t.name === areaEntry.triggers[0].name
             );
             const associatedReaction = platformService.actions.find(
                 (r) => r.name === areaEntry.actions[0].name
             );
-
             if (detectedTrigger && associatedReaction) {
                 const triggerParameters =
                     areaEntry.triggers[0].parameters.length > 0
