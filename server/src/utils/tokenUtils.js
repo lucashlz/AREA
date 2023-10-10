@@ -79,7 +79,6 @@ async function refreshAllServiceTokens(userId) {
 
     const services = [
         { name: "spotify", refreshFunction: refreshSpotifyToken },
-        { name: "discord", refreshFunction: refreshDiscordToken },
         { name: "google", refreshFunction: refreshGoogleToken },
         { name: "twitch", refreshFunction: refreshTwitchToken },
         { name: "github", refreshFunction: refreshGithubToken },
@@ -110,15 +109,6 @@ async function refreshSpotifyToken(refreshToken) {
         }
     );
 
-    return response.data.access_token;
-}
-async function refreshDiscordToken(refreshToken) {
-    const response = await axios.post("https://discord.com/api/v10/oauth2/token", {
-        grant_type: "refresh_token",
-        refresh_token: refreshToken,
-        client_id: process.env.DISCORD_CLIENT_ID,
-        client_secret: process.env.DISCORD_CLIENT_SECRET,
-    });
     return response.data.access_token;
 }
 
