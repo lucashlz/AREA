@@ -14,18 +14,20 @@ const ServiceSchema = new Schema({
         type: Number,
         default: null,
     },
+    tokenIssuedAt: {
+        type: Number,
+        default: Date.now,
+    },
     data: {
         type: Object,
         default: {},
     },
 });
 
-const ExternalAuthServiceSchema = new Schema(
-    {
-        service: String,
-        serviceId: String,
-    },
-);
+const ExternalAuthServiceSchema = new Schema({
+    service: String,
+    serviceId: String,
+});
 
 const userSchema = new mongoose.Schema({
     username: { type: String, default: "" },

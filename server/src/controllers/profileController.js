@@ -21,12 +21,11 @@ exports.updateProfile = async (req, res) => {
         if (!user) return res.status(404).json({ message: "User not found" });
 
         const hasGoogleAuth = hasAuthService(user, "google");
-        const hasFacebookAuth = hasAuthService(user, "facebook");
 
         if (username) user.username = username;
 
         if (email) {
-            if (hasGoogleAuth || hasFacebookAuth) {
+            if (hasGoogleAuth) {
                 return res.status(403).json({
                     message:
                         "You've previously logged in using an external service. You cannot change your email.",
@@ -37,7 +36,7 @@ exports.updateProfile = async (req, res) => {
         }
 
         if (oldPassword && newPassword) {
-            if (hasGoogleAuth || hasFacebookAuth) {
+            if (hasGoogleAuth) {
                 return res.status(403).json({
                     message:
                         "You've previously logged in using an external service. You cannot change your password.",

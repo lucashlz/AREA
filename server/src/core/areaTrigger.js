@@ -1,10 +1,15 @@
 const mongoose = require("mongoose");
 const AREAS = require("./areaServices");
 
-async function executeReaction(areaEntry, associatedReaction) {
+async function executeReaction(areaEntry, associatedReaction, reactionParameters) {
     const userParameters = areaEntry.parameters;
     try {
-        await associatedReaction.actionFunction(areaEntry.userId, ...Object.values(userParameters));
+        await associatedReaction.actionFunction(
+            areaEntry.userId,
+            ...Object.values(userParameters),
+            ...reactionParameters
+        );
+        console.log(`Successfully executed reaction for area ID: ${areaEntry._id}`);
     } catch (error) {
         console.error("Failed to execute reaction:", error);
     }
@@ -12,32 +17,45 @@ async function executeReaction(areaEntry, associatedReaction) {
 
 exports.checkAndReact = async () => {
     try {
-        const activeServiceAreas = await mongoose.model("Area").find({ isActive: true });
+        const activeServiceAreas = await mongoose.model("Area").find({});
+
+        if (activeServiceAreas.length === 0) {
+            console.log("No service areas found.");
+            return;
+        }
 
         for (const areaEntry of activeServiceAreas) {
-            const platformService = AREAS[areaEntry.service];
+            const platformService = AREAS[areaEntry.triggers[0].service];
 
             if (!platformService) continue;
-            const detectedTrigger = platformService.actions.find(
-                (t) => t.name === areaEntry.action.name
+
+            const detectedTrigger = platformService.triggers.find(
+                (t) => t.name === areaEntry.triggers[0].name
             );
-            const associatedReaction = platformService.reactions.find(
-                (r) => r.name === areaEntry.reaction.name
+            const associatedReaction = platformService.actions.find(
+                (r) => r.name === areaEntry.actions[0].name
             );
 
             if (detectedTrigger && associatedReaction) {
-                const userParameters = areaEntry.parameters;
+                const triggerParameters =
+                    areaEntry.triggers[0].parameters.length > 0
+                        ? areaEntry.triggers[0].parameters[0]
+                        : {};
                 const hasTriggered = await detectedTrigger.triggerFunction(
                     areaEntry.userId,
-                    userParameters.lastCount || userParameters.lastTopTrackId
+                    triggerParameters.lastCount || triggerParameters.lastTopTrackId
                 );
 
                 if (hasTriggered) {
-                    await executeReaction(areaEntry, associatedReaction);
+                    const reactionParameters =
+                        areaEntry.actions[0].parameters.length > 0
+                            ? areaEntry.actions[0].parameters
+                            : [];
+                    await executeReaction(areaEntry, associatedReaction, ...reactionParameters);
                 }
             }
         }
     } catch (error) {
         console.error("Error during trigger evaluation:", error);
     }
-}
+};

@@ -12,24 +12,24 @@ const ParameterSchema = new Schema({
     }
 });
 
-const ActionSchema = new Schema({
-    name: {
+const TriggerSchema = new Schema({
+    service: {
         type: String,
         required: true,
     },
-    description: {
+    name: {
         type: String,
         required: true,
     },
     parameters: [ParameterSchema],
 });
 
-const ReactionSchema = new Schema({
-    name: {
+const ActionSchema = new Schema({
+    service: {
         type: String,
         required: true,
     },
-    description: {
+    name: {
         type: String,
         required: true,
     },
@@ -41,15 +41,15 @@ const AreaSchema = new Schema({
         type: Schema.Types.ObjectId,
         required: true,
     },
+    triggers: [TriggerSchema],
     actions: [ActionSchema],
-    reactions: [ReactionSchema],
 });
 
 const AreaModel = mongoose.model("Area", AreaSchema);
 
 module.exports = {
     Area: AreaModel,
+    Trigger: mongoose.model("Trigger", TriggerSchema),
     Action: mongoose.model("Action", ActionSchema),
-    Reaction: mongoose.model("Reaction", ReactionSchema),
     Parameter: mongoose.model("Parameter", ParameterSchema)
 };

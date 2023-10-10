@@ -210,39 +210,4 @@ router.get("/google", authController.redirectToGoogle);
  */
 router.get("/google/callback", authController.handleGoogleCallback);
 
-/**
- * @swagger
- * /auth/facebook:
- *   get:
- *     summary: Redirect the user to the Facebook authentication page
- *     tags: [auth]
- *     responses:
- *       302:
- *         description: Redirect to the Facebook authentication page.
- */
-router.get("/facebook", authController.redirectToFacebook);
-
-/**
- * @swagger
- * /auth/facebook/callback:
- *   get:
- *     summary: Handle the callback from Facebook after user authentication
- *     tags: [auth]
- *     responses:
- *       200:
- *         description: Successfully authenticated and JWT token returned.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 token:
- *                   type: string
- *       400:
- *         description: Authentication failed.
- *       500:
- *         description: Server error.
- */
-router.get("/facebook/callback", authController.handleFacebookCallback);
-
 module.exports = router;

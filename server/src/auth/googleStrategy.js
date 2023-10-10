@@ -15,40 +15,19 @@ passport.use(
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             callbackURL: "http://localhost:8080/auth/google/callback",
         },
-        async (accessToken, refreshToken, profile, done) => {
+        async (accessToken, refreshToken, expires_in, profile, done) => {
             let existingUser = await findUserByExternalId("google", profile.id);
 
             if (existingUser) {
                 await updateUserConnectionService(existingUser, "google", {
                     access_token: accessToken,
-                    // refresh_token: refreshToken,
+                    refresh_token: refreshToken,
+                    expires_in: expires_in * 1000,
+                    tokenIssuedAt: Date.now(),
                     data: profile._json,
                 });
                 return done(null, existingUser);
             }
-
-            const userWithEmail = await User.findOne({
-                email: profile.emails[0].value,
-            });
-
-            if (userWithEmail) {
-                const hasFacebookAuth =
-                    userWithEmail.externalAuth &&
-                    userWithEmail.externalAuth.some((service) => service.service === "facebook");
-
-                if (hasFacebookAuth) {
-                    return done(null, false, {
-                        message:
-                            "This email is already registered using Facebook. Please log in using Facebook.",
-                    });
-                } else {
-                    return done(null, false, {
-                        message:
-                            "An account with this email already exists. Please login using your email and password.",
-                    });
-                }
-            }
-
             try {
                 const newUser = await createNewExternalUser(
                     "google",
@@ -57,6 +36,8 @@ passport.use(
                     {
                         access_token: accessToken,
                         refresh_token: refreshToken,
+                        expires_in: expires_in * 1000,
+                        tokenIssuedAt: Date.now(),
                         data: profile._json,
                     }
                 );

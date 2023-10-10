@@ -46,6 +46,7 @@ const Applet: React.FC<AppletProps> = ({ logo_paths, applet_desc, onoff }) => {
 
   return (
     <>
+      
       <div className="applet-content-holder" style={{ backgroundColor: status === "on" ? "#0066FF" : "#565656" }}>
         <div className='applet-content-container'>
           {logo_paths.map((item, index) => (

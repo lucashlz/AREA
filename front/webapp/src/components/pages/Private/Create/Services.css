@@ -1,0 +1,83 @@
+.service-txt {
+    font-weight: 750;
+    font-size: xx-large;
+    text-align: center;
+    width: 100%;
+    margin-left: calc(-5rem - 1.5%);
+    justify-content: center;
+    align-items: center;
+}
+
+.services-container {
+    margin-right: 20%;
+    margin-left: 20%;
+}
+
+.services-holder {
+    padding: 5%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.service-content-holder {
+    border-radius: 10px;
+    flex-grow: 1;
+    flex-basis: auto;
+    margin: 3%;
+    height: 20vh;
+    width: 95%;
+    max-width: 30vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.service-logo-holder {
+    width: 25%;
+    height: auto;
+    overflow: hidden;
+    border-radius: 50%;
+    padding: 3%;
+    margin-bottom: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.service-logo {
+    width: 100%;
+    height: auto;
+}
+
+.service-description {
+    font-weight: bolder;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.selection-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    cursor:pointer;
+}
+
+@media screen and (max-width: 960px) {
+    .btn--large {
+        margin-right: 0%;
+        margin-left: 0%;
+    }
+    .service-txt {
+        font-size:x-large;
+    }
+    .services-container {
+        margin-right: 7%;
+        margin-left: 7%;
+    }
+}

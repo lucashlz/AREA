@@ -1,6 +1,7 @@
 const { Area } = require("../models/areaModels");
 const User = require("../models/userModels");
 const AREAS = require("../core/areaServices");
+const { checkParameters } = require("../utils/areaUtils");
 
 exports.listAllAreas = async (req, res) => {
     try {
@@ -17,75 +18,36 @@ exports.createArea = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
-
-        const {
-            actionService,
-            reactionService,
-            actionName,
-            reactionName,
-            actionParameters,
-            reactionParameters,
-        } = req.body;
-
-        const actionServiceObj = AREAS[actionService];
-        const reactionServiceObj = AREAS[reactionService];
-
-        if (!actionServiceObj || !reactionServiceObj) {
-            return res.status(400).json({ message: "Invalid services provided." });
+        const { action: trigger, reactions: actions } = req.body;
+        const triggerServiceObj = AREAS[trigger.service];
+        if (!triggerServiceObj) {
+            return res.status(400).json({ message: "Invalid trigger service provided." });
         }
 
-        const action = actionServiceObj.actions.find((a) => a.name === actionName);
-        const reaction = reactionServiceObj.reactions.find((r) => r.name === reactionName);
-
-        if (!action || !reaction) {
-            return res.status(400).json({ message: "Invalid action or reaction provided." });
+        const triggerObj = triggerServiceObj.triggers.find((t) => t.name === trigger.name);
+        if (!triggerObj) {
+            return res.status(400).json({ message: "Invalid trigger provided." });
         }
-
-        const checkParameters = (provided, required) => {
-            if (provided.length !== required.length) return false;
-            for (const param of required) {
-                const hasParameter = provided.some((p) => p.name === param.name);
-                if (!hasParameter) return false;
-            }
-            return true;
-        };
-        if (
-            !checkParameters(actionParameters, action.parameters) ||
-            !checkParameters(reactionParameters, reaction.parameters)
-        ) {
+        if (!(await checkParameters(req.user.id, trigger, actions))) {
             return res.status(400).json({ message: "Invalid parameters provided." });
         }
-        const existingArea = await Area.findOne({
-            userId: user._id,
-            actions: {
-                $elemMatch: {
-                    name: actionName,
-                },
-            },
-            reactions: {
-                $elemMatch: {
-                    name: reactionName,
-                },
-            },
-        });
-        if (existingArea) {
-            return res.status(409).json({ message: "Area with these parameters already exists." });
-        }
-        const mapParameters = (provided, original) => {
-            return original.map((param) => {
-                const providedParam = provided.find((p) => p.name === param.name);
-                return { ...param, value: providedParam ? providedParam.value : undefined };
-            });
-        };
+
         const newArea = new Area({
             userId: user._id,
-            actions: [
-                { ...action, parameters: mapParameters(actionParameters, action.parameters) },
+            triggers: [
+                {
+                    service: trigger.service,
+                    name: trigger.name,
+                    parameters: trigger.parameters,
+                },
             ],
-            reactions: [
-                { ...reaction, parameters: mapParameters(reactionParameters, reaction.parameters) },
-            ],
+            actions: actions.map((a) => ({
+                service: a.service,
+                name: a.name,
+                parameters: a.parameters,
+            })),
         });
+
         const savedArea = await newArea.save();
         res.status(200).json(savedArea);
     } catch (error) {
