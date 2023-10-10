@@ -69,6 +69,21 @@ const Applet: React.FC<AppletProps> = ({ logo_paths, applet_desc, onoff }) => {
 
 export default function Applets() {
   const [searchInput, setSearchInput] = useState('');
+  const [areas, setAreas] = useState([]);
+
+  useEffect(() => {
+    const getApplets = async () => {
+      let token = localStorage.getItem('userToken');
+      const response = await axios.get('http://localhost:8080/areas', { headers: { Authorization: `Bearer ${token}` } });
+      if (response.status == 200) {
+        setAreas(response.data)
+        console.log("areas: ", areas)
+      } else {
+        console.log("cannot get areas, resonse: ", response.status)
+      }
+    }
+    getApplets()
+  }, [])
 
   return (
     <div className="applets-container">
@@ -80,7 +95,9 @@ export default function Applets() {
         <Input onChange={(e) => setSearchInput(e.target.value)} placeholder='Search' type='searchInput' value={searchInput} icon={`${process.env.PUBLIC_URL}/search.png`} />
       </div>
       <div className="applets-holder">
-        <Applet logo_paths={[`${process.env.PUBLIC_URL}/search.png`, `${process.env.PUBLIC_URL}/search.png`]} applet_desc="Une description vraiiiiiiment" onoff="off" />
+        {areas.length > 0 ? 'got areas' : 'No areas created for now'}
+        {/* {areas.map} */}
+        {/* <Applet logo_paths={[`${process.env.PUBLIC_URL}/search.png`, `${process.env.PUBLIC_URL}/search.png`]} applet_desc="Une description vraiiiiiiment" onoff="off" /> */}
       </div>
     </div>
   );
