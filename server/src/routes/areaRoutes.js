@@ -22,7 +22,7 @@ router.get("/", areaController.listAllAreas);
  * @swagger
  * /areas:
  *   post:
- *     summary: Create a new area by specifying the services, names, and parameters for action and reaction
+ *     summary: Create a new area by specifying the services, names, and parameters for action and reactions
  *     tags: [areas]
  *     security:
  *       - bearerAuth: []
@@ -33,38 +33,46 @@ router.get("/", areaController.listAllAreas);
  *           schema:
  *             type: object
  *             properties:
- *               actionService:
- *                 type: string
- *                 description: The name of the service for the action (e.g., "github", "spotify")
- *               reactionService:
- *                 type: string
- *                 description: The name of the service for the reaction (e.g., "github", "spotify")
- *               actionName:
- *                 type: string
- *                 description: The name of the selected action within the action service
- *               reactionName:
- *                 type: string
- *                 description: The name of the selected reaction within the reaction service
- *               actionParameters:
+ *               action:
+ *                 type: object
+ *                 properties:
+ *                   service:
+ *                     type: string
+ *                     description: The name of the service for the action (e.g., "github", "spotify")
+ *                   name:
+ *                     type: string
+ *                     description: The name of the selected action within the action service
+ *                   parameters:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         name:
+ *                           type: string
+ *                         input:
+ *                           type: string
+ *                     description: The parameters required for the selected action
+ *               reactions:
  *                 type: array
  *                 items:
  *                   type: object
  *                   properties:
+ *                     service:
+ *                       type: string
+ *                       description: The name of the service for the reaction (e.g., "github", "spotify")
  *                     name:
  *                       type: string
- *                     input:
- *                       type: string
- *                 description: The parameters required for the selected action
- *               reactionParameters:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     name:
- *                       type: string
- *                     input:
- *                       type: string
- *                 description: The parameters required for the selected reaction
+ *                       description: The name of the selected reaction within the reaction service
+ *                     parameters:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           input:
+ *                             type: string
+ *                       description: The parameters required for the selected reaction
  *     responses:
  *       200:
  *         description: Area created successfully
