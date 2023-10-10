@@ -56,7 +56,8 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
                 serviceURL.searchParams.append("scope", serviceOAuthConstants.scopes.join(" "));
                 serviceURL.searchParams.append("state", serviceOAuthConstants.oAuthSessionId);
                 localStorage.setItem('selectedService', initialName)
-                window.location.href = serviceURL.href;
+                window.open(serviceURL.href, '_blank');
+                setCurrentPage(initialName)
             } else {
                 console.log("cannot get ", initialName, ' in array')
             }

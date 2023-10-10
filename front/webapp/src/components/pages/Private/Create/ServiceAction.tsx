@@ -54,9 +54,7 @@ const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedA
         localStorage.setItem('selectedArea', JSON.stringify(selectedArea))
 
         if (selectedArea) {
-            if (selectedArea.action && (selectedArea.action.parameters.length != actionInfos.parameters.length)) {
-                setMode({infos: actionInfos, type: whatami})
-            } else if (selectedArea.reactions && (selectedArea.reactions[0].parameters.length != actionInfos.parameters.length)) {
+            if (actionInfos.parameters.length != 0) {
                 setMode({infos: actionInfos, type: whatami})
             } else {
                 setCurrentPage("create")

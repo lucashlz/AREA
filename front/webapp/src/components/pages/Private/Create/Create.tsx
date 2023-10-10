@@ -98,7 +98,7 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
   }
 
   const setCreation = async () => {
-    let area = localStorage.getItem('selectedArea')
+    let area = JSON.parse(localStorage.getItem('selectedArea') || '{}');
     let token = localStorage.getItem('userToken')
 
     try {
@@ -111,6 +111,7 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
     } catch (error) {
         console.error("Error creating areas");
     }
+    console.log("sended: ", area)
   }
 
   useEffect(() => {
