@@ -1,6 +1,5 @@
 const passport = require("passport");
 const SpotifyStrategy = require("passport-spotify").Strategy;
-const User = require("../models/userModels");
 
 passport.use(
     "spotify-connect",
@@ -13,19 +12,17 @@ passport.use(
         },
         async (req, accessToken, refreshToken, expires_in, profile, done) => {
             try {
-                const loggedInUser = await User.findById(req.user.id);
-                if (!loggedInUser) {
-                    return done(new Error("No associated user found for this session."));
-                }
+                const user = req.user;
                 const spotifyService = {
                     access_token: accessToken,
                     refresh_token: refreshToken,
-                    expires_in: expires_in,
+                    expires_in: expires_in * 1000,
+                    tokenIssuedAt: Date.now(),
                     data: profile._json,
                 };
-                loggedInUser.connectServices.set("spotify", spotifyService);
-                await loggedInUser.save();
-                return done(null, loggedInUser);
+                user.connectServices.set("spotify", spotifyService);
+                await user.save();
+                return done(null, user);
             } catch (error) {
                 console.error("Error during Spotify connection:", error);
                 return done(error);

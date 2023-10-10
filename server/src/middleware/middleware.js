@@ -1,44 +1,52 @@
-const session = require("express-session");
+const session = require('express-session');
 const passport = require("passport");
+const cookieParser = require('cookie-parser');
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
-const url = require("url");
+const cors = require("cors");
+const JWT_SECRET_KEY = "RAF";
 
 exports.setupAppMiddleware = async (app) => {
+    app.use(session({
+        secret: 'RAF',
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            secure: false,
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000
+        }
+    }));
+    app.use(bodyParser.json());
     app.use(
-        session({
-            secret: "your_secret_key",
-            resave: false,
-            saveUninitialized: false,
+        bodyParser.urlencoded({
+            extended: false,
         })
     );
-
-    app.use(bodyParser.json());
+    app.use(cookieParser());
+    app.set("trust proxy", true);
+    app.use(
+        cors({
+            origin: `http://localhost:8081`,
+            credentials: true,
+        })
+    );
     app.use(passport.initialize());
     app.use(passport.session());
 };
 
-exports.authMiddleware = async (req, res, next) => {
-    let token = req.header("Authorization")?.replace("Bearer ", "");
+exports.ensureAuthenticated = (req, res, next) => {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
-        const parsedUrl = url.parse(req.url, true);
-        token = parsedUrl.query.token;
+        return res.status(401).json({ message: "No token provided" });
     }
-
-    console.log("Received token:", token);
-
-    if (!token) return res.status(401).send("Access denied. No token provided.");
-
-    try {
-        const decoded = jwt.verify(token, process.env.SECRET_JWT);
-        console.log("Decoded JWT:", decoded);
-
+    jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(403).json({ message: "Failed to authenticate token" });
+        }
         req.user = decoded;
         next();
-    } catch (ex) {
-        console.error("JWT Verification Error:", ex.message);
-        res.status(400).send("Invalid token.");
-    }
+    });
 };
-

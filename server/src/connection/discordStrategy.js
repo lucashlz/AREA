@@ -12,20 +12,22 @@ passport.use(
             scope: ["identify", "email"],
             passReqToCallback: true,
         },
-        async (req, accessToken, refreshToken, profile, done) => {
+        async (req, accessToken, refreshToken, expires_in, profile, done) => {
             try {
-                const loggedInUser = await User.findById(req.user.id);
-                if (!loggedInUser) {
+                const user = req.user;
+                if (!user) {
                     return done(new Error("No associated user found for this session."));
                 }
                 const discordService = {
                     access_token: accessToken,
                     refresh_token: refreshToken,
-                    data: profile,
+                    expires_in: expires_in * 1000,
+                    tokenIssuedAt: Date.now(),
+                    data: profile._json,
                 };
-                loggedInUser.connectServices.set("discord", discordService);
-                await loggedInUser.save();
-                return done(null, loggedInUser);
+                user.connectServices.set("discord", discordService);
+                await user.save();
+                return done(null, user);
             } catch (error) {
                 console.error("Error during Discord connection:", error);
                 return done(error);
