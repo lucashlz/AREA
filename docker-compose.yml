@@ -1,14 +1,14 @@
 version: '3'
 
 services:
-  # mobileapp:
-  #   privileged: true
-  #   image: mobileapp:latest
-  #   build:
-  #     context: ./front/mobileapp
-  #     dockerfile: ./Dockerfile
-  #   volumes:
-  #     - apk-volume:/apk
+  mobileapp:
+    privileged: true
+    image: mobileapp:latest
+    build:
+      context: ./front/mobileapp
+      dockerfile: ./Dockerfile
+    volumes:
+      - apk-volume:/apk
 
   server:
     build: ./server/
@@ -32,7 +32,7 @@ services:
         target: /app
       - apk-volume:/app/public/apk
     depends_on:
-      # - mobileapp
+      - mobileapp
       - server
 
   mongo:
