@@ -4,59 +4,6 @@ const areaController = require("../controllers/areaController");
 
 /**
  * @swagger
- * components:
- *   schemas:
- *     Parameter:
- *       type: object
- *       properties:
- *         name:
- *           type: string
- *           description: The name of the parameter.
- *         input:
- *           type: string
- *           description: The input value of the parameter.
- *     Trigger:
- *       type: object
- *       properties:
- *         service:
- *           type: string
- *           description: The service name.
- *         name:
- *           type: string
- *           description: The name of the trigger.
- *         parameters:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Parameter'
- *     Action:
- *       type: object
- *       properties:
- *         service:
- *           type: string
- *           description: The service name.
- *         name:
- *           type: string
- *           description: The name of the action.
- *         parameters:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Parameter'
- *     Area:
- *       type: object
- *       properties:
- *         userId:
- *           type: string
- *           format: uuid
- *           description: The user's unique identifier.
- *         triggers:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Trigger'
- *         actions:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Action'
- *
  * /areas:
  *   get:
  *     summary: List all available areas
