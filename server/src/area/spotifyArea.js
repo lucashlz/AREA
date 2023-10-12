@@ -60,16 +60,11 @@ async function saveTrack(userId, trackName) {
     return spotifyApi.addToMySavedTracks([trackId]);
 }
 
-async function addToPlaylistById(userId, playlistName, trackId) {
+async function addToPlaylistById(userId, playlistId, trackId) {
     await setSpotifyToken(userId);
-    const playlists = await spotifyApi.getUserPlaylists();
-    let targetPlaylist = playlists.body.items.find((playlist) => playlist.name === playlistName);
-    if (!targetPlaylist) {
-        const createdPlaylist = await spotifyApi.createPlaylist(playlistName, { public: false });
-        targetPlaylist = createdPlaylist.body;
-    }
-    return spotifyApi.addTracksToPlaylist(targetPlaylist.id, [`spotify:track:${trackId}`]);
+    return spotifyApi.addTracksToPlaylist(playlistId, [`spotify:track:${trackId}`]);
 }
+
 
 module.exports = {
     newSavedTrack,
