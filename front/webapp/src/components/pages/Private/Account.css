@@ -1,4 +1,5 @@
 .account-container {
+    margin-bottom: 4rem; /* adjust value as needed */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -75,12 +76,76 @@ form {
     color: rgb(255, 0, 0);
 }
 
-@media screen and (max-width: 550px) {
+.connected-services-container {
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+
+    margin-top: 30px;
+    align-items: center; 
+}
+
+.connected-services-title {
+    font-size: 50px;
+    font-weight: 900;
+    text-align: center;
+    max-width: 600px;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+}
+
+.services-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center; 
+}
+
+.service-item {
+    color: white;
+    padding: 20px 40px;
+    border-radius: 20px;
+    background-color: #1D1D1D;
+    font-size: 45px;
+    font-weight: 900;
+}
+
+.service-content {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.service-item img {
+    width: 60px;
+    height: 60px;
+  }
+
+@media screen and (max-width: 600px) {
 .account-input {
     width: 90%;
     align-self: center;
 }
 .account-main-text {
     font-size: 40px;
+}
+
+.connected-services-title {
+    font-size: 40px;
+}
+
+.service-item {
+    color: white;
+    padding: 20px 40px;
+    border-radius: 20px;
+    background-color: #1D1D1D;
+    font-size: 45px;
+    font-weight: 900;
+}
+
+.service-content {
+  display: flex;
+  align-items: center;
+  gap: 30px;
 }
 }
