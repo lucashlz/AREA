@@ -5,7 +5,7 @@ const { checkParameters } = require("../utils/areaUtils");
 
 exports.listAllAreas = async (req, res) => {
     try {
-        const areas = await Area.find({ userId: req.user.id });
+        const areas = await Area.find({ userId: req.user.id }).select('-userId');
         res.status(200).json(areas);
     } catch (error) {
         res.status(500).json({ message: "Error fetching areas", error });
@@ -18,7 +18,7 @@ exports.createArea = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
-        const { action: trigger, reactions: actions } = req.body;
+        const { trigger, actions } = req.body;
         const triggerServiceObj = AREAS[trigger.service];
         if (!triggerServiceObj) {
             return res.status(400).json({ message: "Invalid trigger service provided." });
@@ -53,6 +53,7 @@ exports.createArea = async (req, res) => {
         res.status(500).json({ message: "Error creating the area", error });
     }
 };
+
 
 exports.getAreaById = async (req, res) => {
     const id = req.params.id;
