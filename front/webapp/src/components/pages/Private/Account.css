@@ -102,12 +102,40 @@ form {
 }
 
 .service-item {
+    position: relative; 
     color: white;
     padding: 20px 40px;
     border-radius: 20px;
     background-color: #1D1D1D;
     font-size: 45px;
     font-weight: 900;
+    transition: background-color 0.3s;
+}
+
+.service-item::before {
+    border-radius: 20px;
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3); /* dark overlay */
+    opacity: 0; /* fully transparent by default */
+    transition: opacity 0.3s;
+}
+
+.service-item:hover::before {
+    opacity: 1; /* fully visible on hover */
+}
+
+.disconnect-text {
+    display: none; /* hide by default */
+}
+
+.service-item:hover .disconnect-text {
+    display: block; /* show on hover */
 }
 
 .service-content {
@@ -135,12 +163,14 @@ form {
 }
 
 .service-item {
+    position: relative; 
     color: white;
     padding: 20px 40px;
     border-radius: 20px;
     background-color: #1D1D1D;
     font-size: 45px;
     font-weight: 900;
+    transition: background-color 0.3s;
 }
 
 .service-content {

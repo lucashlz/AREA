@@ -9,6 +9,7 @@ import { SERVICE_COLORS } from '../../../../public/servicesColors'
 
 const AccountPage: React.FC = () => {
   const [connectedServices, setConnectedServices] = useState<string[]>([]);
+  const [disconnectingService, setDisconnectingService] = useState<string | null>(null);
   const userContext = useContext(UserContext);
   const [error, setError] = useState('');
   const [message, setMessage] = useState<string | null>(null);
@@ -45,6 +46,15 @@ const AccountPage: React.FC = () => {
   if (!token) {
     return <Navigate to="/" />;
   }
+
+  const handleDisconnect = async (service: string) => {
+    setDisconnectingService(service);
+    // Here, you'd typically call an API or context method to handle the actual disconnection.
+    // Once disconnected, remove the service from the connectedServices array:
+    const updatedServices = connectedServices.filter(s => s !== service);
+    setConnectedServices(updatedServices);
+    setDisconnectingService(null);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -128,26 +138,29 @@ const AccountPage: React.FC = () => {
       <div className="connected-services-container">
         <div className="connected-services-title">Connected services</div>
         <div className="services-list">
-    {connectedServices.length === 0 ? (
-        <div className="service-item" style={{ backgroundColor: '#f2f2f2' }}>
-            <div className="service-content">
-                No services connected
-            </div>
+        {connectedServices.length === 0 ? (
+    <div className="service-item no-service" style={{ backgroundColor: 'lightgray' }}>
+        <div className="service-content">
+            No services connected
         </div>
-    ) : (
-        connectedServices.map(service => (
-            <div
-                key={service}
-                className="service-item"
-                style={{ backgroundColor: SERVICE_COLORS[service] || 'defaultColor' }}
-            >
-                <div className="service-content">
-                    <img src={`/servicesLogo/${service}.png`} alt={`${service} logo`} />
-                    {service.charAt(0).toUpperCase() + service.slice(1)}
-                </div>
-            </div>
-        ))
-    )}
+    </div>
+) : (
+      connectedServices.map(service => (
+          <div
+              key={service}
+              className="service-item"
+              style={{ backgroundColor: SERVICE_COLORS[service] || 'defaultColor' }}
+              onMouseEnter={() => setDisconnectingService(service)}
+              onMouseLeave={() => setDisconnectingService(null)}
+              onClick={() => handleDisconnect(service)}
+          >
+              <div className="service-content">
+                  <img src={`/servicesLogo/${service}.png`} alt={`${service} logo`} />
+                  {disconnectingService === service ? "Disconnect" : service.charAt(0).toUpperCase() + service.slice(1)}
+              </div>
+          </div>
+      ))
+  )}
 </div>
 
       </div>
