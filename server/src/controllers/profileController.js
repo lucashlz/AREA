@@ -3,11 +3,15 @@ const { hasAuthService, updateUserEmail, updateUserPassword } = require("../util
 
 exports.getUserProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select("username email");
+        const user = await User.findById(req.user.id).select("-_id username email connectServices");
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        res.json(user);
+        const serviceNames = Array.from(user.connectServices.keys());
+        res.json({
+            ...user._doc,
+            connectServices: serviceNames
+        });
     } catch (err) {
         res.status(500).json({ message: "Server error" });
     }
