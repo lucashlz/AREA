@@ -16,14 +16,18 @@ const profileController = require("../controllers/profileController");
  *         content:
  *           application/json:
  *             schema:
- *               type: object
  *               properties:
- *                 _id:
- *                   type: string
  *                 username:
  *                   type: string
+ *                   description: The username of the user.
  *                 email:
  *                   type: string
+ *                   description: The email of the user.
+ *                 connectServices:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: The list of connected services by the user.
  *       404:
  *         description: User not found
  *       500:
