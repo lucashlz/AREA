@@ -70,7 +70,7 @@ const AccountPage: React.FC = () => {
     <div className="account-container">
       <form>
       <div className="account-main-text">Account settings</div>
-      <Button buttonSize='btn--medium' buttonStyle='btn--primary-inverted' type='button' onClick={handleSubmit} >Logout</Button>
+      <Button buttonSize='btn--medium' buttonStyle='btn--primary-inverted' type='button' onClick={signOut} >Logout</Button>
       <Button color="red" type="button" buttonStyle='btn--outline' buttonSize="btn--medium" onClick={deleteUser}>
         <FaTrash className="bin-icon" />&nbsp;&nbsp;&nbsp;Delete Account
       </Button>

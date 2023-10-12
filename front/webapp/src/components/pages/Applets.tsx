@@ -6,6 +6,7 @@ import { IUserContext, UserContext } from '../../context/userContext';
 import axios from 'axios';
 import Input from '../Input';
 
+
 interface AppletProps {
   logo_paths: string[];
   applet_desc: string;
@@ -15,7 +16,7 @@ interface AppletProps {
 const Applet: React.FC<AppletProps> = ({ logo_paths, applet_desc, onoff }) => {
   const [status, setStatus] = useState(onoff);
   const toogleStatus = () => {
-    status === "on" ? setStatus("off") : setStatus("on") 
+    status === "on" ? setStatus("off") : setStatus("on")
   }
 
   const { setToken, token} = useContext(UserContext) as IUserContext;
@@ -36,7 +37,6 @@ const Applet: React.FC<AppletProps> = ({ logo_paths, applet_desc, onoff }) => {
 
   return (
     <>
-      
       <div className="applet-content-holder" style={{ backgroundColor: status === "on" ? "#0066FF" : "#565656" }}>
         <div className='applet-content-container'>
           {logo_paths.map((item, index) => (

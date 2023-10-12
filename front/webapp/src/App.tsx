@@ -22,7 +22,7 @@ function App() {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === '/' || location.pathname.startsWith('/auth/confirm')) {
+    if (location.pathname === '/' || location.pathname.startsWith('/auth/confirm/')) {
       document.body.style.backgroundColor = '#1D1D1D';
     } else {
       document.body.style.backgroundColor = '#fff';
@@ -41,7 +41,7 @@ function App() {
         <Route path="/account" element={<Account />} />
         <Route path="/register" element={<Register/>}/>
         <Route path="/applets" element={<Applets />} />
-        <Route path="/auth/confirm/:confirmationCode" element={<Confirm />} />
+        <Route path="/auth/confirm/:token" element={<Confirm />} />
       </Routes>
     </>
   );
