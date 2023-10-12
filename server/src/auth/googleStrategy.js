@@ -19,27 +19,12 @@ passport.use(
             let existingUser = await findUserByExternalId("google", profile.id);
 
             if (existingUser) {
-                await updateUserConnectionService(existingUser, "google", {
-                    access_token: accessToken,
-                    refresh_token: refreshToken,
-                    expires_in: expires_in * 1000,
-                    tokenIssuedAt: Date.now(),
-                    data: profile._json,
-                });
                 return done(null, existingUser);
             }
             try {
                 const newUser = await createNewExternalUser(
                     "google",
                     profile.emails[0].value,
-                    profile.id,
-                    {
-                        access_token: accessToken,
-                        refresh_token: refreshToken,
-                        expires_in: expires_in * 1000,
-                        tokenIssuedAt: Date.now(),
-                        data: profile._json,
-                    }
                 );
                 return done(null, newUser);
             } catch (err) {

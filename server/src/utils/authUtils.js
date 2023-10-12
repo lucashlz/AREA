@@ -15,7 +15,7 @@ const updateUserConnectionService = async (user, serviceName, data) => {
     await user.save();
 };
 
-const createNewExternalUser = async (service, email, serviceId, profileData) => {
+const createNewExternalUser = async (service, email, serviceId) => {
     const usernameFromEmail = email.split("@")[0].replace(/[^a-zA-Z0-9]/g, "");
 
     const newUser = new User({
@@ -27,14 +27,7 @@ const createNewExternalUser = async (service, email, serviceId, profileData) => 
                 serviceId: serviceId,
             },
         ],
-        connectServices: {
-            [service]: {
-                access_token: profileData.access_token,
-                data: profileData.data,
-            },
-        },
     });
-
     await newUser.save();
     return newUser;
 };
