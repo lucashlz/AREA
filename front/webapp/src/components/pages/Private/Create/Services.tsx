@@ -4,7 +4,6 @@ import './Services.css';
 import axios from 'axios';
 import { ServiceOAuthConstants } from '../../../../interfaces/serviceConnect';
 import { getServiceAuthorizeByName } from '../../../../interfaces/serviceConnect';
-import { servicesAuthorize } from '../../../../interfaces/serviceConnect';
 
 interface ServicesProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
@@ -21,53 +20,61 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
     const upperName = initialName[0].toUpperCase() + initialName.slice(1);
     const image = require(`../../../../../public/servicesLogo/${initialName}.png`);
 
-    useEffect(() => {
+    const getOAuthConstants = async () => {
+        const token = localStorage.getItem('userToken');
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
 
-        async function fetchServiceOAuthConstants() {
-            let serviceAuthorize = getServiceAuthorizeByName(initialName)
-            if (serviceAuthorize) {
-                const token = localStorage.getItem('userToken');
-                const headers = {
-                    Authorization: `Bearer ${token}`
-                };
-
-                try {
-                    const response = await axios.get(`http://localhost:8080/connect/get${upperName}OAuthConstants`, { headers: headers});
-                    if (response.status === 200) {
-                        setServiceOAuthConstants(response.data);
-                    }
-                } catch (error) {
-                    console.error("Error fetching Service OAuth constants:", error);
-                }
+        try {
+            const response = await axios.get(`http://localhost:8080/connect/get${upperName}OAuthConstants`, { headers: headers});
+            if (response.status === 200) {
+                setServiceOAuthConstants(response.data);
             }
+        } catch (error) {
+            console.error("Error fetching Service OAuth constants:", error);
         }
+    }
 
-        fetchServiceOAuthConstants();
-    }, []);
-
-    const selectArea = async () => {
+    useEffect(() => {
         let serviceAuthorize = getServiceAuthorizeByName(initialName)
+
         if (serviceOAuthConstants) {
             if (serviceAuthorize) {
+                console.log("serviceOAuthConstants: ", serviceOAuthConstants)
+                console.log("serviceAuthorize: ", serviceAuthorize)
                 const serviceURL = new URL(serviceAuthorize);
                 serviceURL.searchParams.append("client_id", serviceOAuthConstants.clientId);
                 serviceURL.searchParams.append("response_type", "code");
                 serviceURL.searchParams.append("redirect_uri", serviceOAuthConstants.redirectUri);
                 serviceURL.searchParams.append("scope", serviceOAuthConstants.scopes.join(" "));
                 serviceURL.searchParams.append("state", serviceOAuthConstants.oAuthSessionId);
-                localStorage.setItem('selectedService', initialName)
-                window.open(serviceURL.href, '_blank');
+
+                const popupWidth = 800;
+                const popupHeight = 600;
+    
+                const popup = window.open(serviceURL.href, '_blank', `width=${popupWidth},height=${popupHeight},menubar=no,toolbar=no,location=no`);
+                if (popup) {
+                    popup.focus();
+                }
                 setCurrentPage(initialName)
             } else {
                 console.log("cannot get ", initialName, ' in array')
             }
-        } else {
-            setCurrentPage(initialName)
         }
+    }, [serviceOAuthConstants])
+
+    const selectArea = async () => {
+        let serviceAuthorize = getServiceAuthorizeByName(initialName)
+
+        if (serviceAuthorize)
+            await getOAuthConstants()
+        else
+            setCurrentPage(initialName)
     }
 
     return (
-        <button className='selection-button' onClick={selectArea}>
+        <button className='selection-button' onClick={() => {selectArea()}}>
             <div className="service-content-holder" style={{ backgroundColor: serviceInfos.color }}>
                 <div className="service-logo-holder">
                     <img alt="logo" className="service-logo" src={image}></img>

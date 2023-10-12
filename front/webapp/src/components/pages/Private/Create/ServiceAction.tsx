@@ -97,15 +97,15 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
         const fetchData = async () => {
             let currArea: postService = JSON.parse(localStorage.getItem('selectedArea') || 'null') || {
                 action: {
-                    name: '',
                     service: '',
+                    name: '',
                     parameters: [{name: '', input: ''}] 
                 },
                 reactions: [
                     {
-                    name: '',
-                    service: '',
-                    parameters: [{name: '', input: ''}]
+                        service: '',
+                        name: '',
+                        parameters: [{name: '', input: ''}]
                     }
                 ]
             };
@@ -163,18 +163,16 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                 <div className='action-parameters'>
                     <div className='action-parameters-name'>{getBetterNames(mode.infos.name)}</div>
                     {mode.infos.parameters.map((item, index) => (
-                        <>
-                        <input
-                            type="searchInput"
-                            className={'input'}
-                            placeholder={item.input} 
-                            required
-                            key={index}
-                            style={{marginTop: '2%'}}
-                            onChange={(e) => handleInputChange(index, e.target.value, item.name)}
-                        />
-
-                        </>
+                        <div key={index}>
+                            <input
+                                type="searchInput"
+                                className={'input'}
+                                placeholder={item.input} 
+                                required
+                                style={{marginTop: '2%'}}
+                                onChange={(e) => handleInputChange(index, e.target.value, item.name)}
+                            />
+                        </div>
                     ))}
                     <button className='add-action-btn' style={{marginLeft: 0, marginTop: '10%', border: '1px solid'}} onClick={() => { setCurrentPage("create") }}>
                         Add
