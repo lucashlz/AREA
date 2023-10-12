@@ -11,7 +11,7 @@ import CreatePage from './components/pages/Private/Create/CreatePage';
 import Account from './components/pages/Private/Account'
 import { useLocation } from 'react-router-dom';
 import Register from './components/Register';
-import Applets from './components/pages/Applets';
+import Applets from './components/pages/Private/Applets';
 import Confirm from './components/pages/Confirm';
 import 'react-notifications-component/dist/theme.css';
 import { ReactNotifications } from 'react-notifications-component';

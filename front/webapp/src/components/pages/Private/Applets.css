@@ -103,16 +103,10 @@
   margin-bottom: 0%;
 }
 
-.applet-logo-holder {
-  width: 15%;
-  overflow: hidden;
-  border-radius: 100%;
-  padding: 3%;
-}
-
 .applet-logo {
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: 75%;
+  margin-left: 3%;
 }
 
 .applet-description {

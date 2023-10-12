@@ -21,14 +21,16 @@ const IftttSquare: React.FC<IftttProps> = ({ ifttt_name, is_current, setCurrentP
   var action = ''
   var services
 
-  if (ifttt_name == "If This" && selectedArea.action && selectedArea.action.name.length > 0) {
-    serviceName = selectedArea.action.service
-    action = selectedArea.action.name
+  console.log("selectedArea: ", selectedArea)
+
+  if (ifttt_name == "If This" && selectedArea.trigger && selectedArea.trigger.name.length > 0) {
+    serviceName = selectedArea.trigger.service
+    action = selectedArea.trigger.name
     ifttt_name = "If"
   }
-  if (ifttt_name == "Then That" && selectedArea.reactions && selectedArea.reactions[0].name.length > 0) {
-    serviceName = selectedArea.reactions[0].service
-    action = selectedArea.reactions[0].name
+  if (ifttt_name == "Then That" && selectedArea.actions && selectedArea.actions[0].name.length > 0) {
+    serviceName = selectedArea.actions[0].service
+    action = selectedArea.actions[0].name
     ifttt_name = "Then"
   }
 
@@ -104,12 +106,12 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
 
   useEffect(() => {
     let selectedArea: postService = JSON.parse(localStorage.getItem('selectedArea') || 'null') || {
-      action: {
+      trigger: {
         name: '',
         service: '',
         parameters: [{name: '', input: ''}] 
       },
-      reactions: [
+      actions: [
         {
           name: '',
           service: '',
@@ -119,7 +121,7 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
     };
 
     setSelectedArea(selectedArea)
-    if (selectedArea.action && selectedArea.action.name.length > 0)
+    if (selectedArea.trigger && selectedArea.trigger.name.length > 0)
       setCurrent('that')
 
     const fetchAboutJSON = async () => {
@@ -147,7 +149,7 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
         <IftttSquare JSONservices={services} ifttt_name='If This' selectedArea={selectedArea} is_current={current == 'this' ? true : false} setCurrentPage={setCurrentPage}></IftttSquare>
         <div className='ifttt-link-line'></div>
         <IftttSquare JSONservices={services} ifttt_name='Then That' selectedArea={selectedArea} is_current={current == 'that' ? true : false} setCurrentPage={setCurrentPage}></IftttSquare>
-        {selectedArea.reactions && selectedArea.reactions[0].name.length > 0 ?
+        {selectedArea.actions && selectedArea.actions[0].name.length > 0 ?
           <div className={"ifttt-add-btn-link"} style={{ justifyContent: 'space-around' }}>
             <button className='add-action-btn' style={{ marginLeft: 0, marginTop: '10%', border: '1px solid' }} onClick={() => { setCreation() }}>
               Add
