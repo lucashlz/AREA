@@ -41,7 +41,7 @@ function Navbar() {
   }, []);
 
   const location = useLocation();
-  const isInverted = location.pathname === '/';
+  const isInverted = location.pathname === '/' || location.pathname.startsWith('/auth/confirm/');
   const logoSrc = isInverted ? `${process.env.PUBLIC_URL}/logo_white.png` : `${process.env.PUBLIC_URL}/logo_black.png`;
 
 

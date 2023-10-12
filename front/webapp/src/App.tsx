@@ -12,6 +12,7 @@ import Account from './components/pages/Private/Account'
 import { useLocation } from 'react-router-dom';
 import Register from './components/Register';
 import Applets from './components/pages/Applets';
+import Confirm from './components/pages/Confirm';
 import 'react-notifications-component/dist/theme.css';
 import { ReactNotifications } from 'react-notifications-component';
 
@@ -21,7 +22,7 @@ function App() {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === '/') {
+    if (location.pathname === '/' || location.pathname.startsWith('/auth/confirm')) {
       document.body.style.backgroundColor = '#1D1D1D';
     } else {
       document.body.style.backgroundColor = '#fff';
@@ -40,6 +41,7 @@ function App() {
         <Route path="/account" element={<Account />} />
         <Route path="/register" element={<Register/>}/>
         <Route path="/applets" element={<Applets />} />
+        <Route path="/auth/confirm/:confirmationCode" element={<Confirm />} />
       </Routes>
     </>
   );

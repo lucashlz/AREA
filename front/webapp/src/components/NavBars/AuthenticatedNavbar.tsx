@@ -6,6 +6,7 @@ import { useContext } from 'react';
 import { UserContext } from '../../context/userContext';
 import './AuthenticatedNavbar.css';
 
+
 function Navbar() {
   const [click, setClick] = useState(false);
   const [button, setButton] = useState(true);
