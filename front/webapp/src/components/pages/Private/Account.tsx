@@ -4,8 +4,11 @@ import { UserContext } from '../../../context/userContext';
 import { Navigate } from 'react-router-dom';
 import { Button } from '../../Button';
 import './Account.css';
+import { SERVICE_COLORS } from '../../../servicesColors'
+
 
 const AccountPage: React.FC = () => {
+  const [connectedServices, setConnectedServices] = useState<string[]>([]);
   const userContext = useContext(UserContext);
   const [error, setError] = useState('');
   const [message, setMessage] = useState<string | null>(null);
@@ -21,18 +24,17 @@ const AccountPage: React.FC = () => {
     if (!formData.username && !formData.email && userContext?.getUserInfo) {
       userContext.getUserInfo().then(data => {
         if (data) {
-          console.log(data);
           setFormData({
             username: data.username,
             email: data.email,
             oldPassword: '',
             newPassword: '',
           });
+          setConnectedServices(data.connectServices);
         }
       });
     }
   }, [userContext, formData]);
-
 
   if (!userContext) {
     throw new Error("AccountPage must be used within a UserContextProvider");
@@ -123,6 +125,33 @@ const AccountPage: React.FC = () => {
 
         <Button buttonSize='btn--large' buttonStyle='btn--primary-inverted' type='button' onClick={handleSubmit} >Update Infos</Button><span></span>
       </form>
+      <div className="connected-services-container">
+        <div className="connected-services-title">Connected services</div>
+        <div className="services-list">
+    {connectedServices.length === 0 ? (
+        <div className="service-item" style={{ backgroundColor: '#f2f2f2' }}>
+            <div className="service-content">
+                No services connected
+            </div>
+        </div>
+    ) : (
+        connectedServices.map(service => (
+            <div
+                key={service}
+                className="service-item"
+                style={{ backgroundColor: SERVICE_COLORS[service] || 'defaultColor' }}
+            >
+                <div className="service-content">
+                    <img src={`/servicesLogo/${service}.png`} alt={`${service} logo`} />
+                    {service.charAt(0).toUpperCase() + service.slice(1)}
+                </div>
+            </div>
+        ))
+    )}
+</div>
+
+      </div>
+
     </div>
   );
 };

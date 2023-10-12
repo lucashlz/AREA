@@ -6,7 +6,7 @@ export interface IUserContext {
   signIn: (email: string, password: string) => Promise<any>;
   createUser: (username: string, email: string, password: string, setError: (e: any) => void) => Promise<any>;
   signOut: () => void;
-  getUserInfo: () => Promise<{username: string, email: string, password: string}>;
+  getUserInfo: () => Promise<{username: string, email: string, connectServices: string[]}>;
   updateInfo: (email: string, username: string, oldPassword: string, newPassword: string) => Promise<any>;
   token: string | null;
   getGoogleToken: () => Promise<any>;
