@@ -5,7 +5,7 @@ const { checkParameters } = require("../utils/areaUtils");
 
 exports.listAllAreas = async (req, res) => {
     try {
-        const areas = await Area.find({ userId: req.user.id }).select('-userId');
+        const areas = await Area.find({ userId: req.user.id }).select("-userId");
         res.status(200).json(areas);
     } catch (error) {
         res.status(500).json({ message: "Error fetching areas", error });
@@ -32,13 +32,11 @@ exports.createArea = async (req, res) => {
         }
         const newArea = new Area({
             userId: user._id,
-            triggers: [
-                {
-                    service: trigger.service,
-                    name: trigger.name,
-                    parameters: trigger.parameters,
-                },
-            ],
+            trigger: {
+                service: trigger.service,
+                name: trigger.name,
+                parameters: trigger.parameters,
+            },
             actions: actions.map((a) => ({
                 service: a.service,
                 name: a.name,
@@ -53,7 +51,6 @@ exports.createArea = async (req, res) => {
         res.status(500).json({ message: "Error creating the area", error });
     }
 };
-
 
 exports.getAreaById = async (req, res) => {
     const id = req.params.id;
@@ -112,9 +109,10 @@ exports.updateAreaById = async (req, res) => {
             id,
             {
                 userId: user._id,
-                actions: [
-                    { ...action, parameters: mapParameters(actionParameters, action.parameters) },
-                ],
+                trigger: {
+                    ...action,
+                    parameters: mapParameters(actionParameters, action.parameters),
+                },
                 reactions: [
                     {
                         ...reaction,

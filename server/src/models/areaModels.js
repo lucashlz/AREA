@@ -95,11 +95,10 @@ const ActionSchema = new Schema({
  *       properties:
  *         userId:
  *           type: string
+ *           format: uuid
  *           description: The user's unique identifier.
- *         triggers:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Trigger'
+ *         trigger:
+ *           $ref: '#/components/schemas/Trigger'
  *         actions:
  *           type: array
  *           items:
@@ -110,7 +109,7 @@ const AreaSchema = new Schema({
         type: Schema.Types.ObjectId,
         required: true,
     },
-    triggers: [TriggerSchema],
+    trigger: TriggerSchema,
     actions: [ActionSchema],
 });
 
