@@ -4,6 +4,7 @@ import './Services.css';
 import axios from 'axios';
 import { ServiceOAuthConstants } from '../../../../interfaces/serviceConnect';
 import { getServiceAuthorizeByName } from '../../../../interfaces/serviceConnect';
+import { postService } from '../../../../interfaces/postArea';
 
 interface ServicesProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
@@ -14,7 +15,7 @@ interface ServiceProps<T> {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) => {
+const Service: React.FC<ServiceProps<any>> = ({serviceInfos, setCurrentPage }) => {
     const [serviceOAuthConstants, setServiceOAuthConstants] = useState<ServiceOAuthConstants | null>(null);
     let initialName = serviceInfos.name;
     const upperName = initialName[0].toUpperCase() + initialName.slice(1);
@@ -27,7 +28,7 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
         };
 
         try {
-            const response = await axios.get(`http://localhost:8080/connect/get${upperName}OAuthConstants`, { headers: headers});
+            const response = await axios.get(`http://localhost:8080/connect/get${upperName}OAuthConstants`, { headers: headers });
             if (response.status === 200) {
                 setServiceOAuthConstants(response.data);
             }
@@ -52,7 +53,7 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
 
                 const popupWidth = 800;
                 const popupHeight = 600;
-    
+
                 const popup = window.open(serviceURL.href, '_blank', `width=${popupWidth},height=${popupHeight},menubar=no,toolbar=no,location=no`);
                 if (popup) {
                     popup.focus();
@@ -64,6 +65,28 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
         }
     }, [serviceOAuthConstants])
 
+    let currArea: postService = JSON.parse(localStorage.getItem('selectedArea') || 'null') || {
+        trigger: {
+            name: '',
+            service: '',
+            parameters: [{ name: '', input: '' }]
+        },
+        actions: [
+            {
+                name: '',
+                service: '',
+                parameters: [{ name: '', input: '' }]
+            }
+        ]
+    };
+
+    if (currArea.trigger && currArea.trigger.name.length > 0 && serviceInfos.actions.length == 0) {
+        return (<></>)
+    }
+    if (currArea.trigger.name == '' && serviceInfos.triggers.length == 0) {
+        return (<></>)
+    }
+
     const selectArea = async () => {
         let serviceAuthorize = getServiceAuthorizeByName(initialName)
 
@@ -74,7 +97,7 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
     }
 
     return (
-        <button className='selection-button' onClick={() => {selectArea()}}>
+        <button className='selection-button' onClick={() => { selectArea() }}>
             <div className="service-content-holder" style={{ backgroundColor: serviceInfos.color }}>
                 <div className="service-logo-holder">
                     <img alt="logo" className="service-logo" src={image}></img>
@@ -111,7 +134,7 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
     return (
         <div>
             <div className='cancel-bar'>
-                <button className='back-button' onClick={() => {setCurrentPage("create")}}>
+                <button className='back-button' onClick={() => { setCurrentPage("create") }}>
                     Cancel
                 </button>
                 <div className='service-txt'>Choose a service</div>

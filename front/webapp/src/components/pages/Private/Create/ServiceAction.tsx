@@ -41,17 +41,18 @@ const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedA
     let whatami = ''
 
     const handleSelectionClick = () => {
-        if (selectedArea.action && selectedArea.action.name.length > 0) {
-            selectedArea.reactions[0].service = currentPage
-            selectedArea.reactions[0].name = actionInfos.name
-            whatami = 'reaction'
-        } else if (selectedArea.action) {
-            selectedArea.action.name = actionInfos.name;
-            selectedArea.action.service = currentPage;
+        if (selectedArea.trigger && selectedArea.trigger.name.length > 0) {
+            selectedArea.actions[0].service = currentPage
+            selectedArea.actions[0].name = actionInfos.name
+            whatami = 'actions'
+        } else if (selectedArea.trigger) {
+            selectedArea.trigger.name = actionInfos.name;
+            selectedArea.trigger.service = currentPage;
             whatami = 'trigger'
         }
-    
-        localStorage.setItem('selectedArea', JSON.stringify(selectedArea))
+
+        if (actionInfos.parameters.length == 0)
+            localStorage.setItem('selectedArea', JSON.stringify(selectedArea))
 
         if (selectedArea) {
             if (actionInfos.parameters.length != 0) {
@@ -85,23 +86,22 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
 
     const handleInputChange = (index: number, value: string, name: string) => {
         if (mode?.type == "trigger" && selectedArea) {
-          selectedArea.action.parameters[index] = {name: name, input: value };
+          selectedArea.trigger.parameters[index] = {name: name, input: value };
         }
-        if (mode?.type == "reaction" && selectedArea) {
-          selectedArea.reactions[0].parameters[index] = {name: name, input: value};
+        if (mode?.type == "actions" && selectedArea) {
+          selectedArea.actions[0].parameters[index] = {name: name, input: value};
         }
-        localStorage.setItem('selectedArea', JSON.stringify(selectedArea))
     }
 
     useEffect(() => {
         const fetchData = async () => {
             let currArea: postService = JSON.parse(localStorage.getItem('selectedArea') || 'null') || {
-                action: {
+                trigger: {
                     service: '',
                     name: '',
-                    parameters: [{name: '', input: ''}] 
+                    parameters: [{name: '', input: ''}]
                 },
-                reactions: [
+                actions: [
                     {
                         service: '',
                         name: '',
@@ -131,16 +131,31 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
         return null
 
     let uppername = services.name[0]?.toUpperCase() + services.name.slice(1)
+    console.log("services: ", services)
 
     return (
         <div className="container">
             <div>
                 <div className='cancel-bar' style={{ backgroundColor: services.color }}>
-                    <button className='back-button' style={{ color: 'white' }} onClick={() => { setCurrentPage("services") }}>
+                    <button className='back-button' style={{ color: 'white' }} onClick={() => { if (mode && mode.infos.parameters.length > 0) {
+                                                                                                    if (mode.type == "trigger" && selectedArea) {
+                                                                                                        selectedArea.trigger.name = '';
+                                                                                                        selectedArea.trigger.service = '';
+                                                                                                        selectedArea.trigger.parameters = [{name: '', input: ''}];
+                                                                                                    }
+                                                                                                    if (mode.type == "actions" && selectedArea) {
+                                                                                                        selectedArea.actions[0].name = '';
+                                                                                                        selectedArea.actions[0].service = '';
+                                                                                                        selectedArea.actions[0].parameters = [{name: '', input: ''}];
+                                                                                                    }
+                                                                                                    setMode(undefined);
+                                                                                                } else {
+                                                                                                    setCurrentPage("services")
+                                                                                                } }}>
                         Back
                     </button>
                     <div className='service-txt' style={{ color: 'white' }}>
-                        <div>{selectedArea?.action?.name?.length == 0 ? "Choose a trigger" : "Choose a reaction"}</div>
+                        <div>{selectedArea?.trigger?.name?.length == 0 ? "Choose a trigger" : mode ? "Choose parameters" : "Choose an action"}</div>
                     </div>
                 </div>
                 <div className='thin-line' style={{ backgroundColor: 'white', opacity: 0.5 }}></div>
@@ -174,13 +189,13 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                             />
                         </div>
                     ))}
-                    <button className='add-action-btn' style={{marginLeft: 0, marginTop: '10%', border: '1px solid'}} onClick={() => { setCurrentPage("create") }}>
+                    <button className='add-action-btn' style={{marginLeft: 0, marginTop: '10%', border: '1px solid'}} onClick={() => { localStorage.setItem('selectedArea', JSON.stringify(selectedArea)); setCurrentPage("create") }}>
                         Add
                     </button>
                 </div>
             ) :
                 <div className="services-actions-holder">
-                    {selectedArea ? (selectedArea?.action?.name?.length > 0 ? (
+                    {selectedArea && (selectedArea?.trigger?.name?.length > 0 ? (
                         services.actions.map((item, index) => (
                             <ServiceAction setMode={setMode} key={index} selectedArea={selectedArea} color={services.color} actionInfos={item} setCurrentPage={setCurrentPage} currentPage={currentPage}/>
                         ))
@@ -188,7 +203,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                         services.triggers.map((item, index) => (
                             <ServiceAction setMode={setMode} key={index} selectedArea={selectedArea} color={services.color} actionInfos={item} setCurrentPage={setCurrentPage} currentPage={currentPage}/>
                         ))
-                    )) : ''}
+                    ))}
                 </div>
             }
         </div>
