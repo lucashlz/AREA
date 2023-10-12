@@ -11,6 +11,7 @@ export interface IUserContext {
   token: string | null;
   getGoogleToken: () => Promise<any>;
   setToken: React.Dispatch<React.SetStateAction<string | null>>;
+  deleteUser: () => Promise<any>;
 }
 
 export const UserContext = createContext<IUserContext | undefined>(undefined);
@@ -35,6 +36,27 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     }
   }
 
+  const deleteUser = async () => {
+    try {
+      const response = await axios.delete('http://localhost:8080/users/delete', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      console.log('Received response from API:', response.data);
+      signOut();
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Server responded with:", error.response.data);
+        return error.response.data;
+      } else {
+        throw error;
+      }
+    }
+  }
 
   const signIn = async (email: string, password: string): Promise<any> => {
     console.log(`Attempting to sign in user with email: ${email}`);
@@ -158,7 +180,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   }, [token]);
 
   return (
-    <UserContext.Provider value={{signUp, signIn, createUser ,signOut, getGoogleToken ,token, getUserInfo, updateInfo, setToken}}>
+    <UserContext.Provider value={{signUp, signIn, createUser, deleteUser, signOut, getGoogleToken, token, getUserInfo, updateInfo, setToken}}>
       {children}
     </UserContext.Provider>
   )

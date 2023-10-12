@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
+import { FaTrash } from 'react-icons/fa';
 import { UserContext } from '../../../context/userContext';
 import { Navigate } from 'react-router-dom';
 import { Button } from '../../Button';
@@ -37,7 +38,7 @@ const AccountPage: React.FC = () => {
     throw new Error("AccountPage must be used within a UserContextProvider");
   }
 
-  const { token, signOut, updateInfo } = userContext;
+  const { token, signOut, updateInfo, deleteUser } = userContext;
 
   if (!token) {
     return <Navigate to="/" />;
@@ -58,13 +59,20 @@ const AccountPage: React.FC = () => {
     setStatusCode(response.status);
   };
 
+  const handleDeleteAccount = async () => {
+    if (window.confirm("Are you sure you want to delete your account?")) {
+      await userContext.deleteUser();
+      signOut();
+    }
+  };
 
   return (
     <div className="account-container">
       <form>
       <div className="account-main-text">Account settings</div>
-      <Button color="red" type="button" buttonStyle='btn--outline' buttonSize="btn--medium" onClick={signOut}>
-        Logout
+      <Button buttonSize='btn--medium' buttonStyle='btn--primary-inverted' type='button' onClick={handleSubmit} >Logout</Button>
+      <Button color="red" type="button" buttonStyle='btn--outline' buttonSize="btn--medium" onClick={deleteUser}>
+        <FaTrash className="bin-icon" />&nbsp;&nbsp;&nbsp;Delete Account
       </Button>
 
         <div className="account-input-titles">

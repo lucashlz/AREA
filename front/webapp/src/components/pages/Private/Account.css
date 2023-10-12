@@ -16,16 +16,13 @@
     margin-top: 10vh;
 }
 
+
 .account-input-titles {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 20px;
     width: 70vw;
-}
-
-.logout-button {
-    margin-bottom: 50px;
 }
 
 form {

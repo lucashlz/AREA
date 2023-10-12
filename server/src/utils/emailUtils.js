@@ -14,7 +14,7 @@ const sendConfirmationMail = async (email, confirmationToken) => {
     from: `"AREA" <${process.env.EMAIL}>`,
     to: email,
     subject: "[AREA] Please confirm your email",
-    text: `Click this link to confirm your email: http://localhost:8081/auth/confirm/${confirmationToken}`,
+    text: `Click this link to confirm your email: http://localhost:8080/auth/confirm/${confirmationToken}`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -31,7 +31,7 @@ const sendEmailChangeConfirmationMail = async (email, emailChangeToken) => {
     from: `"AREA" <${process.env.EMAIL}>`,
     to: email,
     subject: "[AREA] Please confirm your email change",
-    text: `Click this link to confirm your email change: http://localhost:8081/auth/confirm-email-change/${emailChangeToken}`,
+    text: `Click this link to confirm your email change: http://localhost:8080/auth/confirm-email-change/${emailChangeToken}`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -50,7 +50,7 @@ const sendPasswordResetMail = async (email, resetToken) => {
     subject: "[AREA] Password Reset Request",
     text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
     Please click on the following link, or paste this into your browser to complete the process within one hour of receiving it:\n\n
-    http://localhost:8081/reset/password/${resetToken}\n\n
+    http://localhost:8080/reset/password/${resetToken}\n\n
     If you did not request this, please ignore this email and your password will remain unchanged.\n`,
   };
 
