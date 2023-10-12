@@ -4,8 +4,8 @@ export interface TriggerReactionParameters {
 }
 
 export interface TriggerReaction {
-    name: string;
     service: string;
+    name: string;
     parameters: TriggerReactionParameters[];
 }
 

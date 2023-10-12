@@ -20,19 +20,9 @@ const Applet: React.FC<AppletProps> = ({ logo_paths, applet_desc, onoff }) => {
 
   const { setToken, token} = useContext(UserContext) as IUserContext;
 
-  /* useEffect(() => {
-    const getToken = async () => {
-    if (!token) {
-      await getGoogleToken();
-    }
-  }
-  getToken();
-  }, []) */
-
   useEffect(() => {
     const checkToken = async() => {
     if (!token) {
-      // Parse the query parameters from the URL
       const queryParams = new URLSearchParams(window.location.search);
       const tempToken = queryParams.get('token');
       if (tempToken) {
@@ -77,7 +67,6 @@ export default function Applets() {
       const response = await axios.get('http://localhost:8080/areas', { headers: { Authorization: `Bearer ${token}` } });
       if (response.status == 200) {
         setAreas(response.data)
-        console.log("areas: ", areas)
       } else {
         console.log("cannot get areas, resonse: ", response.status)
       }

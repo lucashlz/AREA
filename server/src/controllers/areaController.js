@@ -5,7 +5,7 @@ const { checkParameters } = require("../utils/areaUtils");
 
 exports.listAllAreas = async (req, res) => {
     try {
-        const areas = await Area.find();
+        const areas = await Area.find({ userId: req.user.id });
         res.status(200).json(areas);
     } catch (error) {
         res.status(500).json({ message: "Error fetching areas", error });

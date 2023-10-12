@@ -110,7 +110,7 @@ const SPOTIFY_ACTIONS = [
         "add_track_to_playlist_by_id",
         "Adds a track to a playlist using TrackID",
         [
-            { name: "playlist_name", input: "Name of the target playlist" },
+            { name: "playlist_id", input: "ID of the target playlist" },
             { name: "track_id", input: "Spotify Track ID to add to the playlist" },
         ],
         addToPlaylistById
