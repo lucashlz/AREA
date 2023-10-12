@@ -4,21 +4,32 @@ const areaController = require("../controllers/areaController");
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     AreaWithoutUserId:
+ *       type: object
+ *       properties:
+ *         trigger:
+ *           $ref: '#/components/schemas/Trigger'
+ *         actions:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Action'
  * /areas:
  *   get:
- *     summary: List all available areas
+ *     summary: Retrieve all areas associated with the authenticated user, excluding the userId field
  *     tags: [areas]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of all areas returned successfully
+ *         description: List of all areas returned successfully for the authenticated user
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Area'
+ *                 $ref: '#/components/schemas/AreaWithoutUserId'
  *       500:
  *         description: Server error
  */
@@ -39,15 +50,15 @@ router.get("/", areaController.listAllAreas);
  *           schema:
  *             type: object
  *             properties:
- *               action:
+ *               trigger:
  *                 type: object
  *                 properties:
  *                   service:
  *                     type: string
- *                     description: The name of the service for the action (e.g., "github", "spotify")
+ *                     description: The name of the service for the trigger (e.g., "github", "spotify")
  *                   name:
  *                     type: string
- *                     description: The name of the selected action within the action service
+ *                     description: The name of the selected trigger within the trigger service
  *                   parameters:
  *                     type: array
  *                     items:
@@ -57,18 +68,18 @@ router.get("/", areaController.listAllAreas);
  *                           type: string
  *                         input:
  *                           type: string
- *                     description: The parameters required for the selected action
- *               reactions:
+ *                     description: The parameters required for the selected trigger
+ *               actions:
  *                 type: array
  *                 items:
  *                   type: object
  *                   properties:
  *                     service:
  *                       type: string
- *                       description: The name of the service for the reaction (e.g., "github", "spotify")
+ *                       description: The name of the service for the action (e.g., "github", "spotify")
  *                     name:
  *                       type: string
- *                       description: The name of the selected reaction within the reaction service
+ *                       description: The name of the selected action within the action service
  *                     parameters:
  *                       type: array
  *                       items:
@@ -78,12 +89,12 @@ router.get("/", areaController.listAllAreas);
  *                             type: string
  *                           input:
  *                             type: string
- *                       description: The parameters required for the selected reaction
+ *                       description: The parameters required for the selected action
  *     responses:
  *       200:
  *         description: Area created successfully
  *       400:
- *         description: Bad Request (e.g., Specified service/action/reaction does not exist, Invalid parameters)
+ *         description: Bad Request (e.g., Specified service/action does not exist, Invalid parameters)
  *       404:
  *         description: User not found
  *       409:
