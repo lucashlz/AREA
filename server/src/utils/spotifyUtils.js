@@ -8,7 +8,13 @@ const spotifyApi = new SpotifyWebApi({
 });
 
 async function checkPlaylistExists(user, playlistName) {
-    spotifyApi.setAccessToken(user.spotifyToken);
+    const spotifyService = user.connectServices.get("spotify");
+    if (!spotifyService) {
+        console.error("Spotify service not available for user:", user._id);
+        return false;
+    }
+    const spotifyToken = spotifyService.access_token;
+    spotifyApi.setAccessToken(spotifyToken);
     const playlists = await spotifyApi.getUserPlaylists();
     const exists = !!playlists.body.items.find((playlist) => playlist.name === playlistName);
     console.log(`Playlist name ${playlistName} is ${exists ? "valid" : "invalid"}.`);
@@ -34,7 +40,13 @@ async function checkPlaylistIdValid(user, playlistId) {
 }
 
 async function checkTrackIdValid(user, trackId) {
-    spotifyApi.setAccessToken(user.spotifyToken);
+    const spotifyService = user.connectServices.get("spotify");
+    if (!spotifyService) {
+        console.error("Spotify service not available for user:", user._id);
+        return false;
+    }
+    const spotifyToken = spotifyService.access_token;
+    spotifyApi.setAccessToken(spotifyToken);
     try {
         await spotifyApi.getTrack(trackId);
         console.log(`Track ID ${trackId} is valid.`);
