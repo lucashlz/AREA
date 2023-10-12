@@ -5,8 +5,22 @@ const { refreshTokensForAllUsers } = require("./src/utils/tokenUtils");
 const setupRoutes = require("./src/routes.js");
 const connectDB = require("./src/config/dbConfig");
 require("dotenv").config();
+function logRequestInfo(req, res, next) {
+    console.log("----- Incoming Request -----");
+    console.log("Time:", new Date().toISOString());
+    console.log("Method:", req.method);
+    console.log("URL:", req.originalUrl);
+    console.log("Headers:", JSON.stringify(req.headers, null, 2));
+
+    if (req.body && Object.keys(req.body).length) {
+        console.log("Body:", JSON.stringify(req.body, null, 2));
+    }
+
+    next();
+}
 
 const app = express();
+app.use(logRequestInfo);
 setupAppMiddleware(app);
 connectDB();
 setupRoutes(app);
