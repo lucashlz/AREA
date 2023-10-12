@@ -11,6 +11,7 @@ export interface IUserContext {
   token: string | null;
   getGoogleToken: () => Promise<any>;
   setToken: React.Dispatch<React.SetStateAction<string | null>>;
+  confirmAccount: (token: string) => Promise<any>;
 }
 
 export const UserContext = createContext<IUserContext | undefined>(undefined);
@@ -32,6 +33,24 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       }
     } catch (error) {
       console.error("Error signing up:", error);
+    }
+  }
+
+  const confirmAccount = async (token: string) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/auth/confirm/${token}`);
+
+      console.log('Received response from API:', response.data);
+      return { status: response.status, message: response.data.message };
+    } catch (error) {
+      console.error("Error updating infos:", error);
+
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Server responded with:", error.response.data);
+        return { status: error.response.status, message: error.response.data.message };
+      } else {
+        throw error;
+      }
     }
   }
 
@@ -158,7 +177,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   }, [token]);
 
   return (
-    <UserContext.Provider value={{signUp, signIn, createUser ,signOut, getGoogleToken ,token, getUserInfo, updateInfo, setToken}}>
+    <UserContext.Provider value={{signUp, signIn, createUser ,signOut, getGoogleToken ,token, getUserInfo, updateInfo, setToken, confirmAccount}}>
       {children}
     </UserContext.Provider>
   )
