@@ -3,7 +3,6 @@ const { checkSpotifyParameters } = require("./spotifyUtils");
 const serviceCheckFunctions = {
     spotify: checkSpotifyParameters,
 };
-
 const checkParameters = async (userId, trigger, actions) => {
     if (Array.isArray(trigger.parameters)) {
         for (const param of trigger.parameters) {
@@ -35,6 +34,7 @@ const checkParameters = async (userId, trigger, actions) => {
             console.error("Action parameters is not an array for action:", action.name);
             return false;
         }
+
         if (serviceCheckFunctions[action.service]) {
             try {
                 await serviceCheckFunctions[action.service](userId, action.parameters);

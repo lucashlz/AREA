@@ -4,7 +4,7 @@ import { UserContext } from '../../../context/userContext';
 import { Navigate } from 'react-router-dom';
 import { Button } from '../../Button';
 import './Account.css';
-import { SERVICE_COLORS } from '../../../servicesColors'
+import { SERVICE_COLORS } from '../../../../public/servicesColors'
 
 
 const AccountPage: React.FC = () => {

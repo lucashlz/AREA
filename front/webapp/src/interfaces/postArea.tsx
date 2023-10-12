@@ -10,6 +10,6 @@ export interface TriggerReaction {
 }
 
 export interface postService {
-    action: TriggerReaction;
-    reactions: TriggerReaction[];
+    trigger: TriggerReaction;
+    actions: TriggerReaction[];
 }
