@@ -13,7 +13,7 @@ exports.getGoogleOAuthConstants = async (req, res) => {
     return res.json({
         clientId: process.env.GOOGLE_CLIENT_ID,
         redirectUri: "http://localhost:8080/connect/google/callback",
-        scope: [
+        scopes: [
             "profile",
             "email",
             "https://www.googleapis.com/auth/youtube",
@@ -63,7 +63,7 @@ exports.getGithubOAuthConstants = async (req, res) => {
     return res.json({
         clientId: process.env.GITHUB_CLIENT_ID,
         redirectUri: "http://localhost:8080/connect/github/callback",
-        scope: ["user:email"],
+        scopes: ["user:email"],
         oAuthSessionId: oAuthSessionId,
     });
 };
@@ -156,7 +156,7 @@ exports.getTwitchOAuthConstants = async (req, res) => {
     return res.json({
         clientId: process.env.TWITCH_CLIENT_ID,
         redirectUri: "http://localhost:8080/connect/twitch/callback",
-        scope: ["user_read"],
+        scopes: ["user_read"],
         oAuthSessionId: oAuthSessionId,
     });
 };
