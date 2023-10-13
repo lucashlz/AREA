@@ -6,6 +6,7 @@ import { postService } from "../../../../interfaces/postArea";
 import { Navigate } from 'react-router-dom';
 import { TriggerActions } from '../../../../interfaces/aboutDotJson';
 import { getLocalSelectedArea } from '../../../../interfaces/postArea';
+import Input from '../../../Input';
 
 interface ServiceActionsProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>
@@ -82,6 +83,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
     const [services, setServices] = useState<aboutService | undefined>();
     const [selectedArea, setSelectedArea] = useState<postService>()
     const [mode, setMode] = useState<actionReactionInfos | undefined>()
+    let parameters: string[] = [];
 
     let token = localStorage.getItem('userToken');
 
@@ -172,15 +174,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                     <form onSubmit={(e) => { e.preventDefault(); submitParams(); }}>
                         <div className='action-parameters-name'>{getBetterNames(mode.infos.name)}</div>
                         {mode.infos.parameters.map((item, index) => (
-                            <div key={index} className='input-wrapper'>
-                                <input
-                                    type="searchInput"
-                                    className='input'
-                                    placeholder={item.input}
-                                    required
-                                    onChange={(e) => handleInputChange(index, e.target.value, item.name)}
-                                />
-                            </div>
+                            <Input onChange={(e) => handleInputChange(index, e.target.value, item.name)} placeholder={item.input} type='searchInput' value={parameters[index]}/>
                         ))}
                         <button type="submit" className='add-action-btn' style={{ marginLeft: 0, marginTop: '7%', height: '3.5rem', border: '1px solid' }}>
                             Add
