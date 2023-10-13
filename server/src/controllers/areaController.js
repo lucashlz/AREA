@@ -12,6 +12,22 @@ exports.listAllAreas = async (req, res) => {
     }
 };
 
+exports.switchAreaActivationStatus = async (req, res) => {
+    try {
+        const area = await Area.findById(req.params.id);
+
+        if (!area) {
+            return res.status(404).json({ message: "Area not found." });
+        }
+        area.isActive = !area.isActive;
+        await area.save();
+        res.status(200).json({ message: `Area ${area.isActive ? "activated" : "deactivated"} successfully`, area });
+    } catch (error) {
+        console.error("Error toggling area activation status:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
 exports.createArea = async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
@@ -42,6 +58,7 @@ exports.createArea = async (req, res) => {
                 name: a.name,
                 parameters: a.parameters,
             })),
+            isActive: true,
         });
 
         const savedArea = await newArea.save();
