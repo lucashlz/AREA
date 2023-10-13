@@ -1,9 +1,9 @@
 const User = require("../models/userModels");
 
-const findUserByExternalId = async (service, serviceId) => {
+const findUserByExternalId = async (service, serviceEmail) => {
     return User.findOne({
         "externalAuth.service": service,
-        "externalAuth.serviceId": serviceId,
+        "email": serviceEmail,
     });
 };
 
@@ -21,6 +21,7 @@ const createNewExternalUser = async (service, email, serviceId) => {
     const newUser = new User({
         username: usernameFromEmail,
         email: email,
+        confirmed: true,
         externalAuth: [
             {
                 service: service,
