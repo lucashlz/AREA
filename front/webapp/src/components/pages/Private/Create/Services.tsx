@@ -5,6 +5,9 @@ import axios from 'axios';
 import { ServiceOAuthConstants } from '../../../../interfaces/serviceConnect';
 import { getServiceAuthorizeByName } from '../../../../interfaces/serviceConnect';
 import { postService } from '../../../../interfaces/postArea';
+import Input from '../../../Input';
+import { TriggerReaction } from '../../../../interfaces/postArea';
+import { getLocalSelectedArea } from '../../../../interfaces/postArea';
 
 interface ServicesProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
@@ -15,14 +18,69 @@ interface ServiceProps<T> {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const Service: React.FC<ServiceProps<any>> = ({serviceInfos, setCurrentPage }) => {
+const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) => {
     const [serviceOAuthConstants, setServiceOAuthConstants] = useState<ServiceOAuthConstants | null>(null);
+    const [isConnected, setIsConnected] = useState(false);
+    const [selectedArea, setSelectedArea] = useState<postService>()
     let initialName = serviceInfos.name;
     const upperName = initialName[0].toUpperCase() + initialName.slice(1);
     const image = require(`../../../../../public/servicesLogo/${initialName}.png`);
+    const token = localStorage.getItem('userToken');
+
+    useEffect(() => {
+        const checkConnect = async () => {
+            const response = await axios.get('http://localhost:8080/profile', { headers: { Authorization: `Bearer ${token}` } });
+            if (response.status == 200) {
+                if (response.data.connectServices.includes(initialName)) {
+                    setIsConnected(true)
+                }
+            } else {
+                console.error("Cannot get user datas")
+            }
+        }
+        checkConnect()
+        setSelectedArea(getLocalSelectedArea())
+    }, [])
+
+    useEffect(() => {
+        if (!isConnected) {
+            let serviceAuthorize = getServiceAuthorizeByName(initialName)
+
+            if (serviceOAuthConstants) {
+                if (serviceAuthorize) {
+                    const serviceURL = new URL(serviceAuthorize);
+                    serviceURL.searchParams.append("client_id", serviceOAuthConstants.clientId);
+                    serviceURL.searchParams.append("response_type", "code");
+                    serviceURL.searchParams.append("redirect_uri", serviceOAuthConstants.redirectUri);
+                    serviceURL.searchParams.append("scope", serviceOAuthConstants.scopes.join(" "));
+                    serviceURL.searchParams.append("state", serviceOAuthConstants.oAuthSessionId);
+
+                    const popupWidth = 800;
+                    const popupHeight = 600;
+
+                    const popup = window.open(serviceURL.href, '_blank', `width=${popupWidth},height=${popupHeight},menubar=no,toolbar=no,location=no`);
+                    if (popup) {
+                        popup.focus();
+                    }
+                    setCurrentPage(initialName)
+                } else {
+                    console.error("cannot get ", initialName, ' in array')
+                }
+            }
+        }
+    }, [serviceOAuthConstants])
+
+    if (selectedArea) {
+        if (selectedArea.trigger.name.length == 0) {
+            if (serviceInfos.triggers.length == 0)
+                return <></>
+        } else {
+            if (serviceInfos.actions.length == 0)
+                return <></>
+        }
+    }
 
     const getOAuthConstants = async () => {
-        const token = localStorage.getItem('userToken');
         const headers = {
             Authorization: `Bearer ${token}`
         };
@@ -37,63 +95,16 @@ const Service: React.FC<ServiceProps<any>> = ({serviceInfos, setCurrentPage }) =
         }
     }
 
-    useEffect(() => {
-        let serviceAuthorize = getServiceAuthorizeByName(initialName)
-
-        if (serviceOAuthConstants) {
-            if (serviceAuthorize) {
-                console.log("serviceOAuthConstants: ", serviceOAuthConstants)
-                console.log("serviceAuthorize: ", serviceAuthorize)
-                const serviceURL = new URL(serviceAuthorize);
-                serviceURL.searchParams.append("client_id", serviceOAuthConstants.clientId);
-                serviceURL.searchParams.append("response_type", "code");
-                serviceURL.searchParams.append("redirect_uri", serviceOAuthConstants.redirectUri);
-                serviceURL.searchParams.append("scope", serviceOAuthConstants.scopes.join(" "));
-                serviceURL.searchParams.append("state", serviceOAuthConstants.oAuthSessionId);
-
-                const popupWidth = 800;
-                const popupHeight = 600;
-
-                const popup = window.open(serviceURL.href, '_blank', `width=${popupWidth},height=${popupHeight},menubar=no,toolbar=no,location=no`);
-                if (popup) {
-                    popup.focus();
-                }
+    const selectArea = async () => {
+        if (!isConnected) {
+            if (!getServiceAuthorizeByName(initialName) || isConnected) {
                 setCurrentPage(initialName)
             } else {
-                console.log("cannot get ", initialName, ' in array')
+                await getOAuthConstants()
             }
-        }
-    }, [serviceOAuthConstants])
-
-    let currArea: postService = JSON.parse(localStorage.getItem('selectedArea') || 'null') || {
-        trigger: {
-            name: '',
-            service: '',
-            parameters: [{ name: '', input: '' }]
-        },
-        actions: [
-            {
-                name: '',
-                service: '',
-                parameters: [{ name: '', input: '' }]
-            }
-        ]
-    };
-
-    if (currArea.trigger && currArea.trigger.name.length > 0 && serviceInfos.actions.length == 0) {
-        return (<></>)
-    }
-    if (currArea.trigger.name == '' && serviceInfos.triggers.length == 0) {
-        return (<></>)
-    }
-
-    const selectArea = async () => {
-        let serviceAuthorize = getServiceAuthorizeByName(initialName)
-
-        if (serviceAuthorize)
-            await getOAuthConstants()
-        else
+        } else {
             setCurrentPage(initialName)
+        }
     }
 
     return (
@@ -110,10 +121,9 @@ const Service: React.FC<ServiceProps<any>> = ({serviceInfos, setCurrentPage }) =
     );
 }
 
-
 const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
     const [searchInput, setSearchInput] = useState('');
-    const [services, setServices] = useState([]);
+    const [services, setServices] = useState<TriggerReaction[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -131,6 +141,9 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
         fetchData();
     }, []);
 
+    if (!services)
+        return <></>
+
     return (
         <div>
             <div className='cancel-bar'>
@@ -141,16 +154,8 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
             </div>
             <div className='thin-line'></div>
             <div className="services-container">
-                <div className="top-searchbar-holder">
-                    <img className="top-searchbar-image" src={`${process.env.PUBLIC_URL}/search.png`}></img>
-                    <input
-                        type="searchInput"
-                        className='input'
-                        placeholder='Search'
-                        value={searchInput}
-                        required
-                        onChange={(e) => setSearchInput(e.target.value)}
-                    />
+                <div className="applets-searchbar-holder" style={{marginTop: "3rem"}}>
+                    <Input onChange={(e) => setSearchInput(e.target.value)} placeholder='Search' type='searchInput' value={searchInput} icon={`${process.env.PUBLIC_URL}/search.png`} />
                 </div>
                 <div className="services-holder">
                     {services.map((service, index) => (

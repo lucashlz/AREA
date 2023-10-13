@@ -120,17 +120,40 @@
   height: 50%;
 }
 
+.delete-applet {
+  height: 100%;
+  width: auto;
+  border: none;
+  outline: none;
+  background: none;
+  overflow: hidden;
+  margin-left: 5%;
+  cursor: pointer;
+}
+
+.bottom-btn-container {
+  height: 15%;
+  width: 100%;
+  display: flex;
+  align-items: row;
+}
+
+.delete-applet-img {
+  width: 100%;
+  height: 100%;
+}
+
 .applet-status-on {
-  width: 12%;
-  height: 10%;
+  width: 15%;
+  height: 80%;
   background-color: #41CB00;
   border: none;
   outline: none;
   border-radius: 60px;
   bottom: 0;
-  margin-left: 80%;
   margin-top: 2%;
   padding: 0.8%;
+  margin-left: 65%;
 }
 
 .status {
@@ -138,16 +161,16 @@
 }
 
 .applet-status-off {
-  width: 12%;
-  height: 10%;
+  width: 15%;
+  height: 80%;
   background-color: #D2D2D2;
   border: none;
   outline: none;
   border-radius: 60px;
   bottom: 0;
-  margin-left: 80%;
   margin-top: 2%;
   padding: 0.8%;
+  margin-left: 65%;
 }
 
 .applet-status-ball {
@@ -156,6 +179,7 @@
   background-color: white;
   border-radius: 100%;
   transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
 .translated {

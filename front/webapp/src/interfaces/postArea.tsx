@@ -10,6 +10,30 @@ export interface TriggerReaction {
 }
 
 export interface postService {
+    _id: string
     trigger: TriggerReaction;
     actions: TriggerReaction[];
+}
+
+export function getLocalSelectedArea(): postService {
+    let currArea: postService = JSON.parse(localStorage.getItem('selectedArea') || 'null')
+    if (currArea)
+        return (currArea)
+    else
+        return (
+            {
+                _id: '',
+                trigger: {
+                    service: '',
+                    name: '',
+                    parameters: [{ name: '', input: '' }]
+                },
+                actions: [
+                    {
+                        service: '',
+                        name: '',
+                        parameters: [{ name: '', input: '' }]
+                    }
+                ]
+            })
 }
