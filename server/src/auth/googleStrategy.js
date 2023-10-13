@@ -15,17 +15,20 @@ passport.use(
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             callbackURL: "http://localhost:8080/auth/google/callback",
         },
-        async (accessToken, refreshToken, expires_in, profile, done) => {
-            let existingUser = await findUserByExternalId("google", profile.id);
+        async (profile, done) => {
+            if (!profile.emails || profile.emails.length === 0) {
+                return done(new Error("No email found or provided by Google OAuth2."));
+            }
 
+            const email = profile.emails[0].value;
+
+            let existingUser = await findUserByExternalId("google", email);
             if (existingUser) {
                 return done(null, existingUser);
             }
+
             try {
-                const newUser = await createNewExternalUser(
-                    "google",
-                    profile.emails[0].value,
-                );
+                const newUser = await createNewExternalUser("google", email);
                 return done(null, newUser);
             } catch (err) {
                 console.error(err);
