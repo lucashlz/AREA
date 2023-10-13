@@ -129,6 +129,53 @@ router.get("/:id", areaController.getAreaById);
 
 /**
  * @swagger
+ * /areas/{id}/switch_activation:
+ *   put:
+ *     summary: Toggle the activation status of an area by its ID
+ *     tags: [areas]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the area
+ *     responses:
+ *       200:
+ *         description: Area activation status toggled successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Area activated successfully"
+ *       404:
+ *         description: Area not found for the given ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Area not found."
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Server error"
+ */
+router.put("/:id/switch_activation", areaController.switchAreaActivationStatus);
+
+/**
+ * @swagger
  * /areas/{id}:
  *   put:
  *     summary: Update an area by its ID
