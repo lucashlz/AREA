@@ -1,4 +1,5 @@
 const User = require("../models/userModels");
+const { Area } = require('../models/areaModels');
 
 exports.deleteLoggedInUser = async (req, res) => {
     try {
@@ -20,11 +21,11 @@ exports.deleteLoggedInUser = async (req, res) => {
 exports.disconnectService = async (req, res) => {
     try {
         const serviceName = req.params.service_name;
-
         if (!serviceName) {
             return res.status(400).json({ message: "Service name not provided." });
         }
-        const user = req.user;
+        const userId = req.user.id;
+        const user = await User.findById(userId);
         if (user.connectServices.has(serviceName)) {
             user.connectServices.delete(serviceName);
             await user.save();
@@ -42,6 +43,7 @@ exports.disconnectService = async (req, res) => {
             res.status(400).json({ message: `User is not connected to ${serviceName}.` });
         }
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: "Error disconnecting the service.", error });
     }
 };

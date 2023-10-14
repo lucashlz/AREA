@@ -49,7 +49,7 @@ app.listen(PORT, () => {
         }
         printTimeRemaining();
     }
-    const EVALUATION_INTERVAL = 2000;
-    setInterval(checkAndReact, EVALUATION_INTERVAL);
+    // const EVALUATION_INTERVAL = 2000;
+    // setInterval(checkAndReact, EVALUATION_INTERVAL);
     recursiveRefresh();
 });

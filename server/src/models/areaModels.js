@@ -120,11 +120,7 @@ const AreaSchema = new Schema({
     }
 });
 
-const AreaModel = mongoose.model("Area", AreaSchema);
-
-module.exports = {
-    Area: AreaModel,
-    Trigger: mongoose.model("Trigger", TriggerSchema),
-    Action: mongoose.model("Action", ActionSchema),
-    Parameter: mongoose.model("Parameter", ParameterSchema)
-};
+module.exports.Area = mongoose.model("Area", AreaSchema);
+module.exports.Trigger = mongoose.model("Trigger", TriggerSchema);
+module.exports.Action = mongoose.model("Action", ActionSchema);
+module.exports.Parameter = mongoose.model("Parameter", ParameterSchema);
