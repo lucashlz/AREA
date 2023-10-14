@@ -103,6 +103,9 @@ const ActionSchema = new Schema({
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/Action'
+ *         isActive:
+ *           type: boolean
+ *           description: Indicates if the area is active or not.
  */
 const AreaSchema = new Schema({
     userId: {
@@ -111,6 +114,10 @@ const AreaSchema = new Schema({
     },
     trigger: TriggerSchema,
     actions: [ActionSchema],
+    isActive: {
+        type: Boolean,
+        default: true,
+    }
 });
 
 const AreaModel = mongoose.model("Area", AreaSchema);
