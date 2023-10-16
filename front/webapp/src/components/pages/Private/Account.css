@@ -123,7 +123,7 @@ form {
     font-weight: 900;
     transition: background-color 0.3s;
     box-sizing: border-box;
-    width: 340px;
+    width: 400px;
     height: 100px;
     background-color: #f2f2f2;
     text-align: center;
@@ -169,6 +169,7 @@ form {
   align-items: center;
   gap: 40px;
 }
+
 
 .service-item img {
     width: 60px;

@@ -164,8 +164,8 @@ const AccountPage: React.FC = () => {
         <div className="services-list">
           {connectedServices.length === 0 ? (
             <div className="service-item no-service" style={{ backgroundColor: 'lightgray' }}>
-              <div className="service-content">
-                No services connected
+              <div className="no-service-content">
+                No services
               </div>
             </div>
           ) : (

@@ -80,7 +80,7 @@ export default function Register() {
             <Input onChange={(e) => setUsername(e.target.value)} placeholder='Username' type='username' value={username}/>
             <Input onChange={(e) => setEmail(e.target.value)} placeholder='Email' type='email' value={email}/>
             <Input onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='password' value={password}/>
-            <Button buttonSize='btn--medium' type='button' buttonStyle='btn--primary-inverted' onClick={handleSubmit} >Get started</Button>
+            <Button buttonSize='btn--large' type='button' buttonStyle='btn--primary-inverted' onClick={handleSubmit} >Get started</Button>
             <a href='http://localhost:8080/auth/google' ><img src={`${process.env.PUBLIC_URL}/logo_google.png`} style={{height: 50, width: 'auto'}} /></a>
         </div>
     )
