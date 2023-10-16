@@ -156,7 +156,7 @@ exports.getTwitchOAuthConstants = async (req, res) => {
     return res.json({
         clientId: process.env.TWITCH_CLIENT_ID,
         redirectUri: "http://localhost:8080/connect/twitch/callback",
-        scopes: ["user_read"],
+        scopes: ["user_read", "user:read:follows"],
         oAuthSessionId: oAuthSessionId,
     });
 };
