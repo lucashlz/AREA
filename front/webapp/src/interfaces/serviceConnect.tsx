@@ -7,7 +7,8 @@ export interface ServiceOAuthConstants {
 
 export const servicesAuthorize: { [key: string]: string }[] = [
     { spotify: 'https://accounts.spotify.com/authorize' },
-    { google: 'https://accounts.google.com/o/oauth2/v2/auth'},
+    { youtube: 'https://accounts.google.com/o/oauth2/v2/auth'},
+    { gmail: 'https://accounts.google.com/o/oauth2/v2/auth'},
     { github: 'https://github.com/login/oauth/authorize'},
     { twitch: 'https://id.twitch.tv/oauth2/authorize'},
 ];
