@@ -107,7 +107,7 @@ const AccountPage: React.FC = () => {
       <form>
         <div className="account-main-text">Account settings</div>
         <Button buttonSize='btn--medium' buttonStyle='btn--primary-inverted' type='button' onClick={signOut} >Logout</Button>
-        <Button color="red" type="button" buttonStyle='btn--outline' buttonSize="btn--medium" onClick={deleteUser}>
+        <Button color="red" type="button" buttonStyle='btn--outline' buttonSize="btn--medium" onClick={handleDeleteAccount}>
           <FaTrash className="bin-icon" />&nbsp;&nbsp;&nbsp;Delete Account
         </Button>
 
@@ -180,7 +180,7 @@ const AccountPage: React.FC = () => {
               >
                 <div className="service-content">
                   <img src={`/servicesLogo/${service}.png`} alt={`${service} logo`} />
-                  {disconnectingService === service ? "Disconnect" : service.charAt(0).toUpperCase() + service.slice(1)}
+                  {disconnectingService === service ? "Delete" : service.charAt(0).toUpperCase() + service.slice(1)}
                 </div>
               </div>
             ))

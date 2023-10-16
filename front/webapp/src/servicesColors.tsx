@@ -3,5 +3,5 @@ export const SERVICE_COLORS: { [key: string]: string } = {
   github: "#282828",
   twitch: "#5865F2",
   youtube: "#FF0000",
-  gmail: "#94BAF5",
+  gmail: "#BF02AF",
 };

@@ -7,6 +7,8 @@
     color: #1D1D1D;
     flex-direction: column;
     margin-top: 10%;
+    width: 100%;
+    padding: 0 2rem; 
 }
 
 .account-main-text {
@@ -76,11 +78,19 @@ form {
     color: rgb(255, 0, 0);
 }
 
+
+
+
+
+
+
+
+
+
 .connected-services-container {
     gap: 10px;
     display: flex;
     flex-direction: column;
-
     margin-top: 30px;
     align-items: center; 
 }
@@ -97,8 +107,10 @@ form {
 .services-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  align-items: center; 
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  justify-content: center;
 }
 
 .service-item {
@@ -110,6 +122,20 @@ form {
     font-size: 45px;
     font-weight: 900;
     transition: background-color 0.3s;
+    box-sizing: border-box;
+    width: 340px;
+    height: 100px;
+    background-color: #f2f2f2;
+    text-align: center;
+
+
+}
+
+@media screen and (max-width: 768px) {
+    .account-input-titles {
+        width: 90vw;
+    }
+
 }
 
 .service-item::before {
@@ -149,33 +175,23 @@ form {
     height: 60px;
   }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 768px) {
 .account-input {
     width: 90%;
     align-self: center;
 }
 .account-main-text {
-    font-size: 40px;
+    font-size: 30px;
 }
 
 .connected-services-title {
-    font-size: 40px;
+    font-size: 30px;
 }
 
 .service-item {
-    position: relative; 
-    color: white;
-    padding: 20px 40px;
-    border-radius: 20px;
-    background-color: #1D1D1D;
-    font-size: 45px;
-    font-weight: 900;
-    transition: background-color 0.3s;
+    font-size: 30px;
+    width: 300px;
 }
 
-.service-content {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-}
+
 }
