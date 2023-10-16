@@ -1,34 +1,33 @@
 const passport = require("passport");
 const { registerOAuthSession, verifyOAuthSession } = require("../utils/OAuthSessionUtils");
-require("../connection/googleStrategy");
+require("../connection/youtubeStrategy");
+require("../connection/gmailStrategy");
 require("../connection/githubStrategy");
 require("../connection/spotifyStrategy");
 require("../connection/twitchStrategy");
 
-exports.getGoogleOAuthConstants = async (req, res) => {
-    const oAuthSessionId = await registerOAuthSession(req.user.id, "google");
+exports.getYoutubeOAuthConstants = async (req, res) => {
+    const oAuthSessionId = await registerOAuthSession(req.user.id, "youtube");
     if (!oAuthSessionId) {
         return res.status(500).send("Failed to initiate OAuth session.");
     }
     return res.json({
         clientId: process.env.GOOGLE_CLIENT_ID,
-        redirectUri: "http://localhost:8080/connect/google/callback",
+        redirectUri: "http://localhost:8080/connect/youtube/callback",
         scopes: [
             "profile",
             "email",
             "https://www.googleapis.com/auth/youtube",
-            "https://www.googleapis.com/auth/gmail.readonly",
-            "https://www.googleapis.com/auth/gmail.send"
         ],
         oAuthSessionId: oAuthSessionId,
     });
 };
 
 
-exports.googleCallback = async (req, res, next) => {
+exports.youtubeCallback = async (req, res, next) => {
     try {
         const { state: oAuthSessionIdFromState } = req.query;
-        const { user } = await verifyOAuthSession(oAuthSessionIdFromState, "google");
+        const { user } = await verifyOAuthSession(oAuthSessionIdFromState, "youtube");
 
         if (!user) {
             return res
@@ -36,7 +35,7 @@ exports.googleCallback = async (req, res, next) => {
                 .json({ status: "error", message: "Invalid state or session expired" });
         }
         req.user = user;
-        passport.authenticate("google-connect", (err, authenticatedUser) => {
+        passport.authenticate("youtube-connect", (err, authenticatedUser) => {
             if (err) {
                 return res.status(500).json({ status: "error", message: "Internal server error." });
             }
@@ -47,13 +46,62 @@ exports.googleCallback = async (req, res, next) => {
             }
             res.json({
                 status: "success",
-                message: "Successfully connected with Google.",
+                message: "Successfully connected with Youtube.",
             });
         })(req, res, next);
     } catch (error) {
         return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
     }
 };
+
+exports.getGmailOAuthConstants = async (req, res) => {
+    const oAuthSessionId = await registerOAuthSession(req.user.id, "gmail");
+    if (!oAuthSessionId) {
+        return res.status(500).send("Failed to initiate OAuth session.");
+    }
+    return res.json({
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        redirectUri: "http://localhost:8080/connect/gmail/callback",
+        scopes: [
+            "profile",
+            "email",
+            "https://www.googleapis.com/auth/gmail.readonly",
+            "https://www.googleapis.com/auth/gmail.send"
+        ],
+        oAuthSessionId: oAuthSessionId,
+    });
+};
+
+exports.gmailCallback = async (req, res, next) => {
+    try {
+        const { state: oAuthSessionIdFromState } = req.query;
+        const { user } = await verifyOAuthSession(oAuthSessionIdFromState, "gmail");
+
+        if (!user) {
+            return res
+                .status(400)
+                .json({ status: "error", message: "Invalid state or session expired" });
+        }
+        req.user = user;
+        passport.authenticate("gmail-connect", (err, authenticatedUser) => {
+            if (err) {
+                return res.status(500).json({ status: "error", message: "Internal server error." });
+            }
+            if (!authenticatedUser) {
+                return res
+                    .status(401)
+                    .json({ status: "failed", message: "Authentication failed." });
+            }
+            res.json({
+                status: "success",
+                message: "Successfully connected with Gmail.",
+            });
+        })(req, res, next);
+    } catch (error) {
+        return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
+    }
+};
+
 
 exports.getGithubOAuthConstants = async (req, res) => {
     const oAuthSessionId = await registerOAuthSession(req.user.id, "github");
