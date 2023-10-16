@@ -63,7 +63,7 @@ exports.getGithubOAuthConstants = async (req, res) => {
     return res.json({
         clientId: process.env.GITHUB_CLIENT_ID,
         redirectUri: "http://localhost:8080/connect/github/callback",
-        scopes: ["user:email"],
+        scopes: ["user", "repo", "user:email"],
         oAuthSessionId: oAuthSessionId,
     });
 };

@@ -127,7 +127,7 @@ router.get("/google/callback", connectController.googleCallback);
  *               type: string
  *               example: Failed to initiate OAuth session.
  */
-router.get("/getGithubyOAuthConstants", ensureAuthenticated, connectController.getGithubOAuthConstants);
+router.get("/getGithubOAuthConstants", ensureAuthenticated, connectController.getGithubOAuthConstants);
 
 /**
  * @swagger

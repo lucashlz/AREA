@@ -20,7 +20,7 @@ passport.use(
                 const githubService = {
                     access_token: accessToken,
                     refresh_token: refreshToken,
-                    expires_in: expires_in * 1000,
+                    expires_in: (expires_in && typeof expires_in === 'number') ? expires_in * 1000 : null,
                     tokenIssuedAt: Date.now(),
                     data: profile._json,
                 };
