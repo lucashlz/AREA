@@ -24,10 +24,12 @@ exports.updateProfile = async (req, res) => {
         const updatedFields = [];
         if (!user) return res.status(404).json({ message: "User not found" });
         const hasGoogleAuth = hasAuthService(user, "google");
+
         if (username && username !== user.username) {
             user.username = username;
-            updatedFields.push("username");
+            updatedFields.push("Username");
         }
+
         if (email) {
             if (hasGoogleAuth) {
                 return res.status(403).json({
@@ -37,10 +39,14 @@ exports.updateProfile = async (req, res) => {
             }
             if (email !== user.email) {
                 await updateUserEmail(user, email);
-                updatedFields.push("email");
+                updatedFields.push("Email");
             }
         }
+
         if (oldPassword && newPassword) {
+            if (oldPassword === newPassword) {
+                return res.status(400).json({ message: "Same old and new password provided." });
+            }
             if (hasGoogleAuth) {
                 return res.status(403).json({
                     message:
@@ -48,22 +54,21 @@ exports.updateProfile = async (req, res) => {
                 });
             }
             await updateUserPassword(user, oldPassword, newPassword);
-            updatedFields.push("password");
+            updatedFields.push("Password");
         }
         await user.save();
         const messageComponents = [];
-        if (updatedFields.length) {
-            messageComponents.push(
-                `Profile updated successfully. ${updatedFields.join(", ")} changed.`
-            );
+        const updateSuccessFields = updatedFields.filter(field => ['Username', 'Password'].includes(field));
+        if (updateSuccessFields.length) {
+            messageComponents.push(`${updateSuccessFields.join(", ")} updated successfully.`);
         }
-        if (updatedFields.includes("email")) {
-            messageComponents.push("Please check your email to confirm the new address.");
-        }
-        const message = messageComponents.length
-            ? messageComponents.join(" ")
-            : "Profile updated successfully. No fields were changed.";
 
+        if (updatedFields.includes("Email")) {
+            messageComponents.push("Please check your email to confirm the new email adress.");
+        } else if (!updatedFields.length) {
+            messageComponents.push("No fields were changed.");
+        }
+        const message = messageComponents.join(" ");
         res.json({ message });
     } catch (err) {
         console.error(err);
@@ -72,6 +77,7 @@ exports.updateProfile = async (req, res) => {
                 "Invalid email format",
                 "Email is already in use",
                 "Old password is incorrect",
+                "Same old and new password provided."
             ].includes(err.message)
         ) {
             return res.status(400).json({ message: err.message });
