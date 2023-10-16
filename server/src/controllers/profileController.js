@@ -51,9 +51,19 @@ exports.updateProfile = async (req, res) => {
             updatedFields.push("password");
         }
         await user.save();
-        const message = updatedFields.length
-            ? `Profile updated successfully. Fields changed: ${updatedFields.join(", ")}.`
+        const messageComponents = [];
+        if (updatedFields.length) {
+            messageComponents.push(
+                `Profile updated successfully. ${updatedFields.join(", ")} changed.`
+            );
+        }
+        if (updatedFields.includes("email")) {
+            messageComponents.push("Please check your email to confirm the new address.");
+        }
+        const message = messageComponents.length
+            ? messageComponents.join(" ")
             : "Profile updated successfully. No fields were changed.";
+
         res.json({ message });
     } catch (err) {
         console.error(err);
