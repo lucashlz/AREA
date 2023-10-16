@@ -39,11 +39,14 @@ router.get("/", profileController.getUserProfile);
  * @swagger
  * /profile/update:
  *   put:
- *     summary: Update the profile of the authenticated user
- *     tags: [profile]
+ *     summary: Update the authenticated user's profile
+ *     tags:
+ *       - Profile
  *     security:
  *       - bearerAuth: []
  *     requestBody:
+ *       description: Updated profile information.
+ *       required: true
  *       content:
  *         application/json:
  *           schema:
@@ -51,16 +54,22 @@ router.get("/", profileController.getUserProfile);
  *             properties:
  *               email:
  *                 type: string
- *                 description: When a new email is provided, a confirmation link will be sent to this address.
+ *                 format: email
+ *                 description: The new email. If changed, a confirmation link will be sent to this address.
  *               username:
  *                 type: string
+ *                 description: The new username.
  *               oldPassword:
  *                 type: string
+ *                 format: password
+ *                 description: The current password, required if changing the password.
  *               newPassword:
  *                 type: string
+ *                 format: password
+ *                 description: The new password.
  *     responses:
  *       200:
- *         description: Profile updated successfully. If email was changed, a confirmation link has been sent to the new address.
+ *         description: Profile updated successfully. The response message details which fields were changed. If the email was altered, a confirmation link has been sent to the new address.
  *         content:
  *           application/json:
  *             schema:
@@ -69,7 +78,7 @@ router.get("/", profileController.getUserProfile);
  *                 message:
  *                   type: string
  *       400:
- *         description: Bad request (e.g., Invalid email format, Email already in use, Old password incorrect)
+ *         description: Request error, e.g. invalid email format, email already in use, incorrect old password.
  *         content:
  *           application/json:
  *             schema:
@@ -78,7 +87,7 @@ router.get("/", profileController.getUserProfile);
  *                 message:
  *                   type: string
  *       403:
- *         description: Forbidden (e.g., User authenticated via external service trying to change password or email)
+ *         description: Unauthorized action, e.g., trying to modify the email or password after authenticating via an external service.
  *         content:
  *           application/json:
  *             schema:
@@ -87,7 +96,7 @@ router.get("/", profileController.getUserProfile);
  *                 message:
  *                   type: string
  *       404:
- *         description: User not found
+ *         description: User not found.
  *         content:
  *           application/json:
  *             schema:
@@ -96,7 +105,7 @@ router.get("/", profileController.getUserProfile);
  *                 message:
  *                   type: string
  *       500:
- *         description: Server error
+ *         description: Unexpected server error.
  *         content:
  *           application/json:
  *             schema:
