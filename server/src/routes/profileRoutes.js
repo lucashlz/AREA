@@ -69,7 +69,7 @@ router.get("/", profileController.getUserProfile);
  *                 description: The new password.
  *     responses:
  *       200:
- *         description: Profile updated successfully. The response message details which fields were changed. If the email was altered, a confirmation link has been sent to the new address.
+ *         description: Profile update status. The response message details which fields were changed or if no fields were changed at all. If the email was altered, a note about the confirmation link sent to the new address will be included.
  *         content:
  *           application/json:
  *             schema:
@@ -78,7 +78,7 @@ router.get("/", profileController.getUserProfile);
  *                 message:
  *                   type: string
  *       400:
- *         description: Request error, e.g. invalid email format, email already in use, incorrect old password.
+ *         description: Request error, e.g. invalid email format, email already in use, incorrect old password, same old and new password provided.
  *         content:
  *           application/json:
  *             schema:
