@@ -1,5 +1,5 @@
 .account-container {
-    margin-bottom: 4rem; /* adjust value as needed */
+    margin-bottom: 4rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -121,21 +121,21 @@ form {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.3); /* dark overlay */
-    opacity: 0; /* fully transparent by default */
+    background-color: rgba(0, 0, 0, 0.3);
+    opacity: 0;
     transition: opacity 0.3s;
 }
 
 .service-item:hover::before {
-    opacity: 1; /* fully visible on hover */
+    opacity: 1;
 }
 
 .disconnect-text {
-    display: none; /* hide by default */
+    display: none;
 }
 
 .service-item:hover .disconnect-text {
-    display: block; /* show on hover */
+    display: block;
 }
 
 .service-content {
