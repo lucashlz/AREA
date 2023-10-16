@@ -13,6 +13,9 @@ passport.use(
         async (req, accessToken, refreshToken, { expires_in }, profile, done) => {
             try {
                 const user = req.user;
+                if (!user) {
+                    return done(new Error("No associated user found for this session."));
+                }
                 const twitchService = {
                     access_token: accessToken,
                     refresh_token: refreshToken,
