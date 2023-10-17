@@ -7,6 +7,7 @@
   .navbar {
     background: #1D1D1D;
     height: 10%;
+    margin-top: 0.1%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -133,8 +134,8 @@
   }
   
   .navbar-inverted {
+    margin-top: 0.1%;
     background: white;
-    height: 110px;
     display: flex;
     justify-content: space-between;
     align-items: center;
