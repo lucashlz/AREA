@@ -110,7 +110,7 @@ const SPOTIFY_ACTIONS = [
         "add_track_to_playlist_by_id",
         "Adds a track to a playlist using TrackID",
         [
-            { name: "playlist_name", input: "Name of the target playlist" },
+            { name: "playlist_id", input: "ID of the target playlist" },
             { name: "track_id", input: "Spotify Track ID to add to the playlist" },
         ],
         addToPlaylistById
@@ -302,7 +302,7 @@ const AREAS = {
     github: new Area(GITHUB_TRIGGERS, GITHUB_ACTIONS, "#282828"),
     twitch: new Area(TWITCH_TRIGGERS, TWITCH_ACTIONS, "#5865F2"),
     youtube: new Area(YOUTUBE_TRIGGERS, YOUTUBE_ACTIONS, "#FF0000"),
-    gmail: new Area(GMAIL_TRIGGERS, GMAIL_ACTIONS, "#94BAF5"),
+    gmail: new Area(GMAIL_TRIGGERS, GMAIL_ACTIONS, "#BF02AF"),
 };
 
 module.exports = AREAS;

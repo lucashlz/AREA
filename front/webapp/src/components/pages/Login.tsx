@@ -61,7 +61,7 @@ const Login: React.FC = () => {
         {error && <p>{error}</p>}
         <div className='underline-text' style={{fontSize: 20}} onClick={() => setPasswordPage(true)} >Forgot your password ?</div>
         <button type="button" className="btn btn--primary-inverted btn--large" onClick={handleSubmit}>Log in</button>
-        <div style={{fontWeight: 500, fontSize: 25, marginTop: '10%'}} >Continue with <a href="http://localhost:8080/auth/google" className='underline-text'>Google</a> or <a href="http://localhost:8080/auth/facebook" className='underline-text'>Facebook</a></div>
+        <div style={{fontWeight: 500, fontSize: 25, marginTop: '10%'}} >Continue with <a href="http://localhost:8080/auth/google" className='underline-text'>Google</a></div>
       </form>
     </div>
   );

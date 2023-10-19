@@ -6,11 +6,14 @@ export interface IUserContext {
   signIn: (email: string, password: string) => Promise<any>;
   createUser: (username: string, email: string, password: string, setError: (e: any) => void) => Promise<any>;
   signOut: () => void;
-  getUserInfo: () => Promise<{username: string, email: string, password: string}>;
+  getUserInfo: () => Promise<{username: string, email: string, connectServices: string[]}>;
   updateInfo: (email: string, username: string, oldPassword: string, newPassword: string) => Promise<any>;
   token: string | null;
   getGoogleToken: () => Promise<any>;
   setToken: React.Dispatch<React.SetStateAction<string | null>>;
+  deleteUser: () => Promise<any>;
+  confirmAccount: (token: string) => Promise<any>;
+  disconnectService: (serviceName: string) => Promise<any>;
 }
 
 export const UserContext = createContext<IUserContext | undefined>(undefined);
@@ -34,6 +37,25 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       console.error("Error signing up:", error);
     }
   }
+
+  const confirmAccount = async (token: string) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/auth/confirm/${token}`);
+
+      console.log('Received response from API:', response.data);
+      return { status: response.status, message: response.data.message };
+    } catch (error) {
+      console.error("Error updating infos:", error);
+
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Server responded with:", error.response.data);
+        return { status: error.response.status, message: error.response.data.message };
+      } else {
+        throw error;
+      }
+    }
+  }
+  
 
 
   const signIn = async (email: string, password: string): Promise<any> => {
@@ -92,6 +114,26 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     setToken(null);
   };
 
+  const deleteUser = async () => {
+    try {
+      const response = await axios.delete('http://localhost:8080/users/delete', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      console.log('Received response from API:', response.data);
+      signOut();
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Server responded with:", error.response.data);
+        return error.response.data;
+      }
+    }
+  }
+
   const getGoogleToken = async () => {
     try {
           const res = await axios.get("http://localhost:8080/auth/google/callback");
@@ -119,6 +161,25 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       return response.data;
     } catch (error) {
       console.error("Error fetching user info:", error);
+    }
+  };
+
+  const disconnectService = async (serviceName: string): Promise<any> => {
+    try {
+      const response = await axios.delete(`http://localhost:8080/users/disconnect/${serviceName}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error disconnecting service:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Server responded with:", error.response.data);
+        return error.response.data;
+      } else {
+        throw error;
+      }
     }
   };
 
@@ -158,7 +219,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   }, [token]);
 
   return (
-    <UserContext.Provider value={{signUp, signIn, createUser ,signOut, getGoogleToken ,token, getUserInfo, updateInfo, setToken}}>
+    <UserContext.Provider value={{signUp, signIn, createUser, deleteUser, signOut, getGoogleToken, token, getUserInfo, updateInfo, setToken, confirmAccount, disconnectService}}>
       {children}
     </UserContext.Provider>
   )

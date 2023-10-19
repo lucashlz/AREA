@@ -79,7 +79,8 @@ async function refreshAllServiceTokens(userId) {
 
     const services = [
         { name: "spotify", refreshFunction: refreshSpotifyToken },
-        { name: "google", refreshFunction: refreshGoogleToken },
+        { name: "youtube", refreshFunction: refreshGoogleToken },
+        { name: "gmail", refreshFunction: refreshGoogleToken },
         { name: "twitch", refreshFunction: refreshTwitchToken },
         { name: "github", refreshFunction: refreshGithubToken },
     ];

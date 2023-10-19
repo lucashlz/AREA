@@ -119,9 +119,6 @@ exports.redirectToGoogle = passport.authenticate("google-auth", {
     scope: [
         "profile",
         "email",
-        "https://www.googleapis.com/auth/youtube",
-        "https://www.googleapis.com/auth/gmail.readonly",
-        "https://www.googleapis.com/auth/gmail.send",
     ],
 });
 
@@ -138,7 +135,6 @@ exports.handleGoogleCallback = (req, res, next) => {
             const token = jwt.sign({ id: user._id }, process.env.SECRET_JWT, {
                 expiresIn: "24h",
             });
-            // add condition if mobile to redirect to desired path, ex : if req.query.from === 'mobile', res.redirect("myapp://account")
             res.status(200).redirect(`http://localhost:8081/applets?token=${token}`);
         } catch (error) {
             console.error("try: ", error.message);

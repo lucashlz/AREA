@@ -21,11 +21,6 @@ export default function CreatePage() {
     return <Navigate to="/" />;
   }
 
-  if (goto) {
-    localStorage.removeItem('selectedService')
-    setCurrentPage(goto)
-  }
-
   return (
     <div>
       {

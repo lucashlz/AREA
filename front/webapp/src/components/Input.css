@@ -1,29 +1,27 @@
 .input {
     font-size: 2rem;
-    padding: 1rem;
-    border: 5px solid;
-    border-radius: 10px;
+    padding: 0.75rem;
+    border: 6px solid;
+    border-radius: 13px;
     color: black;
     border-color: lightgray;
 }
 
 .input-icon {
   position: absolute;
-  left: 20px;
-  width: 30px;
-  height: 30px;
+  left: 0;
+  margin-left: 3.5%;
+  width: auto;
+  height: 40%;
 }
 
 @media screen and (max-width: 550px) {
     .input {
       width: 60%;
-      padding: 0.3rem;
+
     }
     .input-icon {
-      position: absolute;
-      left: 80px;
-      width: 30px;
-      height: 30px;
+      margin-left: 25%;
     }
 }
 

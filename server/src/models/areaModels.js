@@ -95,30 +95,32 @@ const ActionSchema = new Schema({
  *       properties:
  *         userId:
  *           type: string
+ *           format: uuid
  *           description: The user's unique identifier.
- *         triggers:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Trigger'
+ *         trigger:
+ *           $ref: '#/components/schemas/Trigger'
  *         actions:
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/Action'
+ *         isActive:
+ *           type: boolean
+ *           description: Indicates if the area is active or not.
  */
 const AreaSchema = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
         required: true,
     },
-    triggers: [TriggerSchema],
+    trigger: TriggerSchema,
     actions: [ActionSchema],
+    isActive: {
+        type: Boolean,
+        default: true,
+    }
 });
 
-const AreaModel = mongoose.model("Area", AreaSchema);
-
-module.exports = {
-    Area: AreaModel,
-    Trigger: mongoose.model("Trigger", TriggerSchema),
-    Action: mongoose.model("Action", ActionSchema),
-    Parameter: mongoose.model("Parameter", ParameterSchema)
-};
+module.exports.Area = mongoose.model("Area", AreaSchema);
+module.exports.Trigger = mongoose.model("Trigger", TriggerSchema);
+module.exports.Action = mongoose.model("Action", ActionSchema);
+module.exports.Parameter = mongoose.model("Parameter", ParameterSchema);

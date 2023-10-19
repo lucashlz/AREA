@@ -10,15 +10,18 @@ passport.use(
             callbackURL: "http://localhost:8080/connect/twitch/callback",
             passReqToCallback: true,
         },
-        async (req, accessToken, refreshToken, expires_in, profile, done) => {
+        async (req, accessToken, refreshToken, { expires_in }, profile, done) => {
             try {
                 const user = req.user;
+                if (!user) {
+                    return done(new Error("No associated user found for this session."));
+                }
                 const twitchService = {
                     access_token: accessToken,
                     refresh_token: refreshToken,
                     expires_in: expires_in * 1000,
                     tokenIssuedAt: Date.now(),
-                    data: profile._json,
+                    data: profile,
                 };
                 user.connectServices.set("twitch", twitchService);
                 await user.save();

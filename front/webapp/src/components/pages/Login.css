@@ -23,6 +23,7 @@
 
 ::placeholder {
   color: lightgray;
+  font-weight: 900;
 }
 
 .login {

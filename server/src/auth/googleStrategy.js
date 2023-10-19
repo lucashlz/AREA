@@ -1,11 +1,6 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const User = require("../models/userModels");
-const {
-    findUserByExternalId,
-    updateUserConnectionService,
-    createNewExternalUser,
-} = require("../utils/authUtils");
+const { findUserByExternalId, createNewExternalUser } = require("../utils/authUtils");
 
 passport.use(
     "google-auth",
@@ -15,32 +10,17 @@ passport.use(
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             callbackURL: "http://localhost:8080/auth/google/callback",
         },
-        async (accessToken, refreshToken, expires_in, profile, done) => {
-            let existingUser = await findUserByExternalId("google", profile.id);
+        async (accessToken, refreshToken, profile, done) => {
+            console.log("Full profile:", JSON.stringify(profile, null, 2));
+            const email = profile.emails[0].value;
 
+            let existingUser = await findUserByExternalId("google", email);
             if (existingUser) {
-                await updateUserConnectionService(existingUser, "google", {
-                    access_token: accessToken,
-                    refresh_token: refreshToken,
-                    expires_in: expires_in * 1000,
-                    tokenIssuedAt: Date.now(),
-                    data: profile._json,
-                });
                 return done(null, existingUser);
             }
+
             try {
-                const newUser = await createNewExternalUser(
-                    "google",
-                    profile.emails[0].value,
-                    profile.id,
-                    {
-                        access_token: accessToken,
-                        refresh_token: refreshToken,
-                        expires_in: expires_in * 1000,
-                        tokenIssuedAt: Date.now(),
-                        data: profile._json,
-                    }
-                );
+                const newUser = await createNewExternalUser("google", email);
                 return done(null, newUser);
             } catch (err) {
                 console.error(err);

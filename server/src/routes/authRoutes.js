@@ -89,7 +89,6 @@ router.post("/sign-up", authController.sign_up);
  */
 router.get("/confirm/:token", authController.confirm);
 
-
 /**
  * @swagger
  * /auth/confirm-email-change/{token}:

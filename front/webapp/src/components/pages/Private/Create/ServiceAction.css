@@ -73,7 +73,7 @@
 .action-parameters {
     margin-left: 20%;
     margin-right: 20%;
-    margin-top: 5%;
+    margin-top: 7%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -95,6 +95,7 @@
     .action-parameters {
         margin-left: 5%;
         margin-right: 5%;
+        margin-top: 10%;
     }
 
     .selection-action-button {

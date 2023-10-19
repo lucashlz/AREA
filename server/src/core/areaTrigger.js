@@ -17,8 +17,7 @@ async function executeReaction(areaEntry, associatedReaction, reactionParameters
 
 exports.checkAndReact = async () => {
     try {
-        const activeServiceAreas = await mongoose.model("Area").find({});
-
+        const activeServiceAreas = await mongoose.model("Area").find({ isActive: true });
         if (activeServiceAreas.length === 0) {
             console.log("No service areas found.");
             return;

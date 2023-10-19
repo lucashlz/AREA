@@ -4,12 +4,36 @@ export interface TriggerReactionParameters {
 }
 
 export interface TriggerReaction {
-    name: string;
     service: string;
+    name: string;
     parameters: TriggerReactionParameters[];
 }
 
 export interface postService {
-    action: TriggerReaction;
-    reactions: TriggerReaction[];
+    _id: string
+    trigger: TriggerReaction;
+    actions: TriggerReaction[];
+}
+
+export function getLocalSelectedArea(): postService {
+    let currArea: postService = JSON.parse(localStorage.getItem('selectedArea') || 'null')
+    if (currArea)
+        return (currArea)
+    else
+        return (
+            {
+                _id: '',
+                trigger: {
+                    service: '',
+                    name: '',
+                    parameters: [{ name: '', input: '' }]
+                },
+                actions: [
+                    {
+                        service: '',
+                        name: '',
+                        parameters: [{ name: '', input: '' }]
+                    }
+                ]
+            })
 }

@@ -1,4 +1,5 @@
 .account-container {
+    margin-bottom: 4rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -6,6 +7,8 @@
     color: #1D1D1D;
     flex-direction: column;
     margin-top: 10%;
+    width: 100%;
+    padding: 0 2rem; 
 }
 
 .account-main-text {
@@ -16,16 +19,13 @@
     margin-top: 10vh;
 }
 
+
 .account-input-titles {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 20px;
     width: 70vw;
-}
-
-.logout-button {
-    margin-bottom: 50px;
 }
 
 form {
@@ -78,12 +78,121 @@ form {
     color: rgb(255, 0, 0);
 }
 
-@media screen and (max-width: 550px) {
+
+
+
+
+
+
+
+
+
+.connected-services-container {
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
+    align-items: center; 
+}
+
+.connected-services-title {
+    font-size: 50px;
+    font-weight: 900;
+    text-align: center;
+    max-width: 600px;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+}
+
+.services-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  justify-content: center;
+}
+
+.service-item {
+    position: relative; 
+    color: white;
+    padding: 20px 40px;
+    border-radius: 20px;
+    background-color: #1D1D1D;
+    font-size: 45px;
+    font-weight: 900;
+    transition: background-color 0.3s;
+    box-sizing: border-box;
+    width: 400px;
+    height: 100px;
+    background-color: #f2f2f2;
+    text-align: center;
+
+
+}
+
+@media screen and (max-width: 768px) {
+    .account-input-titles {
+        width: 90vw;
+    }
+
+}
+
+.service-item::before {
+    border-radius: 20px;
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.service-item:hover::before {
+    opacity: 1;
+}
+
+.disconnect-text {
+    display: none;
+}
+
+.service-item:hover .disconnect-text {
+    display: block;
+}
+
+.service-content {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+
+.service-item img {
+    width: 60px;
+    height: 60px;
+  }
+
+@media screen and (max-width: 768px) {
 .account-input {
     width: 90%;
     align-self: center;
 }
 .account-main-text {
-    font-size: 40px;
+    font-size: 30px;
 }
+
+.connected-services-title {
+    font-size: 30px;
+}
+
+.service-item {
+    font-size: 30px;
+    width: 300px;
+}
+
+
 }

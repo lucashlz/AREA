@@ -5,16 +5,16 @@ const { ensureAuthenticated } = require("../middleware/middleware");
 
 /**
  * @swagger
- * /connect/getGoogleOAuthConstants:
+ * /connect/getYoutubeOAuthConstants:
  *   get:
  *     tags:
  *       - connect
  *     security:
  *       - bearerAuth: []
- *     description: Fetches Google OAuth constants
+ *     description: Fetches Youtube OAuth constants
  *     responses:
  *       200:
- *         description: Returns Google OAuth constants.
+ *         description: Returns Youtube OAuth constants.
  *         content:
  *           application/json:
  *             schema:
@@ -22,15 +22,15 @@ const { ensureAuthenticated } = require("../middleware/middleware");
  *               properties:
  *                 clientId:
  *                   type: string
- *                   description: The client ID for Google API.
+ *                   description: The client ID for Youtube API.
  *                 redirectUri:
  *                   type: string
- *                   description: The redirect URI for Google authentication callback.
+ *                   description: The redirect URI for Youtube authentication callback.
  *                 scopes:
  *                   type: array
  *                   items:
  *                     type: string
- *                   description: The scopes required for Google authentication.
+ *                   description: The scopes required for Youtube authentication.
  *                 oAuthSessionId:
  *                   type: string
  *                   description: The OAuth session ID for the current user.
@@ -42,18 +42,18 @@ const { ensureAuthenticated } = require("../middleware/middleware");
  *               type: string
  *               example: Failed to initiate OAuth session.
  */
-router.get("/getGoogleOAuthConstants", ensureAuthenticated, connectController.getGoogleOAuthConstants);
+router.get("/getYoutubeOAuthConstants", ensureAuthenticated, connectController.getYoutubeOAuthConstants);
 
 /**
  * @swagger
- * /connect/google/callback:
+ * /connect/youtube/callback:
  *   get:
  *     tags:
  *       - connect
- *     description: Callback from Google authentication
+ *     description: Callback from Youtube authentication
  *     responses:
  *       200:
- *         description: Google connection successful.
+ *         description: Youtube connection successful.
  *         content:
  *           application/json:
  *             schema:
@@ -86,7 +86,92 @@ router.get("/getGoogleOAuthConstants", ensureAuthenticated, connectController.ge
  *                 message:
  *                   type: string
  */
-router.get("/google/callback", connectController.googleCallback);
+router.get("/youtube/callback", connectController.youtubeCallback);
+
+/**
+ * @swagger
+ * /connect/getGmailOAuthConstants:
+ *   get:
+ *     tags:
+ *       - connect
+ *     security:
+ *       - bearerAuth: []
+ *     description: Fetches Gmail OAuth constants
+ *     responses:
+ *       200:
+ *         description: Returns Gmail OAuth constants.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 clientId:
+ *                   type: string
+ *                   description: The client ID for Gmail API.
+ *                 redirectUri:
+ *                   type: string
+ *                   description: The redirect URI for Gmail authentication callback.
+ *                 scopes:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: The scopes required for Gmail authentication.
+ *                 oAuthSessionId:
+ *                   type: string
+ *                   description: The OAuth session ID for the current user.
+ *       500:
+ *         description: Failed to initiate OAuth session.
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: Failed to initiate OAuth session.
+ */
+router.get("/getGmailOAuthConstants", ensureAuthenticated, connectController.getGmailOAuthConstants);
+
+/**
+ * @swagger
+ * /connect/gmail/callback:
+ *   get:
+ *     tags:
+ *       - connect
+ *     description: Callback from Gmail authentication
+ *     responses:
+ *       200:
+ *         description: Gmail connection successful.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       401:
+ *         description: Authentication failed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Internal server error or failed to save user data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.get("/gmail/callback", connectController.gmailCallback);
 
 /**
  * @swagger
@@ -127,7 +212,7 @@ router.get("/google/callback", connectController.googleCallback);
  *               type: string
  *               example: Failed to initiate OAuth session.
  */
-router.get("/getGithubyOAuthConstants", ensureAuthenticated, connectController.getGithubOAuthConstants);
+router.get("/getGithubOAuthConstants", ensureAuthenticated, connectController.getGithubOAuthConstants);
 
 /**
  * @swagger

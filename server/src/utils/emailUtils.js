@@ -14,7 +14,7 @@ const sendConfirmationMail = async (email, confirmationToken) => {
     from: `"AREA" <${process.env.EMAIL}>`,
     to: email,
     subject: "[AREA] Please confirm your email",
-    text: `Click this link to confirm your email: http://localhost:8080/auth/confirm/${confirmationToken}`,
+    text: `Click this link to confirm your email: http://localhost:8081/auth/confirm/${confirmationToken}`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -31,7 +31,7 @@ const sendEmailChangeConfirmationMail = async (email, emailChangeToken) => {
     from: `"AREA" <${process.env.EMAIL}>`,
     to: email,
     subject: "[AREA] Please confirm your email change",
-    text: `Click this link to confirm your email change: http://localhost:8080/auth/confirm-email-change/${emailChangeToken}`,
+    text: `Click this link to confirm your email change: http://localhost:8081/auth/confirm-email-change/${emailChangeToken}`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {

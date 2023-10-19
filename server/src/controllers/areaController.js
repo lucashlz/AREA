@@ -5,10 +5,26 @@ const { checkParameters } = require("../utils/areaUtils");
 
 exports.listAllAreas = async (req, res) => {
     try {
-        const areas = await Area.find();
+        const areas = await Area.find({ userId: req.user.id }).select("-userId");
         res.status(200).json(areas);
     } catch (error) {
         res.status(500).json({ message: "Error fetching areas", error });
+    }
+};
+
+exports.switchAreaActivationStatus = async (req, res) => {
+    try {
+        const area = await Area.findById(req.params.id);
+
+        if (!area) {
+            return res.status(404).json({ message: "Area not found." });
+        }
+        area.isActive = !area.isActive;
+        await area.save();
+        res.status(200).json({ message: `Area ${area.isActive ? "activated" : "deactivated"} successfully`, area });
+    } catch (error) {
+        console.error("Error toggling area activation status:", error);
+        res.status(500).json({ message: "Server error" });
     }
 };
 
@@ -18,7 +34,7 @@ exports.createArea = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
-        const { action: trigger, reactions: actions } = req.body;
+        const { trigger, actions } = req.body;
         const triggerServiceObj = AREAS[trigger.service];
         if (!triggerServiceObj) {
             return res.status(400).json({ message: "Invalid trigger service provided." });
@@ -32,18 +48,17 @@ exports.createArea = async (req, res) => {
         }
         const newArea = new Area({
             userId: user._id,
-            triggers: [
-                {
-                    service: trigger.service,
-                    name: trigger.name,
-                    parameters: trigger.parameters,
-                },
-            ],
+            trigger: {
+                service: trigger.service,
+                name: trigger.name,
+                parameters: trigger.parameters,
+            },
             actions: actions.map((a) => ({
                 service: a.service,
                 name: a.name,
                 parameters: a.parameters,
             })),
+            isActive: true,
         });
 
         const savedArea = await newArea.save();
@@ -111,9 +126,10 @@ exports.updateAreaById = async (req, res) => {
             id,
             {
                 userId: user._id,
-                actions: [
-                    { ...action, parameters: mapParameters(actionParameters, action.parameters) },
-                ],
+                trigger: {
+                    ...action,
+                    parameters: mapParameters(actionParameters, action.parameters),
+                },
                 reactions: [
                     {
                         ...reaction,

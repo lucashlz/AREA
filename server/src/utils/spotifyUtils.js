@@ -7,14 +7,6 @@ const spotifyApi = new SpotifyWebApi({
     redirectUri: "http://localhost:8080/connect/spotify/callback",
 });
 
-async function checkPlaylistExists(user, playlistName) {
-    spotifyApi.setAccessToken(user.spotifyToken);
-    const playlists = await spotifyApi.getUserPlaylists();
-    const exists = !!playlists.body.items.find((playlist) => playlist.name === playlistName);
-    console.log(`Playlist name ${playlistName} is ${exists ? "valid" : "invalid"}.`);
-    return exists;
-}
-
 async function checkPlaylistIdValid(user, playlistId) {
     const spotifyService = user.connectServices.get("spotify");
     if (!spotifyService) {
@@ -34,7 +26,13 @@ async function checkPlaylistIdValid(user, playlistId) {
 }
 
 async function checkTrackIdValid(user, trackId) {
-    spotifyApi.setAccessToken(user.spotifyToken);
+    const spotifyService = user.connectServices.get("spotify");
+    if (!spotifyService) {
+        console.error("Spotify service not available for user:", user._id);
+        return false;
+    }
+    const spotifyToken = spotifyService.access_token;
+    spotifyApi.setAccessToken(spotifyToken);
     try {
         await spotifyApi.getTrack(trackId);
         console.log(`Track ID ${trackId} is valid.`);
@@ -48,9 +46,6 @@ async function checkTrackIdValid(user, trackId) {
 async function checkSpotifyParameters(userId, parameters) {
     const user = await User.findById(userId);
     for (let param of parameters) {
-        if (param.name === "playlist_name" && !(await checkPlaylistExists(user, param.input))) {
-            throw new Error("Specified playlist not found");
-        }
         if (param.name === "track_id" && !(await checkTrackIdValid(user, param.input))) {
             throw new Error("Invalid track ID provided");
         }
@@ -63,7 +58,6 @@ async function checkSpotifyParameters(userId, parameters) {
 
 module.exports = {
     checkSpotifyParameters,
-    checkPlaylistExists,
     checkTrackIdValid,
     checkPlaylistIdValid,
 };
