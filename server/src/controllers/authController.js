@@ -119,9 +119,6 @@ exports.redirectToGoogle = passport.authenticate("google-auth", {
     scope: [
         "profile",
         "email",
-        "https://www.googleapis.com/auth/youtube",
-        "https://www.googleapis.com/auth/gmail.readonly",
-        "https://www.googleapis.com/auth/gmail.send",
     ],
 });
 

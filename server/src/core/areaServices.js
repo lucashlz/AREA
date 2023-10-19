@@ -302,7 +302,7 @@ const AREAS = {
     github: new Area(GITHUB_TRIGGERS, GITHUB_ACTIONS, "#282828"),
     twitch: new Area(TWITCH_TRIGGERS, TWITCH_ACTIONS, "#5865F2"),
     youtube: new Area(YOUTUBE_TRIGGERS, YOUTUBE_ACTIONS, "#FF0000"),
-    gmail: new Area(GMAIL_TRIGGERS, GMAIL_ACTIONS, "#94BAF5"),
+    gmail: new Area(GMAIL_TRIGGERS, GMAIL_ACTIONS, "#BF02AF"),
 };
 
 module.exports = AREAS;

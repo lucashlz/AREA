@@ -32,10 +32,10 @@ router.delete("/delete", usersController.deleteLoggedInUser);
  *       - in: path
  *         name: service_name
  *         required: true
- *         description: Name of the service to disconnect (e.g., "github", "spotify", "twitch", "google")
+ *         description: Name of the service to disconnect (e.g., "github", "spotify", "twitch", "youtube", "gmail")
  *         schema:
  *           type: string
- *           enum: [github, spotify, twitch, google]
+ *           enum: [github, spotify, twitch, youtube, gmail]
  *     responses:
  *       200:
  *         description: Successfully disconnected from the service and related areas have been deactivated.

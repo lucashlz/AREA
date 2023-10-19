@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom';
 import { Button } from '../../Button';
 import './Account.css';
 import { SERVICE_COLORS } from '../../../servicesColors'
+import ConfirmationModal from '../../ConfirmationModal';
 
 
 const AccountPage: React.FC = () => {
@@ -20,6 +21,26 @@ const AccountPage: React.FC = () => {
     oldPassword: '',
     newPassword: '',
   });
+
+  const [showModal, setShowModal] = useState(false);
+  const [serviceToDisconnect, setServiceToDisconnect] = useState<string | null>(null);
+
+  const handleShowModal = (service: string) => {
+    setShowModal(true);
+    setServiceToDisconnect(service);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setServiceToDisconnect(null);
+  };
+
+  const handleDisconnectConfirm = async () => {
+    if (serviceToDisconnect) {
+      await handleDisconnect(serviceToDisconnect);
+    }
+    handleCloseModal();
+  };
 
   useEffect(() => {
     if (!formData.username && !formData.email && userContext?.getUserInfo) {
@@ -49,8 +70,11 @@ const AccountPage: React.FC = () => {
 
   const handleDisconnect = async (service: string) => {
     setDisconnectingService(service);
-    // Here, you'd typically call an API or context method to handle the actual disconnection.
-    // Once disconnected, remove the service from the connectedServices array:
+    const response = await userContext?.disconnectService(service);
+    if (response && response.status == 200) {
+      const updatedServices = connectedServices.filter(s => s !== service);
+      setConnectedServices(updatedServices);
+    }
     const updatedServices = connectedServices.filter(s => s !== service);
     setConnectedServices(updatedServices);
     setDisconnectingService(null);
@@ -81,11 +105,11 @@ const AccountPage: React.FC = () => {
   return (
     <div className="account-container">
       <form>
-      <div className="account-main-text">Account settings</div>
-      <Button buttonSize='btn--medium' buttonStyle='btn--primary-inverted' type='button' onClick={signOut} >Logout</Button>
-      <Button color="red" type="button" buttonStyle='btn--outline' buttonSize="btn--medium" onClick={deleteUser}>
-        <FaTrash className="bin-icon" />&nbsp;&nbsp;&nbsp;Delete Account
-      </Button>
+        <div className="account-main-text">Account settings</div>
+        <Button buttonSize='btn--medium' buttonStyle='btn--primary-inverted' type='button' onClick={signOut} >Logout</Button>
+        <Button color="red" type="button" buttonStyle='btn--outline' buttonSize="btn--medium" onClick={handleDeleteAccount}>
+          <FaTrash className="bin-icon" />&nbsp;&nbsp;&nbsp;Delete Account
+        </Button>
 
         <div className="account-input-titles">
           <label htmlFor="username" className="input-title">Username</label>
@@ -138,30 +162,37 @@ const AccountPage: React.FC = () => {
       <div className="connected-services-container">
         <div className="connected-services-title">Connected services</div>
         <div className="services-list">
-        {connectedServices.length === 0 ? (
-    <div className="service-item no-service" style={{ backgroundColor: 'lightgray' }}>
-        <div className="service-content">
-            No services connected
-        </div>
-    </div>
-) : (
-      connectedServices.map(service => (
-          <div
-              key={service}
-              className="service-item"
-              style={{ backgroundColor: SERVICE_COLORS[service] || 'defaultColor' }}
-              onMouseEnter={() => setDisconnectingService(service)}
-              onMouseLeave={() => setDisconnectingService(null)}
-              onClick={() => handleDisconnect(service)}
-          >
-              <div className="service-content">
-                  <img src={`/servicesLogo/${service}.png`} alt={`${service} logo`} />
-                  {disconnectingService === service ? "Disconnect" : service.charAt(0).toUpperCase() + service.slice(1)}
+          {connectedServices.length === 0 ? (
+            <div className="service-item no-service" style={{ backgroundColor: 'lightgray' }}>
+              <div className="no-service-content">
+                No services
               </div>
-          </div>
-      ))
-  )}
-</div>
+            </div>
+          ) : (
+            connectedServices.map(service => (
+              <div
+                key={service}
+                className="service-item"
+                style={{ backgroundColor: SERVICE_COLORS[service] || 'defaultColor' }}
+                onMouseEnter={() => setDisconnectingService(service)}
+                onMouseLeave={() => setDisconnectingService(null)}
+                onClick={() => handleShowModal(service)}
+              >
+                <div className="service-content">
+                  <img src={`/servicesLogo/${service}.png`} alt={`${service} logo`} />
+                  {disconnectingService === service ? "Delete" : service.charAt(0).toUpperCase() + service.slice(1)}
+                </div>
+              </div>
+            ))
+          )}
+          {showModal && serviceToDisconnect && (
+            <ConfirmationModal
+              service={serviceToDisconnect}
+              onConfirm={handleDisconnectConfirm}
+              onCancel={handleCloseModal}
+            />
+          )}
+        </div>
 
       </div>
 

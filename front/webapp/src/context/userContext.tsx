@@ -13,6 +13,7 @@ export interface IUserContext {
   setToken: React.Dispatch<React.SetStateAction<string | null>>;
   deleteUser: () => Promise<any>;
   confirmAccount: (token: string) => Promise<any>;
+  disconnectService: (serviceName: string) => Promise<any>;
 }
 
 export const UserContext = createContext<IUserContext | undefined>(undefined);
@@ -163,6 +164,25 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     }
   };
 
+  const disconnectService = async (serviceName: string): Promise<any> => {
+    try {
+      const response = await axios.delete(`http://localhost:8080/users/disconnect/${serviceName}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error disconnecting service:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Server responded with:", error.response.data);
+        return error.response.data;
+      } else {
+        throw error;
+      }
+    }
+  };
+
   const updateInfo = async (email: string, username: string, oldPassword: string, newPassword: string) => {
     console.log(`UPDATING INFOS...`);
 
@@ -199,7 +219,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   }, [token]);
 
   return (
-    <UserContext.Provider value={{signUp, signIn, createUser, deleteUser, signOut, getGoogleToken, token, getUserInfo, updateInfo, setToken, confirmAccount}}>
+    <UserContext.Provider value={{signUp, signIn, createUser, deleteUser, signOut, getGoogleToken, token, getUserInfo, updateInfo, setToken, confirmAccount, disconnectService}}>
       {children}
     </UserContext.Provider>
   )
