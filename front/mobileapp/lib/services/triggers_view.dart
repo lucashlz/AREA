@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../components/search_bar.dart';
 import '../components/servicecard.dart';
 
-Future<List<Service>> fetchServices() async {
+Future<List<Service>> fetchTriggers() async {
   const String url = 'http://10.0.2.2:8080/about/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
@@ -22,26 +22,32 @@ Future<List<Service>> fetchServices() async {
   if (response.statusCode == 200) {
     final Map<String, dynamic> data = json.decode(response.body);
     final List<dynamic> servicesData = data['server']['services'] ?? [];
-    
-    if (servicesData.isNotEmpty) {
-      return servicesData.map((serviceData) => Service.fromJson(serviceData)).toList();
+
+    final List<dynamic> servicesWithTriggers = servicesData.where((service) {
+      final List<dynamic> triggers = service['triggers'];
+      return triggers.isNotEmpty;
+    }).toList();
+
+    if (servicesWithTriggers.isNotEmpty) {
+      return servicesWithTriggers.map((serviceData) => Service.fromJson(serviceData)).toList();
     } else {
-      throw Exception('No services found in the response');
+      throw Exception('No services with triggers found in the response');
     }
   } else {
     throw Exception('Failed to load services');
   }
 }
 
-class ServicesView extends StatefulWidget {
-  const ServicesView({Key? key}) : super(key: key);
+
+class TriggersView extends StatefulWidget {
+  const TriggersView({Key? key}) : super(key: key);
 
   @override
-  ServicesViewState createState() => ServicesViewState();
+  TriggersViewState createState() => TriggersViewState();
 }
 
-class ServicesViewState extends State<ServicesView> {
-  final Future<List<Service>> futureServices = fetchServices();
+class TriggersViewState extends State<TriggersView> {
+  final Future<List<Service>> futureServices = fetchTriggers();
   String _searchQuery = '';
 
   @override
