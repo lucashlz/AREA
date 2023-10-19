@@ -46,7 +46,8 @@ exports.displayResetForm = async (req, res) => {
         .status(400)
         .send("Password reset token is invalid or has expired.");
     }
-    res.json({ message: "Password reset form would be here", token });
+    //change the redirect for mobile @louis
+    res.redirect(`http://localhost:8081/reset-password?token=${token}`);
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal server error.");

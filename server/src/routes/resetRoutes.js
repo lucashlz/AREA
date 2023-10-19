@@ -120,6 +120,6 @@ router.get("/password/:token", resetController.displayResetForm);
  *       500:
  *         description: Server error.
  */
-router.post("/reset/password", resetController.updatePassword);
+router.post("/password", resetController.updatePassword);
 
 module.exports = router;

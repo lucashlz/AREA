@@ -11,6 +11,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState('');
   const [oauth, setOauth] = useState(false);
   const [url, setUrl] = useState('');
+  const [passwordPage, setPasswordPage] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   const { signIn, token } = useContext(UserContext) as IUserContext;
@@ -28,6 +29,10 @@ const Login: React.FC = () => {
       setError('Failed to login.');
     }
   };
+
+  if (passwordPage) {
+    return (<Navigate to="/reset-password"/>)
+  }
 
   if (token) {
     return <Navigate to="/applets" replace />;
@@ -54,8 +59,9 @@ const Login: React.FC = () => {
         <Input onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='password' value={password}/>
         {message && <div className="login-response-message">{message}</div>}
         {error && <p>{error}</p>}
+        <div className='underline-text' style={{fontSize: 20}} onClick={() => setPasswordPage(true)} >Forgot your password ?</div>
         <button type="button" className="btn btn--primary-inverted btn--large" onClick={handleSubmit}>Log in</button>
-        <div style={{fontWeight: 500, fontSize: 25, marginTop: '10%'}} >Continue with <a href="http://localhost:8080/auth/google" className='underline-text'>Google</a> or <a href="http://localhost:8080/auth/facebook" className='underline-text'>Facebook</a></div>
+        <div style={{fontWeight: 500, fontSize: 25, marginTop: '10%'}} >Continue with <a href="http://localhost:8080/auth/google" className='underline-text'>Google</a></div>
       </form>
     </div>
   );

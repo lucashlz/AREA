@@ -16,6 +16,7 @@ import Confirm from './components/pages/Confirm';
 import 'react-notifications-component/dist/theme.css';
 import jwtDecode from 'jwt-decode';
 import { ReactNotifications } from 'react-notifications-component';
+import ResetPassword from './components/pages/ResetPassword';
 
 function App() {
   
@@ -53,6 +54,7 @@ function App() {
         <Route path="/account" element={<Account />} />
         <Route path="/register" element={<Register/>}/>
         <Route path="/applets" element={<Applets />} />
+        <Route path='/reset-password' element={<ResetPassword />} />
         <Route path="/auth/confirm/:token" element={<Confirm />} />
       </Routes>
     </>

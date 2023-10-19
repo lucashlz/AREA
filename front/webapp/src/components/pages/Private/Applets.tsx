@@ -18,22 +18,7 @@ const Applet: React.FC<AppletProps<any>> = ({ onoff, item, setReload }) => {
   const toogleStatus = () => {
     status === "on" ? setStatus("off") : setStatus("on")
   }
-
-  const { setToken, token } = useContext(UserContext) as IUserContext;
-
-  useEffect(() => {
-    const checkToken = async () => {
-      if (!token) {
-        const queryParams = new URLSearchParams(window.location.search);
-        const tempToken = queryParams.get('token');
-        if (tempToken) {
-          console.log("Received google token : ", tempToken);
-          setToken(tempToken);
-        }
-      }
-    }
-    checkToken();
-  }, []);
+  const { token } = useContext(UserContext) as IUserContext;
 
   const deleteApplet = async () => {
     const response = await axios.delete(`http://localhost:8080/areas/${item._id}`, { headers: { Authorization: `Bearer ${token}` } });
@@ -74,8 +59,25 @@ export default function Applets() {
   const [searchInput, setSearchInput] = useState('');
   const [areas, setAreas] = useState<postService[]>([]);
   const [reload, setReload] = useState(0);
+  const [unauthenticated, setUnauthenticated] = useState(false);
 
-  let token = localStorage.getItem('userToken');
+  const { setToken, token } = useContext(UserContext) as IUserContext;
+
+  useEffect(() => {
+    const checkToken = async () => {
+      if (!token) {
+        const queryParams = new URLSearchParams(window.location.search);
+        const tempToken = queryParams.get('token');
+        if (tempToken) {
+          console.log("Received google token : ", tempToken);
+          setToken(tempToken);
+        } else {
+          setUnauthenticated(true);
+        }
+      }
+    }
+    checkToken();
+  }, []);
 
   useEffect(() => {
     const getApplets = async () => {
@@ -92,8 +94,9 @@ export default function Applets() {
     }
   }, [reload])
 
-  if (!token)
-    return (<Navigate to="/" />)
+  if (unauthenticated) {
+    return (<Navigate to={"/"} />)
+  }
 
   return (
     <div className="applets-container" key={reload}>
