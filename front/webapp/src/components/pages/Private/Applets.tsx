@@ -6,6 +6,7 @@ import { IUserContext, UserContext } from '../../../context/userContext';
 import axios from 'axios';
 import Input from '../../Input';
 import { postService } from '../../../interfaces/postArea';
+import SearchBar from '../../SearchBar';
 
 interface AppletProps<T> {
   item: postService;
@@ -103,10 +104,7 @@ export default function Applets() {
       <div className="applets-msg-holder">
         <p className="applets-msg">My Applets</p>
       </div>
-
-      <div className="applets-searchbar-holder">
-        <Input onChange={(e) => setSearchInput(e.target.value)} placeholder='Search' type='searchInput' value={searchInput} icon={`${process.env.PUBLIC_URL}/search.png`} />
-      </div>
+      <SearchBar searchInput={searchInput} setSearchInput={setSearchInput} items={areas} name='trigger.service' setItems={setAreas} />
       <div className="applets-holder">
         <div style={{opacity: 0.5}}>{areas.length > 0 ? '' : 'No areas created for now'}</div>
         {areas.map((item, index) => (

@@ -1,6 +1,6 @@
 import './Input.css';
 
-type InputProps = {
+export type InputProps = {
   placeholder: string,
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
   value: string,
