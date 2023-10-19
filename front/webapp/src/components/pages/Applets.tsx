@@ -20,19 +20,9 @@ const Applet: React.FC<AppletProps> = ({ logo_paths, applet_desc, onoff }) => {
 
   const { setToken, token} = useContext(UserContext) as IUserContext;
 
-  /* useEffect(() => {
-    const getToken = async () => {
-    if (!token) {
-      await getGoogleToken();
-    }
-  }
-  getToken();
-  }, []) */
-
   useEffect(() => {
     const checkToken = async() => {
     if (!token) {
-      // Parse the query parameters from the URL
       const queryParams = new URLSearchParams(window.location.search);
       const tempToken = queryParams.get('token');
       if (tempToken) {
@@ -46,7 +36,6 @@ const Applet: React.FC<AppletProps> = ({ logo_paths, applet_desc, onoff }) => {
 
   return (
     <>
-      
       <div className="applet-content-holder" style={{ backgroundColor: status === "on" ? "#0066FF" : "#565656" }}>
         <div className='applet-content-container'>
           {logo_paths.map((item, index) => (

@@ -78,7 +78,7 @@ function Navbar() {
         )}
 
         <div className="navbar-container">
-          <Link to='/login' className='unauth-nav-links'>
+          <Link to='/login' className={isInverted ? 'unauth-nav-links' : 'unauth-nav-links-inverted'}>
             Log in
           </Link>
           <Button linkTo="/register" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
