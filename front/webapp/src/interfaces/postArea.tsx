@@ -26,13 +26,13 @@ export function getLocalSelectedArea(): postService {
                 trigger: {
                     service: '',
                     name: '',
-                    parameters: [{ name: '', input: '' }]
+                    parameters: []
                 },
                 actions: [
                     {
                         service: '',
                         name: '',
-                        parameters: [{ name: '', input: '' }]
+                        parameters: []
                     }
                 ]
             })
