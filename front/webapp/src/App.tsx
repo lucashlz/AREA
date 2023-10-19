@@ -14,14 +14,26 @@ import Register from './components/Register';
 import Applets from './components/pages/Private/Applets';
 import Confirm from './components/pages/Confirm';
 import 'react-notifications-component/dist/theme.css';
+import jwtDecode from 'jwt-decode';
 import { ReactNotifications } from 'react-notifications-component';
 
 function App() {
+  
   const userContext = useContext(UserContext);
-  const token = userContext ? userContext.token : null;
+  let token = userContext ? userContext.token : null;
   const location = useLocation();
 
   useEffect(() => {
+    const now = (new Date().getTime()) / 1000;
+    if (token) {
+      const decoded: any = jwtDecode(token)
+      if (decoded.exp < now) {
+        localStorage.removeItem('userToken');
+        token = null
+      } else {
+        localStorage.setItem('userToken', token);
+      }
+    }
     if (location.pathname === '/' || location.pathname.startsWith('/auth/confirm/')) {
       document.body.style.backgroundColor = '#1D1D1D';
     } else {

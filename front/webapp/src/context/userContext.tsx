@@ -25,7 +25,6 @@ interface UserContextProviderProps {
 export function UserContextProvider({ children }: UserContextProviderProps) {
   const [token, setToken] = useState<string | null>(localStorage.getItem('userToken'));
 
-
   const signUp = async (email: string, password: string) => {
     try {
       const response = await axios.post('http://localhost:8080/auth/register', { email, password });
