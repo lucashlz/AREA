@@ -44,8 +44,8 @@ const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedA
 
     const handleSelectionClick = () => {
         if (selectedArea.trigger && selectedArea.trigger.name.length > 0) {
-            selectedArea.actions[0].service = currentPage
-            selectedArea.actions[0].name = actionInfos.name
+            selectedArea.actions[selectedArea.actions.length - 1].service = currentPage
+            selectedArea.actions[selectedArea.actions.length - 1].name = actionInfos.name
             whatami = 'actions'
         } else if (selectedArea.trigger) {
             selectedArea.trigger.name = actionInfos.name;
@@ -112,7 +112,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
             selectedArea.trigger.parameters[index] = { name: name, input: value };
         }
         if (mode?.type == "actions" && selectedArea) {
-            selectedArea.actions[0].parameters[index] = { name: name, input: value };
+            selectedArea.actions[selectedArea.actions.length - 1].parameters[index] = { name: name, input: value };
         }
     }
 
@@ -138,9 +138,9 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                                 selectedArea.trigger.parameters = [{ name: '', input: '' }];
                             }
                             if (mode.type == "actions" && selectedArea) {
-                                selectedArea.actions[0].name = '';
-                                selectedArea.actions[0].service = '';
-                                selectedArea.actions[0].parameters = [{ name: '', input: '' }];
+                                selectedArea.actions[selectedArea.actions.length - 1].name = '';
+                                selectedArea.actions[selectedArea.actions.length - 1].service = '';
+                                selectedArea.actions[selectedArea.actions.length - 1].parameters = [{ name: '', input: '' }];
                             }
                             setMode(undefined);
                         } else {
