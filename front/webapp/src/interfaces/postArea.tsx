@@ -12,6 +12,7 @@ export interface TriggerReaction {
 export interface postService {
     _id: string
     trigger: TriggerReaction;
+    isActive: boolean
     actions: TriggerReaction[];
 }
 
@@ -28,6 +29,7 @@ export function getLocalSelectedArea(): postService {
                     name: '',
                     parameters: []
                 },
+                isActive: true,
                 actions: [
                     {
                         service: '',
