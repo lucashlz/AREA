@@ -6,6 +6,7 @@ type InputProps = {
   value: string,
   type: string,
   icon?: string,
+  required?: boolean,
 }
 
 export default function Input(props: InputProps) {
@@ -19,10 +20,11 @@ export default function Input(props: InputProps) {
           style={props.icon ? {paddingLeft: '60px'} : {}}
           placeholder={props.placeholder}
           value={props.value}
-          required
+          required={props.required === undefined ? true : props.required}
           onChange={props.onChange}
         />
       </div>
     </div>
   )
 }
+

@@ -55,8 +55,17 @@ const IftttSquare: React.FC<IftttProps> = ({ ifttt_name, is_current, setCurrentP
         parameters: []
       }
     }
-    if (index >= 0 && selectedArea.actions.length > 1) {
-      selectedArea.actions.splice(index, 1)
+    if (index >= 0) {
+      if (index === 0 && selectedArea.actions.length === 1) {
+        selectedArea.actions[0] = {
+          service: '',
+          name: '',
+          parameters: []
+        }
+      }
+      if (selectedArea.actions.length > 1) {
+        selectedArea.actions.splice(index, 1)
+      }
     }
     localStorage.setItem('selectedArea', JSON.stringify(selectedArea));
     refreshPageContent()
@@ -86,12 +95,12 @@ const IftttSquare: React.FC<IftttProps> = ({ ifttt_name, is_current, setCurrentP
               {actionName}
             </div>
           </div>
-          <button className="delete-applet" style={{ height: '35%' }} onClick={deleteStep}>
-            <img className="delete-applet-img" src={`${process.env.PUBLIC_URL}/bin.png`}></img>
-          </button>
+            <button className="delete-applet" style={{ height: '35%' }} onClick={deleteStep}>
+              <img className="delete-applet-img" src={`${process.env.PUBLIC_URL}/bin.png`}></img>
+            </button>
         </>
         : ''}
-      {!services && (index > 0 || selectedArea.actions.length > 1) ?
+      {!services && (index > 0 || selectedArea.actions.length > 1) && !(index === -1 && selectedArea.trigger.name === '') ?
         <>
           <button className="delete-applet" style={{ height: '35%' }} onClick={deleteStep}>
             <img className="delete-applet-img" src={`${process.env.PUBLIC_URL}/bin.png`}></img>
@@ -197,7 +206,7 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
           </>
         ))}
         <div className='ifttt-error-message'>{error != '' ? error : ''}</div>
-        {selectedArea.actions && selectedArea.actions[selectedArea.actions.length - 1].name.length > 0 ?
+        {selectedArea.actions && selectedArea.actions[selectedArea.actions.length - 1].name.length > 0 && selectedArea.trigger.name.length > 0 ?
           <>
             <button className='add-then-button' style={{ marginLeft: 0, border: '1px solid' }} onClick={() => { addBlankAction() }}>
               +

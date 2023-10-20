@@ -6,19 +6,27 @@ import { IUserContext, UserContext } from '../../../context/userContext';
 import axios from 'axios';
 import Input from '../../Input';
 import { postService } from '../../../interfaces/postArea';
+import { stat } from 'fs';
 
 interface AppletProps<T> {
   item: postService;
-  onoff: string;
   setReload: React.Dispatch<React.SetStateAction<number>>
 }
 
-const Applet: React.FC<AppletProps<any>> = ({ onoff, item, setReload }) => {
-  const [status, setStatus] = useState(onoff);
-  const toogleStatus = () => {
-    status === "on" ? setStatus("off") : setStatus("on")
-  }
+const Applet: React.FC<AppletProps<any>> = ({ item, setReload }) => {
+  const [status, setStatus] = useState(item.isActive);
   const { token } = useContext(UserContext) as IUserContext;
+
+  const toogleStatus = async () => {
+    try {
+      const response = await axios.put(`http://localhost:8080/areas/${item._id}/switch_activation`, {id: item._id}, { headers: { Authorization: `Bearer ${token}` } });
+      if (response.status == 200) {
+        setStatus(!status)
+      }
+    } catch (error) {
+      console.error("Error while fetching areas");
+    }
+  }
 
   const deleteApplet = async () => {
     const response = await axios.delete(`http://localhost:8080/areas/${item._id}`, { headers: { Authorization: `Bearer ${token}` } });
@@ -29,14 +37,12 @@ const Applet: React.FC<AppletProps<any>> = ({ onoff, item, setReload }) => {
       }
   }
 
-  console.log("item: ", item)
-
   return (
-    <div className="applet-content-holder" style={{ backgroundColor: status === "on" ? "#0066FF" : "#565656" }}>
+    <div className="applet-content-holder" style={{ backgroundColor: status === true ? "#0066FF" : "#565656" }}>
       <div className='applet-content-container'>
         <img alt="logo" className="applet-logo" src={`${process.env.PUBLIC_URL}/servicesLogo/${item.trigger ? item.trigger.service : ''}.png`}></img>
         {item.actions.map((item, index) => (
-          <img alt="logo" className="applet-logo" src={`${process.env.PUBLIC_URL}/servicesLogo/${item.service}.png`}></img>
+          <img alt="logo" className="applet-logo" src={`${process.env.PUBLIC_URL}/servicesLogo/${item.service}.png`} key={index}></img>
         ))}
       </div>
       <div className="applet-description">
@@ -46,8 +52,8 @@ const Applet: React.FC<AppletProps<any>> = ({ onoff, item, setReload }) => {
         <button className="delete-applet" onClick={deleteApplet}>
           <img className="delete-applet-img" src={`${process.env.PUBLIC_URL}/bin.png`}></img>
         </button>
-        <button className={status === "on" ? "applet-status-on" : "applet-status-off"} onClick={toogleStatus}>
-          <div className={`applet-status-ball ${status === "on" ? 'translated' : ''}`}>
+        <button className={status === true ? "applet-status-on" : "applet-status-off"} onClick={toogleStatus}>
+          <div className={`applet-status-ball ${status === true ? 'translated' : ''}`}>
           </div>
         </button>
       </div>
@@ -84,7 +90,6 @@ export default function Applets() {
       const response = await axios.get('http://localhost:8080/areas', { headers: { Authorization: `Bearer ${token}` } });
       if (response.status == 200) {
         setAreas(response.data)
-        console.log(response.data)
       } else {
         console.log("cannot get areas, resonse: ", response.status)
       }
@@ -110,7 +115,7 @@ export default function Applets() {
       <div className="applets-holder">
         <div style={{opacity: 0.5}}>{areas.length > 0 ? '' : 'No areas created for now'}</div>
         {areas.map((item, index) => (
-          <Applet setReload={setReload} key={index} item={item} onoff="off" />
+          <Applet setReload={setReload} key={index} item={item}/>
         ))}
       </div>
     </div>
