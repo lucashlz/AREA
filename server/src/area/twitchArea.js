@@ -1,66 +1,121 @@
-const { ApiClient } = require('twitch');
-const { ClientCredentialsAuthProvider } = require('twitch-auth');
-const User = require('../models/userModels');
+const axios = require("axios");
+const User = require("../models/userModels");
 
-const clientId = process.env.TWITCH_CLIENT_ID;
-const clientSecret = process.env.TWITCH_CLIENT_SECRET;
+async function processTriggerData(areaEntry, key, value) {
+    if (!areaEntry.trigger.data) {
+        areaEntry.trigger.data = { key, value };
+        await areaEntry.save();
+        return false;
+    } else if (areaEntry.trigger.data.value !== value) {
+        areaEntry.trigger.data = { key, value };
+        await areaEntry.save();
+        return true;
+    }
+    return false;
+}
 
-const authProvider = new ClientCredentialsAuthProvider(clientId, clientSecret);
-const twitchApi = new ApiClient({ authProvider });
-
-async function setTwitchToken(userId) {
-    const user = await User.findById(userId);
-    if (user && user.connectServices && user.connectServices.twitch) {
-    } else {
-        throw new Error('Failed to set Twitch token for user.');
+async function streamGoingLiveForChannel(areaEntry) {
+    try {
+        const user = await User.findById(areaEntry.userId);
+        if (!user || !user.connectServices || !user.connectServices.get("twitch")) {
+            throw new Error(`Failed to fetch Twitch details for user with ID ${areaEntry.userId}`);
+        }
+        const userAccessToken = user.connectServices.get("twitch").access_token;
+        const twitchUserId = user.connectServices.get("twitch").data.id;
+        let cursor;
+        let allFollowedLiveStreams = [];
+        do {
+            const liveStreamsResponse = await axios.get("https://api.twitch.tv/helix/streams/followed", {
+                headers: {
+                    Authorization: `Bearer ${userAccessToken}`,
+                    "Client-Id": process.env.TWITCH_CLIENT_ID,
+                },
+                params: {
+                    user_id: twitchUserId,
+                    first: 100,
+                    after: cursor,
+                },
+            });
+            allFollowedLiveStreams = allFollowedLiveStreams.concat(liveStreamsResponse.data.data);
+            cursor = liveStreamsResponse.data.pagination && liveStreamsResponse.data.pagination.cursor;
+        } while (cursor);
+        const isChannelLive = allFollowedLiveStreams.some((stream) => {
+            return stream && typeof stream.user_name === "string" && stream.user_name.toLowerCase() === areaEntry.trigger.parameters[0].input.toLowerCase();
+        });
+        if (!areaEntry.trigger.data) {
+            await processTriggerData(areaEntry, "streamStatus", false);
+        }
+        if (isChannelLive) {
+            return await processTriggerData(areaEntry, "streamStatus", true);
+        } else {
+            return await processTriggerData(areaEntry, "streamStatus", false);
+        }
+    } catch (error) {
+        console.error("Error checking if channel is live:", error);
+        throw error;
     }
 }
 
-async function streamGoingLiveForChannel(userId, channelName) {
-    await setTwitchToken(userId);
-    const stream = await twitchApi.streams.getStreamByUserName(channelName);
-    return stream ? stream : null;
+async function youFollowNewChannel(areaEntry) {
+    const user = await User.findById(areaEntry.userId);
+    if (!user || !user.connectServices || !user.connectServices.get("twitch")) {
+        throw new Error(`Failed to fetch Twitch details for user with ID ${areaEntry.userId}`);
+    }
+    const userAccessToken = user.connectServices.get("twitch").access_token;
+    const twitchUserId = user.connectServices.get("twitch").data.id;
+    try {
+        const response = await axios.get("https://api.twitch.tv/helix/channels/followed", {
+            headers: {
+                Authorization: `Bearer ${userAccessToken}`,
+                "Client-Id": process.env.TWITCH_CLIENT_ID,
+            },
+            params: {
+                user_id: twitchUserId,
+            },
+        });
+        const followedChannels = response.data.data;
+        const newFollowedChannel = followedChannels[0];
+        if (!newFollowedChannel) return false;
+        return await processTriggerData(areaEntry, "followedChannelId", newFollowedChannel.broadcaster_id);
+    } catch (error) {
+        console.error("Error fetching followed channels:", error);
+        throw error;
+    }
 }
 
-async function youFollowNewChannel(userId) {
-    await setTwitchToken(userId);
-    const followedChannels = await twitchApi.users.getFollowedChannels(userId);
-    const user = await User.findById(userId);
-    const lastStoredChannels = user.lastFollowedChannels || [];
-    const newFollowedChannels = followedChannels.filter(channel => !lastStoredChannels.includes(channel.id));
-    user.lastFollowedChannels = followedChannels.map(channel => channel.id);
-    await user.save();
-    return newFollowedChannels;
-}
+async function newFollowerOnYourChannel(areaEntry) {
+    const user = await User.findById(areaEntry.userId);
+    if (!user || !user.connectServices || !user.connectServices.get("twitch")) {
+        throw new Error(`Failed to fetch Twitch details for user with ID ${areaEntry.userId}`);
+    }
+    const userAccessToken = user.connectServices.get("twitch").access_token;
+    const twitchUserId = user.connectServices.get("twitch").data.id;
+    try {
+        const response = await axios.get(`https://api.twitch.tv/helix/channels/followers?broadcaster_id=${twitchUserId}`, {
+            headers: {
+                Authorization: `Bearer ${userAccessToken}`,
+                "Client-Id": process.env.TWITCH_CLIENT_ID,
+            },
+        });
+        const followers = response.data.data;
+        const newFollower = followers[0];
+        if (!newFollower) return false;
+        const hasNewFollower = await processTriggerData(areaEntry, "followerId", newFollower.user_id);
+        user.lastFollowers = followers.map((follower) => follower.user_id);
+        await user.save();
 
-async function userFollowedChannel(userId, username) {
-    await setTwitchToken(userId);
-    const user = await twitchApi.users.getUserByName(username);
-    const followedChannels = await twitchApi.users.getFollowedChannels(user.id);
-    const storedUser = await User.findOne({ twitchUsername: username });
-    const lastStoredChannels = storedUser.lastFollowedChannels || [];
-    const newFollowedChannels = followedChannels.filter(channel => !lastStoredChannels.includes(channel.id));
-    storedUser.lastFollowedChannels = followedChannels.map(channel => channel.id);
-    await storedUser.save();
-    return newFollowedChannels;
-}
-
-async function newFollowerOnYourChannel(userId) {
-    await setTwitchToken(userId);
-    const followers = await twitchApi.users.getFollowers(userId);
-
-    const user = await User.findById(userId);
-    const lastStoredFollowers = user.lastFollowers || [];
-    const newFollowers = followers.filter(follower => !lastStoredFollowers.includes(follower.id));
-    user.lastFollowers = followers.map(follower => follower.id);
-    await user.save();
-
-    return newFollowers;
+        if (hasNewFollower) {
+            return newFollower;
+        }
+        return false;
+    } catch (error) {
+        console.error("Error fetching followers for channel:", error);
+        throw error;
+    }
 }
 
 module.exports = {
     streamGoingLiveForChannel,
     youFollowNewChannel,
-    userFollowedChannel,
-    newFollowerOnYourChannel
+    newFollowerOnYourChannel,
 };

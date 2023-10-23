@@ -2,16 +2,17 @@ const mongoose = require("mongoose");
 const AREAS = require("./areaServices");
 
 async function executeReaction(areaEntry, associatedReaction, reactionParameters) {
-    const userParameters = areaEntry.parameters;
-    try {
-        await associatedReaction.actionFunction(
-            areaEntry.userId,
-            ...Object.values(userParameters),
-            ...reactionParameters
-        );
-        console.log(`Successfully executed reaction for area ID: ${areaEntry._id}`);
-    } catch (error) {
-        console.error("Failed to execute reaction:", error);
+    console.log("REACTION !!!!");
+    console.log("areaEntry:", areaEntry);
+    for (const action of areaEntry.actions) {
+        const paramsValues = action.parameters || [];
+        console.log("Action Parameters:", paramsValues);
+        try {
+            await associatedReaction.actionFunction(areaEntry.userId, ...paramsValues.map((param) => param.input), ...reactionParameters);
+            console.log(`Successfully executed reaction for area ID: ${areaEntry._id}`);
+        } catch (error) {
+            console.error("Failed to execute reaction:", error);
+        }
     }
 }
 
@@ -23,34 +24,39 @@ exports.checkAndReact = async () => {
             return;
         }
         for (const areaEntry of activeServiceAreas) {
-            const platformService = AREAS[areaEntry.triggers[0].service];
-            if (!platformService) continue;
-            const detectedTrigger = platformService.triggers.find(
-                (t) => t.name === areaEntry.triggers[0].name
-            );
-            const associatedReaction = platformService.actions.find(
-                (r) => r.name === areaEntry.actions[0].name
-            );
-            if (detectedTrigger && associatedReaction) {
-                const triggerParameters =
-                    areaEntry.triggers[0].parameters.length > 0
-                        ? areaEntry.triggers[0].parameters[0]
-                        : {};
-                const hasTriggered = await detectedTrigger.triggerFunction(
-                    areaEntry.userId,
-                    triggerParameters.lastCount || triggerParameters.lastTopTrackId
-                );
+            const triggerService = AREAS[areaEntry.trigger.service];
+            if (!triggerService) {
+                console.warn(`Trigger Service not found for ${areaEntry.trigger.service}`);
+                continue;
+            }
+            const detectedTrigger = triggerService.triggers.find((t) => t.name === areaEntry.trigger.name);
+            if (!detectedTrigger) {
+                console.warn(`Trigger not found for ${areaEntry.trigger.name}`);
+                continue;
+            }
 
-                if (hasTriggered) {
-                    const reactionParameters =
-                        areaEntry.actions[0].parameters.length > 0
-                            ? areaEntry.actions[0].parameters
-                            : [];
-                    await executeReaction(areaEntry, associatedReaction, ...reactionParameters);
+            const hasTriggered = await detectedTrigger.triggerFunction(areaEntry);
+            if (!hasTriggered) continue;
+            for (const action of areaEntry.actions) {
+                const actionService = AREAS[action.service];
+                if (!actionService) {
+                    console.warn(`Action Service not found for ${action.service}`);
+                    continue;
+                }
+                const associatedReaction = actionService.actions.find((r) => r.name === action.name);
+                if (!associatedReaction) {
+                    console.warn(`Reaction not found for ${action.name}`);
+                    continue;
+                }
+                try {
+                    const reactionParameters = action.parameters.length > 0 ? action.parameters : [];
+                    await executeReaction(areaEntry, associatedReaction, reactionParameters);
+                } catch (reactionError) {
+                    console.error("Error during reaction execution:", reactionError);
                 }
             }
         }
     } catch (error) {
-        console.error("Error during trigger evaluation:", error);
+        console.error("Error during overall trigger evaluation:", error);
     }
 };

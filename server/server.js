@@ -5,6 +5,7 @@ const { refreshTokensForAllUsers } = require("./src/utils/tokenUtils");
 const setupRoutes = require("./src/routes.js");
 const connectDB = require("./src/config/dbConfig");
 require("dotenv").config();
+
 function logRequestInfo(req, res, next) {
     console.log("----- Incoming Request -----");
     console.log("Time:", new Date().toISOString());
@@ -49,7 +50,7 @@ app.listen(PORT, () => {
         }
         printTimeRemaining();
     }
-    // const EVALUATION_INTERVAL = 2000;
-    // setInterval(checkAndReact, EVALUATION_INTERVAL);
+    const EVALUATION_INTERVAL = 5000;
+    setInterval(checkAndReact, EVALUATION_INTERVAL);
     recursiveRefresh();
 });
