@@ -167,6 +167,7 @@ exports.getSpotifyOAuthConstants = async (req, res) => {
 
 exports.spotifyCallback = async (req, res, next) => {
     try {
+        console.log("CALL_BACK");
         const { state: oAuthSessionIdFromState } = req.query;
         const { user } = await verifyOAuthSession(oAuthSessionIdFromState, "spotify");
 
