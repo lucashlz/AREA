@@ -16,13 +16,12 @@ exports.getYoutubeOAuthConstants = async (req, res) => {
         redirectUri: "http://localhost:8080/connect/youtube/callback",
         scopes: [
             "profile",
-            "email",
-            "https://www.googleapis.com/auth/youtube",
+            "https://www.googleapis.com/auth/youtube.readonly",
+            "https://www.googleapis.com/auth/youtube.force-ssl"
         ],
         oAuthSessionId: oAuthSessionId,
     });
 };
-
 
 exports.youtubeCallback = async (req, res, next) => {
     try {
@@ -204,7 +203,7 @@ exports.getTwitchOAuthConstants = async (req, res) => {
     return res.json({
         clientId: process.env.TWITCH_CLIENT_ID,
         redirectUri: "http://localhost:8080/connect/twitch/callback",
-        scopes: ["user_read", "user:read:follows"],
+        scopes: ["user:read:follows", "moderator:read:followers", "channel:read:subscriptions"],
         oAuthSessionId: oAuthSessionId,
     });
 };
