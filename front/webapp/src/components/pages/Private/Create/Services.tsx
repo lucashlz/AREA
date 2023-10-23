@@ -8,6 +8,8 @@ import { postService } from '../../../../interfaces/postArea';
 import Input from '../../../Input';
 import { TriggerReaction } from '../../../../interfaces/postArea';
 import { getLocalSelectedArea } from '../../../../interfaces/postArea';
+import SearchBar from '../../../SearchBar';
+import { InputProps } from '../../../Input';
 
 interface ServicesProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
@@ -134,7 +136,6 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
                 console.error("Error while fetching areas");
             }
         }
-
         fetchData();
     }, []);
 
@@ -151,9 +152,7 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
             </div>
             <div className='thin-line'></div>
             <div className="services-container">
-                <div className="applets-searchbar-holder" style={{marginTop: "3rem"}}>
-                    <Input onChange={(e) => setSearchInput(e.target.value)} placeholder='Search' type='searchInput' value={searchInput} icon={`${process.env.PUBLIC_URL}/search.png`} />
-                </div>
+                <SearchBar style={{marginTop: "3rem"}} searchInput={searchInput} setSearchInput={setSearchInput} items={services} setItems={setServices} name={['name']} />
                 <div className="services-holder">
                     {services.map((service, index) => (
                         <Service
