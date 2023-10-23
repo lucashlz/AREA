@@ -82,7 +82,6 @@ async function refreshAllServiceTokens(userId) {
         { name: "youtube", refreshFunction: refreshGoogleToken },
         { name: "gmail", refreshFunction: refreshGoogleToken },
         { name: "twitch", refreshFunction: refreshTwitchToken },
-        { name: "github", refreshFunction: refreshGithubToken },
     ];
 
     for (let service of services) {
@@ -130,24 +129,6 @@ async function refreshTwitchToken(refreshToken) {
         client_id: process.env.TWITCH_CLIENT_ID,
         client_secret: process.env.TWITCH_CLIENT_SECRET,
     });
-    return response.data.access_token;
-}
-
-async function refreshGithubToken(refreshToken) {
-    const response = await axios.post(
-        "https://github.com/login/oauth/access_token",
-        {
-            grant_type: "refresh_token",
-            refresh_token: refreshToken,
-            client_id: process.env.GITHUB_CLIENT_ID,
-            client_secret: process.env.GITHUB_CLIENT_SECRET,
-        },
-        {
-            headers: {
-                Accept: "application/json",
-            },
-        }
-    );
     return response.data.access_token;
 }
 
