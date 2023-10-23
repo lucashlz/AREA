@@ -62,8 +62,6 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
                     popup.focus();
                 }
                 setCurrentPage(initialName)
-            } else {
-                console.error("cannot get ", initialName, ' in array')
             }
         }
     }, [serviceOAuthConstants])
