@@ -50,6 +50,7 @@
     padding-right: 20%;
     height: 100%;
     padding-top: 10%;
+    align-items: center;
 }
 
 .ifttt-link-line {
@@ -90,6 +91,24 @@
     font-weight: 600;
     margin-left: 1.5rem;
     cursor: pointer;
+}
+
+.add-then-button {
+    width: 6.5rem;
+    height: 4vh;
+    background-color: white;
+    border-radius: 60px;
+    border: none;
+    outline: none;
+    font-size: 100%;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 2rem;
+}
+
+.horizontal-spacer {
+    margin-left: 1.5vw;
+    margin-right: 1.5vw;
 }
 
 .ifttt-add-btn-link {

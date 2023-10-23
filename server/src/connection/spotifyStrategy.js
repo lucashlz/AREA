@@ -23,6 +23,7 @@ passport.use(
                     tokenIssuedAt: Date.now(),
                     data: profile._json,
                 };
+                console.log("SpotifyService: ", spotifyService);
                 user.connectServices.set("spotify", spotifyService);
                 await user.save();
                 return done(null, user);

@@ -8,8 +8,6 @@ import ServiceActions from "./ServiceAction";
 export default function CreatePage() {
   const [currentPage, setCurrentPage] = useState('create')
   const userContext = useContext(UserContext);
-  let goto = localStorage.getItem('selectedService')
-  let area = localStorage.getItem('selectedArea')
 
   if (!userContext) {
     throw new Error("Private must be used within a UserContextProvider");

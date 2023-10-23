@@ -48,29 +48,28 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
         if (!isConnected) {
             let serviceAuthorize = getServiceAuthorizeByName(initialName)
 
-            if (serviceOAuthConstants) {
-                if (serviceAuthorize) {
-                    const serviceURL = new URL(serviceAuthorize);
-                    serviceURL.searchParams.append("client_id", serviceOAuthConstants.clientId);
-                    serviceURL.searchParams.append("response_type", "code");
-                    serviceURL.searchParams.append("redirect_uri", serviceOAuthConstants.redirectUri);
-                    serviceURL.searchParams.append("scope", serviceOAuthConstants.scopes.join(" "));
-                    serviceURL.searchParams.append("state", serviceOAuthConstants.oAuthSessionId);
+            if (serviceOAuthConstants && serviceAuthorize) {
+                const serviceURL = new URL(serviceAuthorize);
+                serviceURL.searchParams.append("client_id", serviceOAuthConstants.clientId);
+                serviceURL.searchParams.append("response_type", "code");
+                serviceURL.searchParams.append("redirect_uri", serviceOAuthConstants.redirectUri);
+                serviceURL.searchParams.append("scope", serviceOAuthConstants.scopes.join(" "));
+                serviceURL.searchParams.append("state", serviceOAuthConstants.oAuthSessionId);
 
-                    const popupWidth = 800;
-                    const popupHeight = 600;
+                const popupWidth = 800;
+                const popupHeight = 600;
 
-                    const popup = window.open(serviceURL.href, '_blank', `width=${popupWidth},height=${popupHeight},menubar=no,toolbar=no,location=no`);
-                    if (popup) {
-                        popup.focus();
-                    }
-                    setCurrentPage(initialName)
-                } else {
-                    console.error("cannot get ", initialName, ' in array')
+                const popup = window.open(serviceURL.href, '_blank', `width=${popupWidth},height=${popupHeight},menubar=no,toolbar=no,location=no`);
+                if (popup) {
+                    popup.focus();
                 }
+                setCurrentPage(initialName)
+            } else {
+                console.error("cannot get ", initialName, ' in array')
             }
         }
     }, [serviceOAuthConstants])
+
 
     if (selectedArea) {
         if (selectedArea.trigger.name.length == 0) {

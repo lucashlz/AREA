@@ -5,6 +5,31 @@ const { Schema } = mongoose;
  * @swagger
  * components:
  *   schemas:
+ *     Data:
+ *       type: object
+ *       properties:
+ *         key:
+ *           type: string
+ *           description: The data's key.
+ *         value:
+ *           type: string
+ *           description: The data's value.
+ */
+const DataSchema = new Schema({
+    key: {
+        type: String,
+        required: true,
+    },
+    value: {
+        type: Schema.Types.Mixed,
+        required: true,
+    },
+});
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
  *     Parameter:
  *       type: object
  *       properties:
@@ -14,6 +39,10 @@ const { Schema } = mongoose;
  *         input:
  *           type: string
  *           description: The input value of the parameter.
+ *         optional:
+ *           type: boolean
+ *           default: false
+ *           description: Indicates if the parameter is optional.
  */
 const ParameterSchema = new Schema({
     name: {
@@ -23,7 +52,12 @@ const ParameterSchema = new Schema({
     input: {
         type: String,
         required: true,
-    }
+    },
+    optional: {
+        type: Boolean,
+        default: false,
+        description: "Indicates if the parameter is optional.",
+    },
 });
 
 /**
@@ -54,6 +88,7 @@ const TriggerSchema = new Schema({
         required: true,
     },
     parameters: [ParameterSchema],
+    data: DataSchema,
 });
 
 /**
@@ -84,6 +119,7 @@ const ActionSchema = new Schema({
         required: true,
     },
     parameters: [ParameterSchema],
+    data: DataSchema,
 });
 
 /**
@@ -117,10 +153,11 @@ const AreaSchema = new Schema({
     isActive: {
         type: Boolean,
         default: true,
-    }
+    },
 });
 
 module.exports.Area = mongoose.model("Area", AreaSchema);
 module.exports.Trigger = mongoose.model("Trigger", TriggerSchema);
 module.exports.Action = mongoose.model("Action", ActionSchema);
 module.exports.Parameter = mongoose.model("Parameter", ParameterSchema);
+module.exports.Data = mongoose.model("Data", DataSchema);
