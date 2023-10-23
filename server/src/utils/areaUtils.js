@@ -1,50 +1,55 @@
 const { checkSpotifyParameters } = require("./spotifyUtils");
+const { checkDatetimeParameters } = require("./datetimeUtils");
+const { checkTwitchParameters } = require("./twitchUtils");
+const { checkYoutubeParameters } = require("./youtubeUtils");
+const { checkGmailParameters } = require("./gmailUtils");
+const { checkGithubParameters } = require("./githubUtils");
 
 const serviceCheckFunctions = {
     spotify: checkSpotifyParameters,
+    dateTime: checkDatetimeParameters,
+    twitch: checkTwitchParameters,
+    github: checkGithubParameters,
+    youtube: checkYoutubeParameters,
+    gmail: checkGmailParameters,
 };
-const checkParameters = async (userId, trigger, actions) => {
-    if (Array.isArray(trigger.parameters)) {
-        for (const param of trigger.parameters) {
-            if (!param.name || !param.input) {
-                return false;
-            }
-        }
-    } else {
-        console.error("Trigger parameters is not an array:", trigger.parameters);
-        return false;
-    }
 
-    if (serviceCheckFunctions[trigger.service]) {
-        try {
-            await serviceCheckFunctions[trigger.service](userId, trigger.parameters);
-        } catch (error) {
-            console.error(error.message);
-            return false;
-        }
-    }
-    for (const action of actions) {
-        if (Array.isArray(action.parameters)) {
-            for (const param of action.parameters) {
-                if (!param.name || !param.input) {
+const checkParameters = async (userId, trigger, actions) => {
+    const checkParams = async (parameters, service, triggerName = null) => {
+        if (Array.isArray(parameters)) {
+            for (const param of parameters) {
+                if ((!param.name || !param.input) && !param.optional) {
                     return false;
                 }
             }
         } else {
-            console.error("Action parameters is not an array for action:", action.name);
+            console.error("Parameters is not an array:", parameters);
             return false;
         }
-
-        if (serviceCheckFunctions[action.service]) {
+        if (serviceCheckFunctions[service]) {
             try {
-                await serviceCheckFunctions[action.service](userId, action.parameters);
+                console.log("Checking parameters:", JSON.stringify(parameters));
+                if (service === "dateTime") {
+                    await serviceCheckFunctions[service](triggerName, parameters);
+                } else {
+                    await serviceCheckFunctions[service](userId, parameters);
+                }
+
             } catch (error) {
                 console.error(error.message);
                 return false;
             }
         }
+        return true;
+    };
+    if (!(await checkParams(trigger.parameters, trigger.service, trigger.name))) {
+        return false;
     }
-
+    for (const action of actions) {
+        if (!(await checkParams(action.parameters, action.service))) {
+            return false;
+        }
+    }
     return true;
 };
 
