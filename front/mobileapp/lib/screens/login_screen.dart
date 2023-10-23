@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
+import 'package:webview_flutter/webview_flutter.dart';
 import '../main_container.dart';
 import 'register_screen.dart';
+import 'reset_password_screen.dart';
 import '../components/my_button.dart';
 import '../components/my_input.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,6 +26,13 @@ void navigateToHome() {
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(builder: (context) => const MainContainer()),
+  );
+}
+
+void continueWithGoogle() {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const LoginWebView()),
   );
 }
 
@@ -101,8 +111,28 @@ Future<void> login() async {
           obscureText: true,
           controller: passwordController,
         ),
-        const SizedBox(height: 20),
-        
+        const SizedBox(height: 12),
+      Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
+                      );
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.only(right: 23.0),
+                      child: Text(
+                        "Forgot Password?",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+      ),
     if (errorMessage != null)
       Text(
         errorMessage!,
@@ -113,43 +143,96 @@ Future<void> login() async {
       padding: const EdgeInsets.only(top: 24),
       child: MyButton(onPressed: login, fontSize: 30,),
     ),
+    const SizedBox(height: 20),
     RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(
-        style: const TextStyle(
-          color: Color(0xFF8E949A),
-          fontFamily: 'Cabin',
-          fontSize: 18,
-          fontWeight: FontWeight.w400,
-          height: 1.465,
-        ),
-        children: [
-          const TextSpan(text: "Don't have an account? "),
-          WidgetSpan(
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                );
-              },
-              child: const Text(
-                "Sign up",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
+  textAlign: TextAlign.center,
+  text: TextSpan(
+    style: const TextStyle(
+      color: Color(0xFF8E949A),
+      fontFamily: 'Cabin',
+      fontSize: 18,
+      fontWeight: FontWeight.w400,
+      height: 1.465,
+    ),
+    children: [
+      const TextSpan(text: "Don't have an account? "),
+      WidgetSpan(
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const RegisterScreen()),
+            );
+          },
+          child: const Text(
+            "Sign up",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
             ),
           ),
-        ],
+        ),
       ),
+    ],
+  ),
+),
+const SizedBox(height: 20),
+const Text(
+  "Or continue with",
+  textAlign: TextAlign.center,
+  style: TextStyle(
+    color: Color(0xFF8E949A),
+    fontSize: 18,
+  ),
+),
+const SizedBox(height: 20),
+GestureDetector(
+  onTap: continueWithGoogle,
+  child: Center(
+    child: Image.asset(
+      'assets/logo_google.png',
+      width: 50,
     ),
+  ),
+),
   ],
 ),
           ],
         ),
     ),
+    );
+  }
+}
+
+class LoginWebView extends StatefulWidget {
+  const LoginWebView({Key? key}) : super(key: key);
+
+  @override
+  LoginWebViewState createState() => LoginWebViewState();
+}
+
+class LoginWebViewState extends State<LoginWebView> {
+  final String url = "http://10.0.2.2:8080/auth/google";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login with Google'),
+      ),
+      body: WebView(
+        initialUrl: url,
+        navigationDelegate: (NavigationRequest request) {
+          if (request.url.startsWith('http://10.0.2.2:8080/auth/google')) {
+
+            Navigator.of(context).pop();
+            return NavigationDecision.prevent;
+          }
+
+          return NavigationDecision.navigate;
+        },
+        javascriptMode: JavascriptMode.unrestricted,
+      ),
     );
   }
 }
