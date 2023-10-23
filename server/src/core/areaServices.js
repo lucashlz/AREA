@@ -88,7 +88,7 @@ const SPOTIFY_TRIGGERS = [
     new Trigger(
         "new_track_added_to_playlist",
         "Triggers every time a new track is added to a specified Spotify playlist",
-        [{ name: "playlist_name", input: "Name of the Spotify playlist to monitor" }],
+        [{ name: "playlist_id", input: "ID of the Spotify playlist to monitor" }],
         newTrackAddedToPlaylist
     ),
 ];
@@ -103,7 +103,7 @@ const SPOTIFY_ACTIONS = [
     new Action(
         "save_track",
         "Searches for a track and saves the first matching result to Spotify library",
-        [{ name: "track_name", input: "Name of the track to search and save" }],
+        [{ name: "track_id", input: "ID of the track to search and save" }],
         saveTrack
     ),
     new Action(
@@ -177,7 +177,7 @@ const DATETIME_TRIGGERS = [
         "every_day_of_the_week_at",
         "Triggers only on specific days of the week at the time you provide",
         [
-            { name: "days_array", input: "Array of days (e.g., ['Monday', 'Wednesday'])" },
+            { name: "days_array", input: "Days (e.g., Monday, Wednesday)" },
             { name: "target_hour", input: "Hour (0-23)" },
             { name: "target_minute", input: "Minute (0-59)" },
         ],
@@ -212,7 +212,7 @@ const TWITCH_TRIGGERS = [
     new Trigger(
         "stream_going_live_for_channel",
         "Triggers every time a stream is going live for the specified Channel that you follow",
-        [{ name: "channel_name", input: "Which channel?" }],
+        [{ name: "channel_name", input: "Name of the channel" }],
         streamGoingLiveForChannel
     ),
     new Trigger(
@@ -220,12 +220,6 @@ const TWITCH_TRIGGERS = [
         "This trigger fires every time you follow a new channel on Twitch",
         [],
         youFollowNewChannel
-    ),
-    new Trigger(
-        "user_followed_channel",
-        "This trigger fires every time the specified user starts following a channel on Twitch",
-        [{ name: "user_name", input: "Which user?" }],
-        userFollowedChannel
     ),
     new Trigger(
         "new_follower_on_your_channel",
@@ -273,11 +267,11 @@ const GMAIL_ACTIONS = [
         "This Action will send an email to up to 20 recipients from your Gmail account.",
         [
             { name: "to_address", input: "To address" },
-            { name: "cc_address", input: "CC address (optional)" },
-            { name: "bcc_address", input: "BCC address (optional)" },
+            { name: "cc_address", input: "CC address", optional: true },
+            { name: "bcc_address", input: "BCC address", optional: true },
             { name: "subject", input: "Subject" },
-            { name: "body", input: "Body (Some HTML ok)" },
-            { name: "attachment_url", input: "Attachment URL (optional)" },
+            { name: "body", input: "Body" },
+            { name: "attachment_url", input: "Attachment URL", optional: true },
         ],
         sendEmail
     ),
@@ -287,8 +281,8 @@ const GMAIL_ACTIONS = [
         "This action will send yourself an email. HTML, images and links are supported.",
         [
             { name: "subject", input: "Subject" },
-            { name: "body", input: "Body (Some HTML ok)" },
-            { name: "attachment_url", input: "Attachment URL (optional)" },
+            { name: "body", input: "Body" },
+            { name: "attachment_url", input: "Attachment URL", optional: true },
         ],
         sendEmailToSelf
     ),
