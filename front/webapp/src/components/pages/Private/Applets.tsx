@@ -102,13 +102,12 @@ export default function Applets() {
   if (unauthenticated) {
     return (<Navigate to={"/"} />)
   }
-
   return (
     <div className="applets-container" key={reload}>
       <div className="applets-msg-holder">
         <p className="applets-msg">My Applets</p>
       </div>
-      <SearchBar searchInput={searchInput} setSearchInput={setSearchInput} items={areas} name='trigger.service' setItems={setAreas} />
+      <SearchBar searchInput={searchInput} setSearchInput={setSearchInput} items={areas} name={['trigger.service', 'actions[0].service']} setItems={setAreas} />
       <div className="applets-holder">
         <div style={{opacity: 0.5}}>{areas.length > 0 ? '' : 'No areas created for now'}</div>
         {areas.map((item, index) => (

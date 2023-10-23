@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import Input from "./Input";
+import _ from "lodash";
 
 type SearchBarProps = {
   style?: React.CSSProperties;
@@ -7,23 +8,25 @@ type SearchBarProps = {
   searchInput: string;
   items: any[];
   setItems: (item: any[]) => void;
-  name: string;
+  name: string[];
 };
 
 export default function SearchBar(props: SearchBarProps) {
   useEffect(() => {
     const sortedItems = [...props.items].sort((a, b) => {
-      const distanceA = a[props.name]
-        .toLowerCase()
-        .indexOf(props.searchInput.toLowerCase());
-      const distanceB = b[props.name]
-        .toLowerCase()
-        .indexOf(props.searchInput.toLowerCase());
+      let distanceA = 0;
+      let distanceB = 0;
+      for (let i = 0; i < props.name.length; i++) {
+        const valueA = _.get(a, props.name[i], "").toLowerCase();
+        const valueB = _.get(b, props.name[i], "").toLowerCase();
+        distanceA += valueA.indexOf(props.searchInput.toLowerCase());
+        distanceB += valueB.indexOf(props.searchInput.toLowerCase());
+      }
       return distanceB - distanceA;
     });
-
     props.setItems(sortedItems);
   }, [props.searchInput]);
+
   return (
     <div className="applets-searchbar-holder" style={props.style}>
       <Input
