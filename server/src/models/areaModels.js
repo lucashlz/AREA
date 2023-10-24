@@ -142,6 +142,9 @@ const ActionSchema = new Schema({
  *         isActive:
  *           type: boolean
  *           description: Indicates if the area is active or not.
+ *         area_description:
+ *           type: string
+ *           description: Description of the area.
  */
 const AreaSchema = new Schema({
     userId: {
@@ -153,6 +156,10 @@ const AreaSchema = new Schema({
     isActive: {
         type: Boolean,
         default: true,
+    },
+    area_description: {
+        type: String,
+        default: "",
     },
 });
 
