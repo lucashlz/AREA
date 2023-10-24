@@ -2,13 +2,16 @@ const mongoose = require("mongoose");
 const AREAS = require("./areaServices");
 
 async function executeReaction(areaEntry, associatedReaction, reactionParameters) {
-    console.log("REACTION !!!!");
     console.log("areaEntry:", areaEntry);
     for (const action of areaEntry.actions) {
-        const paramsValues = action.parameters || [];
+        let paramsValues = action.parameters || [];
         console.log("Action Parameters:", paramsValues);
         try {
-            await associatedReaction.actionFunction(areaEntry.userId, ...paramsValues.map((param) => param.input), ...reactionParameters);
+            if (action.service === "gmail") {
+                await associatedReaction.actionFunction(areaEntry.userId, ...paramsValues.map((param) => param.input), areaEntry.trigger.ingredients, ...reactionParameters);
+            } else {
+                await associatedReaction.actionFunction(areaEntry.userId, ...paramsValues.map((param) => param.input), ...reactionParameters);
+            }
             console.log(`Successfully executed reaction for area ID: ${areaEntry._id}`);
         } catch (error) {
             console.error("Failed to execute reaction:", error);
