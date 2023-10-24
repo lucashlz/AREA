@@ -5,6 +5,31 @@ const { Schema } = mongoose;
  * @swagger
  * components:
  *   schemas:
+ *     Ingredient:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: The name of the ingredient.
+ *         value:
+ *           type: string
+ *           description: The value of the ingredient.
+ */
+const IngredientSchema = new Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    value: {
+        type: String,
+        required: true,
+    },
+});
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
  *     Data:
  *       type: object
  *       properties:
@@ -77,6 +102,10 @@ const ParameterSchema = new Schema({
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/Parameter'
+ *         ingredients:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Ingredient'
  */
 const TriggerSchema = new Schema({
     service: {
@@ -89,6 +118,7 @@ const TriggerSchema = new Schema({
     },
     parameters: [ParameterSchema],
     data: DataSchema,
+    ingredients: [IngredientSchema]
 });
 
 /**
