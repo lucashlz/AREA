@@ -25,15 +25,15 @@ class AccountPageState extends State<AccountPage> {
 
   void navigateToChangeMail() {
     Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const ChangeMailPage()),
+      context,
+      MaterialPageRoute(builder: (context) => const ChangeMailPage()),
     );
   }
 
   void navigateToChangePassword() {
     Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const ChangePasswordPage()),
+      context,
+      MaterialPageRoute(builder: (context) => const ChangePasswordPage()),
     );
   }
 
@@ -45,11 +45,11 @@ class AccountPageState extends State<AccountPage> {
   }
 
   Future<void> _loadProfileFromAPI() async {
-    const String url = 'http://10.0.2.2:8080/profile';
-    
+    const String url = 'cprofile';
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    
+
     if (token == null) {
       navigateToLogin();
       return;
@@ -77,14 +77,14 @@ class AccountPageState extends State<AccountPage> {
   }
 
   void _showErrorSnackbar(String message) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(message),
-      backgroundColor: Colors.red,
-      duration: const Duration(seconds: 3),
-    ),
-  );
-}
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
 
   Future<void> deleteUser() async {
     const String url = 'http://10.0.2.2:8080/users/delete';
@@ -144,7 +144,9 @@ class AccountPageState extends State<AccountPage> {
     return Scaffold(
       backgroundColor: const Color(0xFF1D1D1D),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0,),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20.0,
+        ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -168,12 +170,12 @@ class AccountPageState extends State<AccountPage> {
               ),
               const SizedBox(height: 30),
               MyButton(
-              onPressed: _showDeleteConfirmation,
-              label: 'Delete User',
-              color: Colors.orange,
-              fontSize: 24,
-            ),
-            const SizedBox(height: 90),
+                onPressed: _showDeleteConfirmation,
+                label: 'Delete User',
+                color: Colors.orange,
+                fontSize: 24,
+              ),
+              const SizedBox(height: 90),
               MyButton(
                 onPressed: _logout,
                 label: 'Logout',

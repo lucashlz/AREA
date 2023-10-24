@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/triggers_view.dart';
+import '../services/services_with_triggers_view.dart';
 
 class AreaComponent extends StatelessWidget {
   const AreaComponent({super.key});

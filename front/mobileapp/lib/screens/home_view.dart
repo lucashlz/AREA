@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../components/search_bar.dart';
-import '../components/servicecard.dart';
+import '../components/servicecard_triggers.dart';
 import '../services/service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -22,9 +22,11 @@ Future<List<Service>> fetchServices() async {
   if (response.statusCode == 200) {
     final Map<String, dynamic> data = json.decode(response.body);
     final List<dynamic> servicesData = data['server']['services'] ?? [];
-    
+
     if (servicesData.isNotEmpty) {
-      return servicesData.map((serviceData) => Service.fromJson(serviceData)).toList();
+      return servicesData
+          .map((serviceData) => Service.fromJson(serviceData))
+          .toList();
     } else {
       throw Exception('No services found in the response');
     }
@@ -49,7 +51,8 @@ class HomeViewState extends State<HomeView> {
       return services;
     }
     return services
-        .where((service) => service.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .where((service) =>
+            service.name.toLowerCase().contains(_searchQuery.toLowerCase()))
         .toList();
   }
 
@@ -101,7 +104,8 @@ class HomeViewState extends State<HomeView> {
                   final services = _filterServices(snapshot.data!);
                   return ListView.builder(
                     itemCount: services.length,
-                    itemBuilder: (ctx, index) => ServiceCard(service: services[index]),
+                    itemBuilder: (ctx, index) =>
+                        ServiceCardTriggers(service: services[index]),
                   );
                 }
               },

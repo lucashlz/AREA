@@ -28,10 +28,10 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
 
   Future<void> _loadProfileFromAPI() async {
     const String url = 'http://10.0.2.2:8080/profile';
-    
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    
+
     if (token == null) {
       print("No token found");
       return;
@@ -59,7 +59,8 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
 
   Future<void> updatePassword() async {
     if (_email != emailController.text) {
-      const snackBar = SnackBar(content: Text('The provided email is incorrect'));
+      const snackBar =
+          SnackBar(content: Text('The provided email is incorrect'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
     }

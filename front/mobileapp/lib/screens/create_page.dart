@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/triggers_view.dart';
-import '../services/actions_view.dart';
+import '../services/services_with_triggers_view.dart';
+import '../services/services_with_actions_view.dart';
 
 class CreatePage extends StatefulWidget {
   const CreatePage({Key? key}) : super(key: key);

@@ -18,59 +18,60 @@ class RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
-  
-  void navigateToLogin() {
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (context) => const LoginScreen()),
-  );
-}
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
-Future<void> register() async {
-  if (passwordController.text != confirmPasswordController.text) {
-    setState(() {
-      errorMessage = 'Passwords do not match!';
-    });
-    return;
+  void navigateToLogin() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
   }
 
-  const String url = 'http://10.0.2.2:8080/auth/sign-up';
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: json.encode({
-      "username": usernameController.text,
-      "email": emailController.text,
-      "password": passwordController.text,
-    }),
-  );
+  Future<void> register() async {
+    if (passwordController.text != confirmPasswordController.text) {
+      setState(() {
+        errorMessage = 'Passwords do not match!';
+      });
+      return;
+    }
 
-  print('Status Code: ${response.statusCode}');
-  print('Response Body: ${response.body}');
+    const String url = 'http://10.0.2.2:8080/auth/sign-up';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        "username": usernameController.text,
+        "email": emailController.text,
+        "password": passwordController.text,
+      }),
+    );
 
-  if (response.statusCode == 200) {
-    final Map<String, dynamic> data = json.decode(response.body);
-    if (data.containsKey('token')) {
-      final token = data['token'];
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', token);
-      navigateToLogin();
-    } else if (data.containsKey('message')) {
+    print('Status Code: ${response.statusCode}');
+    print('Response Body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      if (data.containsKey('token')) {
+        final token = data['token'];
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
         navigateToLogin();
+      } else if (data.containsKey('message')) {
+        navigateToLogin();
+      } else {
+        setState(() {
+          errorMessage = 'Error registering. Please try again.';
+        });
+      }
     } else {
       setState(() {
         errorMessage = 'Error registering. Please try again.';
       });
     }
-  } else {
-    setState(() {
-      errorMessage = 'Error registering. Please try again.';
-    });
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -119,48 +120,49 @@ Future<void> register() async {
             ),
             const SizedBox(height: 20),
             if (errorMessage != null)
-      Text(
-        errorMessage!,
-        style: const TextStyle(color: Colors.red),
-      ),
+              Text(
+                errorMessage!,
+                style: const TextStyle(color: Colors.red),
+              ),
             const SizedBox(height: 40),
             MyButton(
-            onPressed: register,
-            label: 'Sign Up',
-            fontSize: 30,
-          ),
-          RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(
-        style: const TextStyle(
-          color: Color(0xFF8E949A),
-          fontFamily: 'Cabin',
-          fontSize: 18,
-          fontWeight: FontWeight.w400,
-          height: 1.465,
-        ),
-        children: [
-          const TextSpan(text: "Already have an account ? "),
-          WidgetSpan(
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
-              },
-              child: const Text(
-                "Sign in",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
+              onPressed: register,
+              label: 'Sign Up',
+              fontSize: 30,
+            ),
+            RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                style: const TextStyle(
+                  color: Color(0xFF8E949A),
+                  fontFamily: 'Cabin',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w400,
+                  height: 1.465,
                 ),
+                children: [
+                  const TextSpan(text: "Already have an account ? "),
+                  WidgetSpan(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginScreen()),
+                        );
+                      },
+                      child: const Text(
+                        "Sign in",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
-    ),
           ],
         ),
       ),

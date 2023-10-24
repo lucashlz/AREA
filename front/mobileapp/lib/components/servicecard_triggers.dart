@@ -4,18 +4,20 @@ import '../services/connect_service_view.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/list_triggers.dart';
 
-class ServiceCard extends StatelessWidget {
+class ServiceCardTriggers extends StatelessWidget {
   final Service service;
 
-  const ServiceCard({Key? key, required this.service}) : super(key: key);
+  const ServiceCardTriggers({Key? key, required this.service})
+      : super(key: key);
 
   Future<void> _loadProfileFromAPI(BuildContext context) async {
     const String url = 'http://10.0.2.2:8080/profile';
-    
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    
+
     if (token == null) {
       print("No token found");
       return;
@@ -28,21 +30,23 @@ class ServiceCard extends StatelessWidget {
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
-      List<String> connectedServices = List<String>.from(data['connectServices'] ?? []);
+      List<String> connectedServices =
+          List<String>.from(data['connectServices'] ?? []);
 
       if (connectedServices.contains(service.name)) {
-        //Navigator.push(
-        //  context,
-        //  MaterialPageRoute(
-        //    builder: (context) => ConnectedServiceView(service: service), // Pass the service data to the view
-        //  ),
-        //);
-      }
-      else {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ConnectServiceView(service: service), // Pass the service data to the view
+              builder: (context) => ListTriggersView(
+                  selectedService: service) // Pass the service data to the view
+              ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ConnectServiceView(
+                service: service), // Pass the service data to the view
           ),
         );
       }
@@ -65,7 +69,7 @@ class ServiceCard extends StatelessWidget {
         ),
         child: SizedBox(
           height: 120,
-          width: 120, 
+          width: 120,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[

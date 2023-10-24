@@ -28,10 +28,10 @@ class ChangeMailPageState extends State<ChangeMailPage> {
 
   Future<void> _loadProfileFromAPI() async {
     const String url = 'http://10.0.2.2:8080/profile';
-    
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    
+
     if (token == null) {
       print("No token found");
       return;
@@ -58,114 +58,114 @@ class ChangeMailPageState extends State<ChangeMailPage> {
   }
 
   Future<void> updateEmail() async {
-  if (_email != oldEmailController.text) {
+    if (_email != oldEmailController.text) {
       const snackBar = SnackBar(content: Text('Old email incorrect'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       return;
+    }
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('token');
+
+    if (token == null) {
+      print("No token found");
+      return;
+    }
+
+    final Uri url = Uri.parse('http://10.0.2.2:8080/profile/update');
+
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode({
+        "email": newEmailController.text,
+        "username": _username ?? "user",
+        "oldPassword": passwordController.text,
+        "newPassword": passwordController.text,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      print(data['message']);
+      setState(() {
+        _emailSent = true;
+      });
+    } else {
+      print("Error updating email: ${response.body}");
+    }
   }
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final String? token = prefs.getString('token');
-
-  if (token == null) {
-    print("No token found");
-    return;
-  }
-
-  final Uri url = Uri.parse('http://10.0.2.2:8080/profile/update');
-
-  final response = await http.put(
-    url,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-    },
-    body: json.encode({
-      "email": newEmailController.text,
-      "username": _username ?? "user",
-      "oldPassword": passwordController.text,
-      "newPassword": passwordController.text,
-    }),
-  );
-
-  if (response.statusCode == 200) {
-    final Map<String, dynamic> data = json.decode(response.body);
-    print(data['message']);
-    setState(() {
-    _emailSent = true;
-  });
-  } else {
-    print("Error updating email: ${response.body}");
-  }
-}
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-  padding: const EdgeInsets.only(top: 20.0),
-  child: Scaffold(
-    backgroundColor: const Color(0xFF1D1D1D),
-    appBar: AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
-        onPressed: _navigateToHome,
-      ),
-      title: const Text(
-        'Change your email',
-        style: TextStyle(
-          fontSize: 25,
-          fontFamily: 'Archivo',
-          color: Colors.white,
+      padding: const EdgeInsets.only(top: 20.0),
+      child: Scaffold(
+        backgroundColor: const Color(0xFF1D1D1D),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: _navigateToHome,
+          ),
+          title: const Text(
+            'Change your email',
+            style: TextStyle(
+              fontSize: 25,
+              fontFamily: 'Archivo',
+              color: Colors.white,
+            ),
+          ),
+          centerTitle: true,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              MyInput(
+                controller: oldEmailController,
+                hint: 'Old email',
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 30),
+              MyInput(
+                controller: newEmailController,
+                hint: 'New email',
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 30),
+              MyInput(
+                controller: passwordController,
+                hint: 'Password',
+                obscureText: true,
+              ),
+              const SizedBox(height: 80),
+              MyButton(
+                onPressed: updateEmail,
+                label: 'Confirm',
+                fontSize: 24,
+              ),
+              if (_emailSent)
+                const Padding(
+                  padding: EdgeInsets.only(top: 20.0),
+                  child: Text(
+                    'Email sent.',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
-      centerTitle: true,
-    ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            MyInput(
-              controller: oldEmailController,
-              hint: 'Old email',
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 30),
-            MyInput(
-              controller: newEmailController,
-              hint: 'New email',
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 30),
-            MyInput(
-              controller: passwordController,
-              hint: 'Password',
-              obscureText: true,
-            ),
-            const SizedBox(height: 80),
-            MyButton(
-  onPressed: updateEmail,
-  label: 'Confirm',
-  fontSize: 24,
-),
-if (_emailSent)
-  const Padding(
-    padding: EdgeInsets.only(top: 20.0),
-    child: Text(
-      'Email sent.',
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 18,
-      ),
-      textAlign: TextAlign.center,
-    ),
-  ),
-          ],
-        ),
-      ),
-    ),
     );
   }
 }
