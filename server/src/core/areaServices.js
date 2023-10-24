@@ -267,11 +267,11 @@ const GMAIL_ACTIONS = [
         "This Action will send an email to up to 20 recipients from your Gmail account.",
         [
             { name: "to_address", input: "To address" },
-            { name: "cc_address", input: "CC address", optional: true },
-            { name: "bcc_address", input: "BCC address", optional: true },
+            { name: "cc_address", input: "CC address (Optional)", optional: true },
+            { name: "bcc_address", input: "BCC address (Optional)", optional: true },
             { name: "subject", input: "Subject" },
             { name: "body", input: "Body" },
-            { name: "attachment_url", input: "Attachment URL", optional: true },
+            { name: "attachment_url", input: "Attachment URL (Optional)", optional: true },
         ],
         sendEmail
     ),
@@ -282,7 +282,7 @@ const GMAIL_ACTIONS = [
         [
             { name: "subject", input: "Subject" },
             { name: "body", input: "Body" },
-            { name: "attachment_url", input: "Attachment URL", optional: true },
+            { name: "attachment_url", input: "Attachment URL (Optional)", optional: true },
         ],
         sendEmailToSelf
     ),
