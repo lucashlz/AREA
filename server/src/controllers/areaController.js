@@ -1,7 +1,7 @@
 const { Area } = require("../models/areaModels");
 const User = require("../models/userModels");
 const AREAS = require("../core/areaServices");
-const { checkParameters } = require("../utils/areaUtils");
+const { checkParameters, generateDescription } = require("../utils/areaUtils");
 
 exports.listAllAreas = async (req, res) => {
     try {
@@ -43,9 +43,12 @@ exports.createArea = async (req, res) => {
         if (!triggerObj) {
             return res.status(400).json({ message: "Invalid trigger provided." });
         }
-        if (!(await checkParameters(req.user.id, trigger, actions))) {
-            return res.status(400).json({ message: "Invalid parameters provided." });
+        try {
+            await checkParameters(req.user.id, trigger, actions);
+        } catch (error) {
+            return res.status(400).json({ message: error.message });
         }
+        areaDescription = await generateDescription(req.body);
         const newArea = new Area({
             userId: user._id,
             trigger: {
@@ -59,8 +62,8 @@ exports.createArea = async (req, res) => {
                 parameters: a.parameters,
             })),
             isActive: true,
+            area_description: areaDescription,
         });
-
         const savedArea = await newArea.save();
         res.status(200).json(savedArea);
     } catch (error) {
@@ -86,14 +89,7 @@ exports.getAreaById = async (req, res) => {
 exports.updateAreaById = async (req, res) => {
     const id = req.params.id;
 
-    const {
-        actionService,
-        reactionService,
-        actionName,
-        reactionName,
-        actionParameters,
-        reactionParameters,
-    } = req.body;
+    const { actionService, reactionService, actionName, reactionName, actionParameters, reactionParameters } = req.body;
 
     try {
         const user = await User.findById(req.user.id);

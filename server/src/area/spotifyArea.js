@@ -47,9 +47,7 @@ async function newSavedAlbum(areaEntry) {
 async function newRecentlyPlayedTrack(areaEntry) {
     await setSpotifyToken(areaEntry.userId);
     const recentlyPlayedTracks = await spotifyApi.getMyRecentlyPlayedTracks({ limit: 1 });
-    console.log("RecentlyplayedTracks: ", recentlyPlayedTracks);
     const recentTrack = recentlyPlayedTracks.body.items.length > 0 ? recentlyPlayedTracks.body.items[0].track : null;
-    console.log("RecentTrack: ", recentTrack);
     if (!recentTrack) return false;
     return await processTriggerData(areaEntry, "recentTrackId", recentTrack.id);
 }
