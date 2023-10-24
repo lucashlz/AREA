@@ -17,6 +17,7 @@ exports.getInfo = (req, res) => {
                         name: trigger.name,
                         description: trigger.description,
                         parameters: trigger.parameters,
+                        ingredients: trigger.ingredients || [],
                     })),
                     actions: area.actions.map((action) => ({
                         name: action.name,
