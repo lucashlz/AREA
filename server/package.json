@@ -21,6 +21,7 @@
     "mongoose": "^7.5.2",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.5",
+    "openai": "^4.12.4",
     "passport": "^0.6.0",
     "passport-github": "^1.1.0",
     "passport-google-oauth20": "^2.0.0",
