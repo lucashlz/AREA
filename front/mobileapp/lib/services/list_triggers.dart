@@ -3,6 +3,7 @@ import './service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import './parameter_input_view.dart';
 
 Future<Service> fetchTriggers(String serviceName) async {
   const String url = 'http://10.0.2.2:8080/about/about.json';
@@ -43,7 +44,6 @@ String formatTriggerName(String original) {
       .join(' ');
 }
 
-
 class ListTriggersView extends StatelessWidget {
   final Service selectedService;
 
@@ -51,7 +51,8 @@ class ListTriggersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color backgroundColor = Color(int.parse('0xFF${selectedService.color.substring(1)}'));
+    Color backgroundColor =
+        Color(int.parse('0xFF${selectedService.color.substring(1)}'));
     Color lowerBackgroundColor = Color(0xFF1D1D1D);
     String logoAssetName = 'assets/servicesLogo/${selectedService.name}.png';
 
@@ -65,7 +66,7 @@ class ListTriggersView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 children: [
-                  SizedBox(height: 45),
+                  SizedBox(height: 55),
                   Text(
                     'Choose a trigger',
                     style: TextStyle(
@@ -102,7 +103,8 @@ class ListTriggersView extends StatelessWidget {
                         ),
                       ),
                     );
-                  } else if (!snapshot.hasData || snapshot.data!.triggers.isEmpty) {
+                  } else if (!snapshot.hasData ||
+                      snapshot.data!.triggers.isEmpty) {
                     return Center(
                       child: Text(
                         'No triggers available.',
@@ -120,7 +122,8 @@ class ListTriggersView extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final trigger = service.triggers[index];
                         return Padding(
-                          padding: const EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 15.0),
+                          padding:
+                              const EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 15.0),
                           child: TextButton(
                             style: TextButton.styleFrom(
                               backgroundColor: backgroundColor,
@@ -135,12 +138,27 @@ class ListTriggersView extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                              // handle what happens when the trigger is tapped
+                              if (trigger.parameters.isEmpty) {
+                                Navigator.pop(context,
+                                    "IF ${formatTriggerName(trigger.name)}");
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => TriggerParameterInputPage(
+                                      service: service,
+                                      trigger: trigger,
+                                    ),
+                                  ),
+                                );
+
+                              }
                             },
                             child: Align(
                               alignment: Alignment.centerLeft,
-                              child: Padding( // Padding added here
-                                padding: const EdgeInsets.only(left: 16.0), // Left padding for the text
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16.0), // Left padding for the text
                                 child: Text(formatTriggerName(trigger.name)),
                               ),
                             ),
