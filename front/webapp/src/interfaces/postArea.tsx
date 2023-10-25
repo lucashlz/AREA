@@ -1,6 +1,7 @@
 export interface TriggerReactionParameters {
     name: string;
     input: string;
+    optional?: boolean
 }
 
 export interface TriggerReaction {

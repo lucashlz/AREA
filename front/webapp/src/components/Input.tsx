@@ -1,6 +1,6 @@
 import './Input.css';
 
-type InputProps = {
+export type InputProps = {
   placeholder: string,
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
   value: string,
@@ -20,7 +20,7 @@ export default function Input(props: InputProps) {
           style={props.icon ? {paddingLeft: '60px'} : {}}
           placeholder={props.placeholder}
           value={props.value}
-          required={props.required === undefined ? true : props.required}
+          required={props.required === undefined ? false : props.required}
           onChange={props.onChange}
         />
       </div>

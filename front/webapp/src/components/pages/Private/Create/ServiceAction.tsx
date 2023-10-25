@@ -58,6 +58,7 @@ const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedA
 
         if (selectedArea) {
             if (actionInfos.parameters.length != 0) {
+                console.log(actionInfos)
                 setMode({ infos: actionInfos, type: whatami })
             } else {
                 setCurrentPage("create")
@@ -174,7 +175,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                     <form onSubmit={(e) => { e.preventDefault(); submitParams(); }}>
                         <div className='action-parameters-name'>{getBetterNames(mode.infos.name)}</div>
                         {mode.infos.parameters.map((item, index) => (
-                            <Input onChange={(e) => handleInputChange(index, e.target.value, item.name)} placeholder={item.input} type='searchInput' value={parameters[index]}/>
+                            <Input key={index} onChange={(e) => handleInputChange(index, e.target.value, item.name)} placeholder={item.input} type='searchInput' value={parameters[index]} required={!item.optional}/>
                         ))}
                         <button type="submit" className='add-action-btn' style={{ marginLeft: 0, marginTop: '7%', height: '3.5rem', border: '1px solid' }}>
                             Add

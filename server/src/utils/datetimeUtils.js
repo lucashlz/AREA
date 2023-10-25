@@ -66,7 +66,6 @@ function checkDatetimeParameters(triggerType, parameters) {
     if (!validations) {
         throw new Error(`Unrecognized trigger type: ${triggerType}. Make sure you are passing the correct trigger name/type.`);
     }
-
     for (let param of parameters) {
         const validate = validations[param.name];
         if (!validate) {

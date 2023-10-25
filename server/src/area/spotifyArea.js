@@ -34,6 +34,17 @@ async function newSavedTrack(areaEntry) {
     const savedTrack = await spotifyApi.getMySavedTracks({ limit: 1 });
     const recentTrack = savedTrack.body.items.length > 0 ? savedTrack.body.items[0].track : null;
     if (!recentTrack) return false;
+    const songName = recentTrack.name;
+    const artist = recentTrack.artists[0].name;
+    const trackURL = recentTrack.external_urls.spotify;
+    const coverURL = recentTrack.album.images[0].url;
+    if (!areaEntry.trigger.ingredients) {
+        areaEntry.trigger.ingredients = [];
+    }
+    areaEntry.trigger.ingredients.push({ name: "song_name", value: songName });
+    areaEntry.trigger.ingredients.push({ name: "artist", value: artist });
+    areaEntry.trigger.ingredients.push({ name: "trackURL", value: trackURL });
+    areaEntry.trigger.ingredients.push({ name: "coverURL", value: coverURL });
     return await processTriggerData(areaEntry, "trackId", recentTrack.id);
 }
 
@@ -42,15 +53,36 @@ async function newSavedAlbum(areaEntry) {
     const savedAlbum = await spotifyApi.getMySavedAlbums({ limit: 1 });
     const recentAlbum = savedAlbum.body.items.length > 0 ? savedAlbum.body.items[0].album : null;
     if (!recentAlbum) return false;
+    const albumName = recentAlbum.name;
+    const artist = recentAlbum.artists[0].name;
+    const albumURL = recentAlbum.external_urls.spotify;
+    const coverURL = recentAlbum.images[0].url;
+    if (!areaEntry.trigger.ingredients) {
+        areaEntry.trigger.ingredients = [];
+    }
+    areaEntry.trigger.ingredients.push({ name: "album_name", value: albumName });
+    areaEntry.trigger.ingredients.push({ name: "artist", value: artist });
+    areaEntry.trigger.ingredients.push({ name: "albumURL", value: albumURL });
+    areaEntry.trigger.ingredients.push({ name: "coverURL", value: coverURL });
     return await processTriggerData(areaEntry, "albumId", recentAlbum.id);
 }
+
 async function newRecentlyPlayedTrack(areaEntry) {
     await setSpotifyToken(areaEntry.userId);
     const recentlyPlayedTracks = await spotifyApi.getMyRecentlyPlayedTracks({ limit: 1 });
-    console.log("RecentlyplayedTracks: ", recentlyPlayedTracks);
     const recentTrack = recentlyPlayedTracks.body.items.length > 0 ? recentlyPlayedTracks.body.items[0].track : null;
-    console.log("RecentTrack: ", recentTrack);
     if (!recentTrack) return false;
+    const songName = recentTrack.name;
+    const artist = recentTrack.artists[0].name;
+    const trackURL = recentTrack.external_urls.spotify;
+    const coverURL = recentTrack.album.images[0].url;
+    if (!areaEntry.trigger.ingredients) {
+        areaEntry.trigger.ingredients = [];
+    }
+    areaEntry.trigger.ingredients.push({ name: "song_name", value: songName });
+    areaEntry.trigger.ingredients.push({ name: "artist", value: artist });
+    areaEntry.trigger.ingredients.push({ name: "trackURL", value: trackURL });
+    areaEntry.trigger.ingredients.push({ name: "coverURL", value: coverURL });
     return await processTriggerData(areaEntry, "recentTrackId", recentTrack.id);
 }
 
@@ -67,6 +99,17 @@ async function newTrackAddedToPlaylist(areaEntry) {
         return false;
     }
     const recentAddedTrack = tracksInPlaylist.body.items[tracksInPlaylist.body.items.length - 1].track;
+    const songName = recentAddedTrack.name;
+    const artist = recentAddedTrack.artists[0].name;
+    const trackURL = recentAddedTrack.external_urls.spotify;
+    const coverURL = recentAddedTrack.album.images[0].url;
+    if (!areaEntry.trigger.ingredients) {
+        areaEntry.trigger.ingredients = [];
+    }
+    areaEntry.trigger.ingredients.push({ name: "song_name", value: songName });
+    areaEntry.trigger.ingredients.push({ name: "artist", value: artist });
+    areaEntry.trigger.ingredients.push({ name: "trackURL", value: trackURL });
+    areaEntry.trigger.ingredients.push({ name: "coverURL", value: coverURL });
     return await processTriggerData(areaEntry, "newPlaylistTrackId", recentAddedTrack.id);
 }
 

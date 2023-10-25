@@ -27,7 +27,6 @@ const {
 const {
     streamGoingLiveForChannel,
     youFollowNewChannel,
-    userFollowedChannel,
     newFollowerOnYourChannel,
 } = require("../area/twitchArea");
 
@@ -49,11 +48,12 @@ class Area {
 }
 
 class Trigger {
-    constructor(name, description, parameters, triggerFunction) {
+    constructor(name, description, parameters, triggerFunction, ingredients) {
         this.name = name;
         this.description = description;
         this.parameters = parameters;
         this.triggerFunction = triggerFunction;
+        this.ingredients = ingredients;
     }
 }
 
@@ -71,26 +71,50 @@ const SPOTIFY_TRIGGERS = [
         "new_saved_track",
         "Triggers every time you save a new track to Your Music on Spotify",
         [],
-        newSavedTrack
+        newSavedTrack,
+        [
+            { name: "song_name", description: "Name of the saved song" },
+            { name: "artist", description: "Artist of the saved song" },
+            { name: "trackURL", description: "URL of the saved track" },
+            { name: "coverURL", description: "Cover image URL of the saved track" },
+        ]
     ),
     new Trigger(
         "new_saved_album",
         "Triggers every time you save a new album to Your Music on Spotify",
         [],
-        newSavedAlbum
+        newSavedAlbum,
+        [
+            { name: "album_name", description: "Name of the saved album" },
+            { name: "artist", description: "Artist of the saved album" },
+            { name: "albumURL", description: "URL of the saved album" },
+            { name: "coverURL", description: "Cover image URL of the saved album" },
+        ]
     ),
     new Trigger(
         "new_recently_played_track",
         "Triggers every time you have played a new track on Spotify",
         [],
-        newRecentlyPlayedTrack
+        newRecentlyPlayedTrack,
+        [
+            { name: "song_name", description: "Name of the recently played song" },
+            { name: "artist", description: "Artist of the recently played song" },
+            { name: "trackURL", description: "URL of the recently played track" },
+            { name: "coverURL", description: "Cover image URL of the recently played track" },
+        ]
     ),
     new Trigger(
         "new_track_added_to_playlist",
         "Triggers every time a new track is added to a specified Spotify playlist",
         [{ name: "playlist_id", input: "ID of the Spotify playlist to monitor" }],
-        newTrackAddedToPlaylist
-    ),
+        newTrackAddedToPlaylist,
+        [
+            { name: "song_name", description: "Name of the song added to the playlist" },
+            { name: "artist", description: "Artist of the song added to the playlist" },
+            { name: "trackURL", description: "URL of the track added to the playlist" },
+            { name: "coverURL", description: "Cover image URL of the track added to the playlist" },
+        ]
+    )
 ];
 
 const SPOTIFY_ACTIONS = [
@@ -122,25 +146,29 @@ const GITHUB_TRIGGERS = [
         "any_new_commit",
         "Triggers every time a new commit in a repo is created on Github",
         [{ name: "repository_name", input: "Repository name" }],
-        anyNewCommit
+        anyNewCommit,
+        []
     ),
     new Trigger(
         "any_new_issue",
         "Triggers every time any new issue is opened in a repository you own or collaborate on",
         [],
-        anyNewIssue
+        anyNewIssue,
+        []
     ),
     new Trigger(
         "new_issue_assigned_to_you",
         "Triggers every time a new issue is assigned to you",
         [],
-        newIssueAssignedToYou
+        newIssueAssignedToYou,
+        []
     ),
     new Trigger(
         "new_repository_by_user_or_org",
         "Triggers every time a new repository is created by the username or organization you specify",
         [{ name: "user_or_org_name", input: "Username or organization name" }],
-        newRepositoryByUserOrOrg
+        newRepositoryByUserOrOrg,
+        []
     ),
 ];
 
@@ -165,13 +193,15 @@ const DATETIME_TRIGGERS = [
             { name: "target_hour", input: "Hour (0-23)" },
             { name: "target_minute", input: "Minute (0-59)" },
         ],
-        everyDayAt
+        everyDayAt,
+        []
     ),
     new Trigger(
         "every_hour_at",
         "Triggers once an hour at :00, :15, :30, or :45 minutes past the hour",
         [{ name: "target_minute", input: "Minute (0, 15, 30, 45)" }],
-        everyHourAt
+        everyHourAt,
+        []
     ),
     new Trigger(
         "every_day_of_the_week_at",
@@ -191,7 +221,8 @@ const DATETIME_TRIGGERS = [
             { name: "target_hour", input: "Hour (0-23)" },
             { name: "target_minute", input: "Minute (0-59)" },
         ],
-        everyMonthOnThe
+        everyMonthOnThe,
+        []
     ),
     new Trigger(
         "every_year_on",
@@ -202,7 +233,8 @@ const DATETIME_TRIGGERS = [
             { name: "target_hour", input: "Hour (0-23)" },
             { name: "target_minute", input: "Minute (0-59)" },
         ],
-        everyYearOn
+        everyYearOn,
+        []
     ),
 ];
 
@@ -213,19 +245,22 @@ const TWITCH_TRIGGERS = [
         "stream_going_live_for_channel",
         "Triggers every time a stream is going live for the specified Channel that you follow",
         [{ name: "channel_name", input: "Name of the channel" }],
-        streamGoingLiveForChannel
+        streamGoingLiveForChannel,
+        []
     ),
     new Trigger(
         "you_follow_new_channel",
         "This trigger fires every time you follow a new channel on Twitch",
         [],
-        youFollowNewChannel
+        youFollowNewChannel,
+        []
     ),
     new Trigger(
         "new_follower_on_your_channel",
         "This trigger fires every time there is a new follower of your channel",
         [],
-        newFollowerOnYourChannel
+        newFollowerOnYourChannel,
+        []
     ),
 ];
 
@@ -236,19 +271,22 @@ const YOUTUBE_TRIGGERS = [
         "new_liked_video",
         "Triggers every time you like a video on YouTube",
         [],
-        newLikedVideo
+        newLikedVideo,
+        []
     ),
     new Trigger(
         "new_video_by_channel",
         "Triggers every time a specific channel publishes a video",
         [{ name: "channel_id", input: "Enter the Channel ID" }],
-        newVideoByChannel
+        newVideoByChannel,
+        []
     ),
     new Trigger(
         "new_subscription",
         "This trigger fires when a new subscription is made by a specific channel",
         [{ name: "channel_id", input: "Channel id" }],
-        newSubscription
+        newSubscription,
+        []
     ),
 ];
 
@@ -267,11 +305,11 @@ const GMAIL_ACTIONS = [
         "This Action will send an email to up to 20 recipients from your Gmail account.",
         [
             { name: "to_address", input: "To address" },
-            { name: "cc_address", input: "CC address", optional: true },
-            { name: "bcc_address", input: "BCC address", optional: true },
+            { name: "cc_address", input: "CC address (Optional)", optional: true },
+            { name: "bcc_address", input: "BCC address (Optional)", optional: true },
             { name: "subject", input: "Subject" },
             { name: "body", input: "Body" },
-            { name: "attachment_url", input: "Attachment URL", optional: true },
+            { name: "attachment_url", input: "Attachment URL (Optional)", optional: true },
         ],
         sendEmail
     ),
@@ -282,7 +320,7 @@ const GMAIL_ACTIONS = [
         [
             { name: "subject", input: "Subject" },
             { name: "body", input: "Body" },
-            { name: "attachment_url", input: "Attachment URL", optional: true },
+            { name: "attachment_url", input: "Attachment URL (Optional)", optional: true },
         ],
         sendEmailToSelf
     ),

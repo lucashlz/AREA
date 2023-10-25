@@ -15,6 +15,12 @@ const areaController = require("../controllers/areaController");
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/Action'
+ *         isActive:
+ *           type: boolean
+ *           description: Indicates if the area is active or not.
+ *         area_description:
+ *           type: string
+ *           description: Description of the area.
  * /areas:
  *   get:
  *     summary: Retrieve all areas associated with the authenticated user, excluding the userId field
@@ -94,7 +100,15 @@ router.get("/", areaController.listAllAreas);
  *       200:
  *         description: Area created successfully
  *       400:
- *         description: Bad Request (e.g., Specified service/action does not exist, Invalid parameters)
+ *         description: Bad Request. Possible reasons include specified service/action does not exist, invalid parameters, or a specific validation error regarding a parameter.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: A specific error message regarding the parameter validation failure.
  *       404:
  *         description: User not found
  *       409:
