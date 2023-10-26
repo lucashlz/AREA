@@ -11,17 +11,32 @@ String formatTriggerParameter(String original) {
       .join(' ');
 }
 
-class TriggerParameterInputPage extends StatelessWidget {
+class TriggerParameterInputPage extends StatefulWidget {
   final Service service;
   final Trigger trigger;
 
   TriggerParameterInputPage({required this.service, required this.trigger});
 
   @override
+  _TriggerParameterInputPageState createState() =>
+      _TriggerParameterInputPageState();
+}
+
+class _TriggerParameterInputPageState extends State<TriggerParameterInputPage> {
+  late final List<TextEditingController> _controllers;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = List.generate(
+        widget.trigger.parameters.length, (index) => TextEditingController());
+  }
+
+  @override
   Widget build(BuildContext context) {
     Color backgroundColor =
-        Color(int.parse('0xFF${service.color.substring(1)}'));
-    String logoAssetName = 'assets/servicesLogo/${service.name}.png';
+        Color(int.parse('0xFF${widget.service.color.substring(1)}'));
+    String logoAssetName = 'assets/servicesLogo/${widget.service.name}.png';
     final areaState = Provider.of<AreaCreationState>(context, listen: false);
 
     return Scaffold(
@@ -57,11 +72,12 @@ class TriggerParameterInputPage extends StatelessWidget {
             child: Container(
               color: backgroundColor,
               child: ListView.builder(
-                itemCount: trigger.parameters.length,
+                itemCount: widget.trigger.parameters.length,
                 itemBuilder: (context, index) {
-                  final parameter = trigger.parameters[index];
+                  final parameter = widget.trigger.parameters[index];
                   return Padding(
-                    padding: const EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 15.0),
+                    padding:
+                        const EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 15.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -75,6 +91,7 @@ class TriggerParameterInputPage extends StatelessWidget {
                         ),
                         SizedBox(height: 8),
                         TextFormField(
+                          controller: _controllers[index],
                           style: TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             filled: true,
@@ -91,9 +108,6 @@ class TriggerParameterInputPage extends StatelessWidget {
                               borderSide: BorderSide(color: Colors.white54),
                             ),
                           ),
-                          onChanged: (value) {
-                            // Handle the input change
-                          },
                         ),
                       ],
                     ),
@@ -107,22 +121,23 @@ class TriggerParameterInputPage extends StatelessWidget {
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
             child: ElevatedButton(
               onPressed: () {
-                final parameters = trigger.parameters.map((param) {
+                final parameters = widget.trigger.parameters.asMap().entries
+                    .map((entry) {
+                  int idx = entry.key;
+                  var param = entry.value;
                   return {
                     'name': param['name'],
-                    'input': "INPUT_VALUE_HERE" // TODO: Fetch the input value from the TextFormField
+                    'input': _controllers[idx].text
                   };
                 }).toList();
 
-                // Step 2: Replace the _areaState with the obtained instance
                 areaState.setTrigger({
-                  'service': service.name,
-                  'name': trigger.name,
+                  'service': widget.service.name,
+                  'name': widget.trigger.name,
                   'parameters': parameters,
                 });
 
                 Navigator.popUntil(context, (route) => route.isFirst);
-
               },
               style: ElevatedButton.styleFrom(
                 primary: Colors.white,
@@ -139,5 +154,13 @@ class TriggerParameterInputPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import './action.dart' as MyAction;
-
 import './service.dart';
 import '../components/area_creation_state.dart';
 import 'package:provider/provider.dart';
@@ -12,21 +11,36 @@ String formatActionParameter(String original) {
       .join(' ');
 }
 
-class ActionParameterInputPage extends StatelessWidget {
+class ActionParameterInputPage extends StatefulWidget {
   final Service service;
   final MyAction.Action action;
 
   ActionParameterInputPage({required this.service, required this.action});
 
   @override
+  _ActionParameterInputPageState createState() =>
+      _ActionParameterInputPageState();
+}
+
+class _ActionParameterInputPageState extends State<ActionParameterInputPage> {
+  late final List<TextEditingController> _controllers;
+
+  @override
+  void initState() {
+    super.initState();
+    _controllers = List.generate(
+        widget.action.parameters.length, (index) => TextEditingController());
+  }
+
+  @override
   Widget build(BuildContext context) {
     Color backgroundColor =
-        Color(int.parse('0xFF${service.color.substring(1)}'));
-    String logoAssetName = 'assets/servicesLogo/${service.name}.png';
+        Color(int.parse('0xFF${widget.service.color.substring(1)}'));
+    String logoAssetName = 'assets/servicesLogo/${widget.service.name}.png';
     final areaState = Provider.of<AreaCreationState>(context, listen: false);
 
     return Scaffold(
-      backgroundColor: backgroundColor, // Set the scaffold background color
+      backgroundColor: backgroundColor,
       body: Column(
         children: [
           Container(
@@ -58,9 +72,9 @@ class ActionParameterInputPage extends StatelessWidget {
             child: Container(
               color: backgroundColor,
               child: ListView.builder(
-                itemCount: action.parameters.length,
+                itemCount: widget.action.parameters.length,
                 itemBuilder: (context, index) {
-                  final parameter = action.parameters[index];
+                  final parameter = widget.action.parameters[index];
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 15.0),
                     child: Column(
@@ -76,6 +90,7 @@ class ActionParameterInputPage extends StatelessWidget {
                         ),
                         SizedBox(height: 8),
                         TextFormField(
+                          controller: _controllers[index],
                           style: TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             filled: true,
@@ -92,9 +107,6 @@ class ActionParameterInputPage extends StatelessWidget {
                               borderSide: BorderSide(color: Colors.white54),
                             ),
                           ),
-                          onChanged: (value) {
-                            // Handle the input change
-                          },
                         ),
                       ],
                     ),
@@ -104,18 +116,22 @@ class ActionParameterInputPage extends StatelessWidget {
             ),
           ),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
             child: ElevatedButton(
               onPressed: () {
-                final parameters = action.parameters.map((param) {
-                  return {'name': param['name'], 'input': "INPUT_VALUE_HERE"};
+                final parameters = widget.action.parameters.asMap().entries
+                    .map((entry) {
+                  int idx = entry.key;
+                  var param = entry.value;
+                  return {
+                    'name': param['name'],
+                    'input': _controllers[idx].text
+                  };
                 }).toList();
 
-                // Step 2: Replace the _areaState with the obtained instance
                 areaState.setAction({
-                  'service': service.name,
-                  'name': action.name,
+                  'service': widget.service.name,
+                  'name': widget.action.name,
                   'parameters': parameters,
                 });
 
@@ -136,5 +152,13 @@ class ActionParameterInputPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 }
