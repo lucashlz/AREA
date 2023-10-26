@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
-import './trigger.dart';
-import './service.dart';
+import './action.dart' as MyAction;
 
-String formatTriggerParameter(String original) {
+import './service.dart';
+import '../components/area_creation_state.dart';
+import 'package:provider/provider.dart';
+
+String formatActionParameter(String original) {
   return original
       .split('_')
       .map((str) => '${str[0].toUpperCase()}${str.substring(1)}')
       .join(' ');
 }
 
-class TriggerParameterInputPage extends StatelessWidget {
+class ActionParameterInputPage extends StatelessWidget {
   final Service service;
-  final Trigger trigger;
+  final MyAction.Action action;
 
-  TriggerParameterInputPage({required this.service, required this.trigger});
+  ActionParameterInputPage({required this.service, required this.action});
 
   @override
   Widget build(BuildContext context) {
-    Color backgroundColor = Color(int.parse('0xFF${service.color.substring(1)}'));
+    Color backgroundColor =
+        Color(int.parse('0xFF${service.color.substring(1)}'));
     String logoAssetName = 'assets/servicesLogo/${service.name}.png';
+    final areaState = Provider.of<AreaCreationState>(context, listen: false);
 
     return Scaffold(
       backgroundColor: backgroundColor, // Set the scaffold background color
@@ -53,16 +58,16 @@ class TriggerParameterInputPage extends StatelessWidget {
             child: Container(
               color: backgroundColor,
               child: ListView.builder(
-                itemCount: trigger.parameters.length,
+                itemCount: action.parameters.length,
                 itemBuilder: (context, index) {
-                  final parameter = trigger.parameters[index];
+                  final parameter = action.parameters[index];
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 15.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          formatTriggerParameter(parameter['name']!),
+                          formatActionParameter(parameter['name']!),
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -99,11 +104,22 @@ class TriggerParameterInputPage extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
             child: ElevatedButton(
               onPressed: () {
-                // Handle the add action
-                Navigator.pop(context);
+                final parameters = action.parameters.map((param) {
+                  return {'name': param['name'], 'input': "INPUT_VALUE_HERE"};
+                }).toList();
+
+                // Step 2: Replace the _areaState with the obtained instance
+                areaState.setAction({
+                  'service': service.name,
+                  'name': action.name,
+                  'parameters': parameters,
+                });
+
+                Navigator.popUntil(context, (route) => route.isFirst);
               },
               style: ElevatedButton.styleFrom(
                 primary: Colors.white,

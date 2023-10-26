@@ -6,6 +6,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'oauth_service.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 
+String capitalize(String input) {
+  if (input.isEmpty) {
+    return input;
+  }
+  return input[0].toUpperCase() + input.substring(1);
+}
+
 class ConnectServiceView extends StatelessWidget {
   final Service service;
 

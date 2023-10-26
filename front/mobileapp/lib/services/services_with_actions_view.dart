@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../components/search_bar.dart';
-import '../components/servicecard_triggers.dart';
+import '../components/servicecard_actions.dart';
 
 Future<List<Service>> fetchActions() async {
   const String url = 'http://10.0.2.2:8080/about/about.json';
@@ -24,8 +24,8 @@ Future<List<Service>> fetchActions() async {
     final List<dynamic> servicesData = data['server']['services'] ?? [];
 
     final List<dynamic> servicesWithActions = servicesData.where((service) {
-      final List<dynamic> Actions = service['actions'];
-      return Actions.isNotEmpty;
+      final List<dynamic> actions = service['actions'];
+      return actions.isNotEmpty;
     }).toList();
 
     if (servicesWithActions.isNotEmpty) {
@@ -126,7 +126,7 @@ class ActionsViewState extends State<ActionsView> {
                     ),
                     itemCount: filteredServices.length,
                     itemBuilder: (ctx, index) =>
-                        ServiceCardTriggers(service: filteredServices[index]),
+                        ServiceCardActions(service: filteredServices[index]),
                   );
                 }
               },

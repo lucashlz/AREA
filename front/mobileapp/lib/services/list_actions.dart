@@ -3,13 +3,11 @@ import './service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'triggers_parameter_input_view.dart';
+import 'actions_parameter_input_view.dart';
 import '../components/area_creation_state.dart';
 import 'package:provider/provider.dart';
 
-
-
-Future<Service> fetchTriggers(String serviceName) async {
+Future<Service> fetchActions(String serviceName) async {
   const String url = 'http://10.0.2.2:8080/about/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
@@ -41,17 +39,17 @@ Future<Service> fetchTriggers(String serviceName) async {
   }
 }
 
-String formatTriggerName(String original) {
+String formatActionName(String original) {
   return original
       .split('_')
       .map((str) => '${str[0].toUpperCase()}${str.substring(1)}')
       .join(' ');
 }
 
-class ListTriggersView extends StatelessWidget {
+class ListActionsView extends StatelessWidget {
   final Service selectedService;
 
-  ListTriggersView({Key? key, required this.selectedService}) : super(key: key);
+  ListActionsView({Key? key, required this.selectedService}) : super(key: key);
 
    @override
   Widget build(BuildContext context) {
@@ -66,14 +64,14 @@ class ListTriggersView extends StatelessWidget {
         children: [
           Container(
             color: backgroundColor,
-            width: double.infinity, // Take all available width
+            width: double.infinity,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 children: [
                   SizedBox(height: 55),
                   Text(
-                    'Choose a trigger',
+                    'Choose an action',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 30,
@@ -93,7 +91,7 @@ class ListTriggersView extends StatelessWidget {
             child: Container(
               color: lowerBackgroundColor,
               child: FutureBuilder<Service>(
-                future: fetchTriggers(selectedService.name),
+                future: fetchActions(selectedService.name),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -109,10 +107,10 @@ class ListTriggersView extends StatelessWidget {
                       ),
                     );
                   } else if (!snapshot.hasData ||
-                      snapshot.data!.triggers.isEmpty) {
+                      snapshot.data!.actions.isEmpty) {
                     return Center(
                       child: Text(
-                        'No triggers available.',
+                        'No actions available.',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -123,9 +121,9 @@ class ListTriggersView extends StatelessWidget {
                   } else {
                     final service = snapshot.data!;
                     return ListView.builder(
-                      itemCount: service.triggers.length,
+                      itemCount: service.actions.length,
                       itemBuilder: (context, index) {
-                        final trigger = service.triggers[index];
+                        final action = service.actions[index];
                         return Padding(
                           padding:
                               const EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 15.0),
@@ -143,11 +141,11 @@ class ListTriggersView extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                                if (trigger.parameters.isEmpty) {
-                                    // Step 2 & 3: Use the obtained instance to set the trigger
-                                    areaState.setTrigger({
+                                if (action.parameters.isEmpty) {
+                                    // Step 2 & 3: Use the obtained instance to set the action
+                                    areaState.setAction({
                                       'service': service.name,
-                                      'name': trigger.name,
+                                      'name': action.name,
                                       'parameters': [], // Since there are no parameters
                                     });
                                     Navigator.popUntil(context, (route) => route.isFirst);
@@ -155,9 +153,9 @@ class ListTriggersView extends StatelessWidget {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => TriggerParameterInputPage(
+                                        builder: (context) => ActionParameterInputPage(
                                           service: service,
-                                          trigger: trigger,
+                                          action: action,
                                         ),
                                       ),
                                     );
@@ -168,7 +166,7 @@ class ListTriggersView extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                     left: 16.0), // Left padding for the text
-                                child: Text(formatTriggerName(trigger.name)),
+                                child: Text(formatActionName(action.name)),
                               ),
                             ),
                           ),
