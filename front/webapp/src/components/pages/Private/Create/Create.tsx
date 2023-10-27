@@ -54,6 +54,7 @@ const IftttSquare: React.FC<IftttProps> = ({ ifttt_name, is_current, setCurrentP
         name: '',
         parameters: []
       }
+      localStorage.removeItem('selectedIngredients');
     }
     if (index >= 0) {
       if (index === 0 && selectedArea.actions.length === 1) {
@@ -157,6 +158,7 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
 
   const resetCreation = () => {
     localStorage.removeItem('selectedArea')
+    localStorage.removeItem('selectedIngredients');
     refreshPageContent()
   }
 
@@ -179,6 +181,7 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
       if (response.status == 200) {
         setRequestIsGood(true)
         localStorage.removeItem('selectedArea')
+        localStorage.removeItem('selectedIngredients');
       } else {
         setError(response.data.message)
       }

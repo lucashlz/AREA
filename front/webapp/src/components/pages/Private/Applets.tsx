@@ -37,6 +37,7 @@ const Applet: React.FC<AppletProps<any>> = ({ item, setReload }) => {
       }
   }
 
+
   return (
     <div className="applet-content-holder" style={{ backgroundColor: status === true ? "#0066FF" : "#565656" }}>
       <div className='applet-content-container'>
@@ -46,7 +47,7 @@ const Applet: React.FC<AppletProps<any>> = ({ item, setReload }) => {
         ))}
       </div>
       <div className="applet-description">
-        <div>des description</div>
+        <div>{item.area_description ? item.area_description : ''}</div>
       </div>
       <div className='bottom-btn-container'>
         <button className="delete-applet" onClick={deleteApplet}>

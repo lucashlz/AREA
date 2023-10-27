@@ -28,18 +28,9 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
     const upperName = initialName[0].toUpperCase() + initialName.slice(1);
     const image = require(`../../../../../public/servicesLogo/${initialName}.png`);
     const token = localStorage.getItem('userToken');
+    let popup: any = undefined
 
     useEffect(() => {
-        const checkConnect = async () => {
-            const response = await axios.get('http://localhost:8080/profile', { headers: { Authorization: `Bearer ${token}` } });
-            if (response.status == 200) {
-                if (response.data.connectServices.includes(initialName)) {
-                    setIsConnected(true)
-                }
-            } else {
-                console.error("Cannot get user datas")
-            }
-        }
         checkConnect()
         setSelectedArea(getLocalSelectedArea())
     }, [])
@@ -59,15 +50,29 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
                 const popupWidth = 800;
                 const popupHeight = 600;
 
-                const popup = window.open(serviceURL.href, '_blank', `width=${popupWidth},height=${popupHeight},menubar=no,toolbar=no,location=no`);
+                popup = window.open(serviceURL.href, '_blank', `width=${popupWidth},height=${popupHeight},menubar=no,toolbar=no,location=no`);
                 if (popup) {
                     popup.focus();
                 }
-                setCurrentPage(initialName)
             }
+        } else {
+            setCurrentPage(initialName)
         }
     }, [serviceOAuthConstants])
 
+
+    const checkConnect = async () => {
+        const response = await axios.get('http://localhost:8080/profile', { headers: { Authorization: `Bearer ${token}` } });
+        if (response.status == 200) {
+            if (response.data.connectServices.includes(initialName)) {
+                setIsConnected(true)
+                if (popup !== undefined)
+                    popup.close()
+            }
+        } else {
+            console.error("Cannot get user datas")
+        }
+    }
 
     if (selectedArea) {
         if (selectedArea.trigger.name.length == 0) {
@@ -95,6 +100,7 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
     }
 
     const selectArea = async () => {
+        checkConnect()
         if (!isConnected) {
             if (!getServiceAuthorizeByName(initialName) || isConnected) {
                 setCurrentPage(initialName)
