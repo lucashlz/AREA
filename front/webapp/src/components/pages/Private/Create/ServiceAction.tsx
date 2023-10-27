@@ -6,7 +6,9 @@ import { postService } from "../../../../interfaces/postArea";
 import { Navigate } from 'react-router-dom';
 import { TriggerActions } from '../../../../interfaces/aboutDotJson';
 import { getLocalSelectedArea } from '../../../../interfaces/postArea';
+import { Ingredient } from '../../../../interfaces/aboutDotJson';
 import Input from '../../../Input';
+import { TriggerReactionParameters } from '../../../../interfaces/postArea';
 
 interface ServiceActionsProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>
@@ -58,9 +60,14 @@ const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedA
 
         if (selectedArea) {
             if (actionInfos.parameters.length != 0) {
-                console.log(actionInfos)
+                if (actionInfos.ingredients) {
+                    localStorage.setItem('selectedIngredients', JSON.stringify(actionInfos.ingredients))
+                }
                 setMode({ infos: actionInfos, type: whatami })
             } else {
+                if (actionInfos.ingredients) {
+                    localStorage.setItem('selectedIngredients', JSON.stringify(actionInfos.ingredients))
+                }
                 setCurrentPage("create")
             }
         }
@@ -84,7 +91,9 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
     const [services, setServices] = useState<aboutService | undefined>();
     const [selectedArea, setSelectedArea] = useState<postService>()
     const [mode, setMode] = useState<actionReactionInfos | undefined>()
-    let parameters: string[] = [];
+    const [ingredients, setIngredients] = useState<Ingredient[]>([])
+    const [parametersInput, setParametersInput] = useState<string[]>(['']);
+    const [parametersNames, setParametersNames] = useState<string[]>(['']);
 
     let token = localStorage.getItem('userToken');
 
@@ -108,18 +117,54 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
         fetchData();
     }, []);
 
-    const handleInputChange = (index: number, value: string, name: string) => {
-        if (mode?.type == "trigger" && selectedArea) {
-            selectedArea.trigger.parameters[index] = { name: name, input: value };
+    useEffect(() => {
+        const getIngredients = () => {
+            let localIngredients = localStorage.getItem('selectedIngredients')
+            if (localIngredients)
+                setIngredients(JSON.parse(localIngredients))
         }
-        if (mode?.type == "actions" && selectedArea) {
-            selectedArea.actions[selectedArea.actions.length - 1].parameters[index] = { name: name, input: value };
-        }
-    }
+        getIngredients();
+    }, [mode]);
 
     const submitParams = () => {
+        if (mode && selectedArea) {
+            for (let i = 0; i < mode.infos.parameters.length - 1; i++) {
+                if (mode.type === "trigger") {
+                    selectedArea.trigger.parameters[i] = {name: parametersNames[i], input: parametersNames[i]}
+                }
+                if (mode.type === "actions") {
+                    selectedArea.actions[selectedArea.actions.length - 1].parameters[i] = {name: parametersNames[i], input: parametersInput[i]}
+                }
+            }
+        }
         localStorage.setItem('selectedArea', JSON.stringify(selectedArea));
+        localStorage.removeItem('selectedIngredients');
         setCurrentPage("create")
+    }
+
+    const handleIngredientChange = (ingredientName: string, index: number) => {
+        setParametersInput(prev => {
+            const updatedInputs = [...prev];
+            if (updatedInputs[index] == undefined) {
+                updatedInputs[index] = `<${ingredientName}>`;
+            } else
+                updatedInputs[index] += `<${ingredientName}>`;
+            return updatedInputs;
+        });
+    }
+
+    const handleInputChange = (index: number, value: string, name: string) => {
+        setParametersNames(prev => {
+            const updatedNames = [...prev];
+            updatedNames[index] = name;
+            return updatedNames;
+        });
+
+        setParametersInput(prev => {
+            const updatedInputs = [...prev];
+            updatedInputs[index] = value;
+            return updatedInputs;
+        });
     }
 
     if (!services)
@@ -134,15 +179,11 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                     <button className='back-button' style={{ color: 'white' }} onClick={() => {
                         if (mode && mode.infos.parameters.length > 0) {
                             if (mode.type == "trigger" && selectedArea) {
-                                selectedArea.trigger.name = '';
-                                selectedArea.trigger.service = '';
-                                selectedArea.trigger.parameters = [{ name: '', input: '' }];
+                                selectedArea.trigger = { name: '', service: '', parameters: [{ name: '', input: '' }] };
+                                localStorage.removeItem('selectedIngredients');
                             }
-                            if (mode.type == "actions" && selectedArea) {
-                                selectedArea.actions[selectedArea.actions.length - 1].name = '';
-                                selectedArea.actions[selectedArea.actions.length - 1].service = '';
-                                selectedArea.actions[selectedArea.actions.length - 1].parameters = [{ name: '', input: '' }];
-                            }
+                            if (mode.type == "actions" && selectedArea)
+                                selectedArea.actions[selectedArea.actions.length - 1] = { name: '', service: '', parameters: [{ name: '', input: '' }] };
                             setMode(undefined);
                         } else {
                             setCurrentPage("services")
@@ -175,8 +216,29 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                     <form onSubmit={(e) => { e.preventDefault(); submitParams(); }}>
                         <div className='action-parameters-name'>{getBetterNames(mode.infos.name)}</div>
                         {mode.infos.parameters.map((item, index) => (
-                            <Input key={index} onChange={(e) => handleInputChange(index, e.target.value, item.name)} placeholder={item.input} type='searchInput' value={parameters[index]} required={!item.optional}/>
+                            <div key={index}>
+                                {selectedArea ?
+                                    <Input
+                                        onChange={(e) => handleInputChange(index, e.target.value, item.name)}
+                                        placeholder={item.input}
+                                        type='searchInput'
+                                        value={parametersInput[index]}
+                                        required={!item.optional}
+                                    />
+                                    : ''}
+                                {selectedArea && mode.type === "actions" && ingredients.length > 0 ?
+                                    <div>
+                                        <select className='ingredient-pick'>
+                                            <option key={-1} value={"Ingredients"} selected>{"Ingredients"}</option>
+                                            {ingredients.map((ingredient, i) => (
+                                                <option key={i} value={ingredient.description} onClick={() => { handleIngredientChange(ingredient.name, index) }}>{ingredient.description}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                : ''}
+                            </div>
                         ))}
+
                         <button type="submit" className='add-action-btn' style={{ marginLeft: 0, marginTop: '7%', height: '3.5rem', border: '1px solid' }}>
                             Add
                         </button>

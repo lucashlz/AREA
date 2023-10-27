@@ -61,6 +61,21 @@
     justify-content:center;
 }
 
+.ingredient-pick {
+    margin-top: 0.3rem;
+    background-color: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border: 1px solid;
+    color: black;
+    border-radius: 60px;
+    padding-left: 0.5rem;
+}
+
 .selection-action-button {
     background: none;
     border: none;

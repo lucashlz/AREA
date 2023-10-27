@@ -15,6 +15,7 @@ export interface postService {
     trigger: TriggerReaction;
     isActive: boolean
     actions: TriggerReaction[];
+    area_description?: string
 }
 
 export function getLocalSelectedArea(): postService {
