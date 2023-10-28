@@ -40,7 +40,7 @@ class _TriggerParameterInputPageState extends State<TriggerParameterInputPage> {
     final areaState = Provider.of<AreaCreationState>(context, listen: false);
 
     return Scaffold(
-      backgroundColor: backgroundColor, // Set the scaffold background color
+      backgroundColor: backgroundColor,
       body: Column(
         children: [
           Container(

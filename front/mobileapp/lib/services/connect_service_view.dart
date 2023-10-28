@@ -34,7 +34,7 @@ class _ConnectServiceViewState extends State<ConnectServiceView> {
 
   Future<void> connectService(String serviceName) async {
     final String url =
-        'https://techparisarea.com/connect/get${Uri.encodeComponent(serviceName)}OAuthConstants';
+        'http://10.0.2.2:8080/connect/get${Uri.encodeComponent(serviceName)}OAuthConstants';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -74,7 +74,9 @@ class _ConnectServiceViewState extends State<ConnectServiceView> {
               _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
 
               return WebViewScreen(
-                  service: widget.service, controller: _controller, sourceType: widget.sourceType);
+                  service: widget.service,
+                  controller: _controller,
+                  sourceType: widget.sourceType);
             },
           ),
         );
@@ -179,7 +181,10 @@ class WebViewScreen extends StatefulWidget {
   final WebViewController controller;
   final String sourceType;
 
-  WebViewScreen({required this.service, required this.controller, required this.sourceType});
+  WebViewScreen(
+      {required this.service,
+      required this.controller,
+      required this.sourceType});
 
   @override
   _WebViewScreenState createState() => _WebViewScreenState();
@@ -197,7 +202,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
     _controller.setNavigationDelegate(
       NavigationDelegate(
         onPageFinished: (String url) {
-          if (url.startsWith("https://techparisarea.com/connect/")) {
+          if (url.startsWith("http://10.0.2.2:8080/connect/")) {
             // Once the page is loaded, redirect the user to triggerView
             Navigator.of(context).pop();
             if (widget.sourceType == "triggers") {
@@ -209,7 +214,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                   ),
                 ),
               );
-            } else if ((widget.sourceType == "actions")){
+            } else if ((widget.sourceType == "actions")) {
               Navigator.push(
                 context,
                 MaterialPageRoute(

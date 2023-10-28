@@ -7,7 +7,7 @@ import '../components/search_bar.dart';
 import '../components/servicecard_actions.dart';
 
 Future<List<Service>> fetchActions() async {
-  const String url = 'https://techparisarea.com/about/about.json';
+  const String url = 'http://10.0.2.2:8080/about/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
@@ -58,20 +58,8 @@ class ActionsViewState extends State<ActionsView> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: const Icon(
-                Icons.close,
-                color: Colors.white,
-              ),
-            ),
-          ),
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 60.0),
             child: Center(
               child: Text(
                 'Choose a service',

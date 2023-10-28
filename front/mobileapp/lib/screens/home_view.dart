@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<List<Service>> fetchServices() async {
-  const String url = 'https://techparisarea.com/about/about.json';
+  const String url = 'http://10.0.2.2:8080/about/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 

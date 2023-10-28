@@ -12,7 +12,7 @@ class ServiceCardActions extends StatelessWidget {
   const ServiceCardActions({Key? key, required this.service}) : super(key: key);
 
   Future<void> _loadProfileFromAPI(BuildContext context) async {
-    const String url = 'https://techparisarea.com/profile';
+    const String url = 'http://10.0.2.2:8080/profile';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -37,7 +37,7 @@ class ServiceCardActions extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) => ListActionsView(
-                  selectedService: service) // Pass the service data to the view
+                  selectedService: service)
               ),
         );
       } else {
@@ -46,7 +46,7 @@ class ServiceCardActions extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => ConnectServiceView(
                 service: service,
-                sourceType: "actions"), // Pass the service data to the view
+                sourceType: "actions"),
           ),
         );
       }

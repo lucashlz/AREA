@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/list_triggers.dart';
+import '../services/oauth_service.dart';
 
 class ServiceCardTriggers extends StatelessWidget {
   final Service service;
@@ -13,7 +14,7 @@ class ServiceCardTriggers extends StatelessWidget {
       : super(key: key);
 
   Future<void> _loadProfileFromAPI(BuildContext context) async {
-    const String url = 'https://techparisarea.com/profile';
+    const String url = 'http://10.0.2.2:8080/profile';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -33,21 +34,24 @@ class ServiceCardTriggers extends StatelessWidget {
       List<String> connectedServices =
           List<String>.from(data['connectServices'] ?? []);
 
-      if (connectedServices.contains(service.name)) {
+      if (connectedServices.contains(service.name) && servicesAuthorize.containsKey(service.name)) {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ListTriggersView(
-                  selectedService: service)
-              ),
+              builder: (context) => ListTriggersView(selectedService: service)),
         );
-      } else {
+      } else if (!connectedServices.contains(service.name) && !servicesAuthorize.containsKey(service.name)) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ConnectServiceView(
-                service: service,
-                sourceType: "triggers"),
+              builder: (context) => ListTriggersView(selectedService: service)),
+        );
+      } else if (servicesAuthorize.containsKey(service.name)) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                ConnectServiceView(service: service, sourceType: "triggers"),
           ),
         );
       }

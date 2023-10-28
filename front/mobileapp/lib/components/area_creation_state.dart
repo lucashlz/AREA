@@ -3,10 +3,10 @@ import 'area_model.dart';
 
 class AreaCreationState extends ChangeNotifier {
   Map<String, dynamic> _trigger = {};
-  List<Map<String, dynamic>> _actions = [];  // Now it's a list of actions
+  List<Map<String, dynamic>> _actions = [];
 
   Map<String, dynamic> get trigger => _trigger;
-  List<Map<String, dynamic>> get actions => _actions;  // Getter for the list of actions
+  List<Map<String, dynamic>> get actions => _actions;
 
   void setTrigger(Map<String, dynamic> trigger) {
     _trigger = trigger;

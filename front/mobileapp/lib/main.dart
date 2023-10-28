@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './screens/login_screen.dart';
 import 'package:provider/provider.dart';
-import './components/area_creation_state.dart'; // Adjust the path as necessary.
+import './components/area_creation_state.dart';
 
 void main() => runApp(const MyApp());
 

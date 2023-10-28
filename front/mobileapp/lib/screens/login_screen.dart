@@ -37,7 +37,7 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> login() async {
-    const String url = 'https://techparisarea.com/auth/sign-in';
+    const String url = 'http://10.0.2.2:8080/auth/sign-in';
     final response = await http.post(
       Uri.parse(url),
       headers: {
@@ -218,21 +218,19 @@ class LoginWebView extends StatefulWidget {
 }
 
 class LoginWebViewState extends State<LoginWebView> {
-  final String url = "https://techparisarea.com/auth/google";
+  final String url = "http://10.0.2.2:8080/auth/google";
   late final WebViewController _controller;
 
   @override
   void initState() {
     super.initState();
 
-    // Initializing the WebViewController
     _controller = WebViewController();
 
-    // Setting the NavigationDelegate to the WebViewController
     _controller.setNavigationDelegate(
       NavigationDelegate(
         onNavigationRequest: (NavigationRequest request) {
-          if (request.url.startsWith('https://techparisarea.com/auth/google')) {
+          if (request.url.startsWith('http://10.0.2.2:8080/auth/google')) {
             Navigator.of(context).pop();
             return NavigationDecision.prevent;
           }
@@ -241,10 +239,8 @@ class LoginWebViewState extends State<LoginWebView> {
       ),
     );
 
-    // Setting JavaScriptMode to unrestricted
     _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
 
-    // Loading the initial URL
     _controller.loadRequest(Uri.parse(url));
   }
 

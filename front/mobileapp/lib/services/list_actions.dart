@@ -8,7 +8,7 @@ import '../components/area_creation_state.dart';
 import 'package:provider/provider.dart';
 
 Future<Service> fetchActions(String serviceName) async {
-  const String url = 'https://techparisarea.com/about/about.json';
+  const String url = 'http://10.0.2.2:8080/about/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
@@ -142,12 +142,11 @@ class ListActionsView extends StatelessWidget {
                             ),
                             onPressed: () {
                               if (action.parameters.isEmpty) {
-                                // Step 2 & 3: Use the obtained instance to set the action
                                 areaState.addAction({
                                   'service': service.name,
                                   'name': action.name,
                                   'parameters':
-                                      [], // Since there are no parameters
+                                      [],
                                 });
                                 Navigator.popUntil(
                                     context, (route) => route.isFirst);
@@ -168,7 +167,7 @@ class ListActionsView extends StatelessWidget {
                               alignment: Alignment.centerLeft,
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 16.0), // Left padding for the text
+                                    left: 16.0),
                                 child: Text(formatActionName(action.name)),
                               ),
                             ),
