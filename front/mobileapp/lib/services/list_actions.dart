@@ -8,7 +8,7 @@ import '../components/area_creation_state.dart';
 import 'package:provider/provider.dart';
 
 Future<Service> fetchActions(String serviceName) async {
-  const String url = 'http://10.0.2.2:8080/about/about.json';
+  const String url = 'https://techparisarea.com/about/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
@@ -51,7 +51,7 @@ class ListActionsView extends StatelessWidget {
 
   ListActionsView({Key? key, required this.selectedService}) : super(key: key);
 
-   @override
+  @override
   Widget build(BuildContext context) {
     Color backgroundColor =
         Color(int.parse('0xFF${selectedService.color.substring(1)}'));
@@ -141,25 +141,28 @@ class ListActionsView extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                                if (action.parameters.isEmpty) {
-                                    // Step 2 & 3: Use the obtained instance to set the action
-                                    areaState.setAction({
-                                      'service': service.name,
-                                      'name': action.name,
-                                      'parameters': [], // Since there are no parameters
-                                    });
-                                    Navigator.popUntil(context, (route) => route.isFirst);
-                                } else {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ActionParameterInputPage(
-                                          service: service,
-                                          action: action,
-                                        ),
-                                      ),
-                                    );
-                                }
+                              if (action.parameters.isEmpty) {
+                                // Step 2 & 3: Use the obtained instance to set the action
+                                areaState.addAction({
+                                  'service': service.name,
+                                  'name': action.name,
+                                  'parameters':
+                                      [], // Since there are no parameters
+                                });
+                                Navigator.popUntil(
+                                    context, (route) => route.isFirst);
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ActionParameterInputPage(
+                                      service: service,
+                                      action: action,
+                                    ),
+                                  ),
+                                );
+                              }
                             },
                             child: Align(
                               alignment: Alignment.centerLeft,

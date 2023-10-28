@@ -24,7 +24,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   Future<void> resetPassword() async {
-    const String url = 'http://10.0.2.2:8080/reset/request-password-reset';
+    const String url = 'https://techparisarea.com/reset/request-password-reset';
     final response = await http.post(
       Uri.parse(url),
       headers: {
@@ -93,7 +93,11 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 const SizedBox(height: 50),
                 Padding(
                   padding: const EdgeInsets.only(top: 24),
-                  child: MyButton(onPressed: resetPassword, label: 'Send Reset Link', fontSize: 26,),
+                  child: MyButton(
+                    onPressed: resetPassword,
+                    label: 'Send Reset Link',
+                    fontSize: 26,
+                  ),
                 ),
               ],
             ),

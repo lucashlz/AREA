@@ -13,7 +13,7 @@ class ServiceCardTriggers extends StatelessWidget {
       : super(key: key);
 
   Future<void> _loadProfileFromAPI(BuildContext context) async {
-    const String url = 'http://10.0.2.2:8080/profile';
+    const String url = 'https://techparisarea.com/profile';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -38,7 +38,7 @@ class ServiceCardTriggers extends StatelessWidget {
           context,
           MaterialPageRoute(
               builder: (context) => ListTriggersView(
-                  selectedService: service) // Pass the service data to the view
+                  selectedService: service)
               ),
         );
       } else {
@@ -46,7 +46,8 @@ class ServiceCardTriggers extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => ConnectServiceView(
-                service: service), // Pass the service data to the view
+                service: service,
+                sourceType: "triggers"),
           ),
         );
       }

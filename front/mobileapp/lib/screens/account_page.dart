@@ -87,7 +87,7 @@ class AccountPageState extends State<AccountPage> {
   }
 
   Future<void> deleteUser() async {
-    const String url = 'http://10.0.2.2:8080/users/delete';
+    const String url = 'https://techparisarea.com/users/delete';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');

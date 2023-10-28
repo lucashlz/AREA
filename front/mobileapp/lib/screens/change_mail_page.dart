@@ -27,7 +27,7 @@ class ChangeMailPageState extends State<ChangeMailPage> {
   }
 
   Future<void> _loadProfileFromAPI() async {
-    const String url = 'http://10.0.2.2:8080/profile';
+    const String url = 'https://techparisarea.com/profile';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -71,7 +71,7 @@ class ChangeMailPageState extends State<ChangeMailPage> {
       return;
     }
 
-    final Uri url = Uri.parse('http://10.0.2.2:8080/profile/update');
+    final Uri url = Uri.parse('https://techparisarea.com/profile/update');
 
     final response = await http.put(
       url,

@@ -8,14 +8,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 Future<void> createArea(
-    Map<String, dynamic> trigger, Map<String, dynamic> action) async {
-  final url = 'http://10.0.2.2:8080/areas';
+    Map<String, dynamic> trigger, List<Map<String, dynamic>> actions) async {
+  final url = 'https://techparisarea.com/areas';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
   final payload = {
     "trigger": trigger,
-    "actions": [action]
+    "actions": actions,
   };
 
   final response = await http.post(
@@ -27,9 +27,10 @@ Future<void> createArea(
     body: json.encode(payload),
   );
 
+  print(json.encode(payload));
   if (response.statusCode != 200) {
     throw Exception(
-        'Failed to create area ${response.statusCode}   ${json.encode(payload)}                ${response.body}');
+        'Failed to create area ${response.statusCode}       ${response.body}');
   }
 }
 
@@ -49,6 +50,7 @@ class CreatePage extends StatefulWidget {
 
 class _CreatePageState extends State<CreatePage> {
   late final AreaCreationState _areaState;
+  int numberOfThenThatButtons = 1;
 
   @override
   void initState() {
@@ -74,8 +76,199 @@ class _CreatePageState extends State<CreatePage> {
     );
 
     if (result != null && result is Map<String, dynamic>) {
-      _areaState.setAction(result['actionData']);
+      _areaState.addAction(result['actionData']);
+      setState(() {
+        numberOfThenThatButtons = _areaState.actions.length + 1;
+      });
     }
+  }
+
+
+  Widget _buildContainer(String text, Color buttonColor, VoidCallback? onTap) {
+    bool showAddButton = text != 'Then That' || (_areaState.trigger.isNotEmpty);
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        constraints: BoxConstraints(
+          minWidth: 300,
+          minHeight: 80,
+          maxWidth: 380,
+        ),
+        decoration: BoxDecoration(
+          color: buttonColor,
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 50.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                text,
+                style: TextStyle(
+                  fontFamily: 'Archivo',
+                  color: const Color(0xFF1D1D1D),
+                  fontSize: 35.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (showAddButton)
+                Padding(  // This padding provides separation between the text and the "Add" button
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: ElevatedButton(
+                    onPressed: onTap, // You can define the button action here
+                    child: Text('Add'),
+                    style: ElevatedButton.styleFrom(
+                      primary: const Color(0xFF1D1D1D),
+                      onPrimary: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+
+  Widget _buildActionContainer(Map<String, dynamic> action, Color buttonColor) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10.0),
+      child: GestureDetector(
+        onTap: () => _navigateToSelectAction(context),
+        child: Container(
+          constraints: BoxConstraints(
+            minWidth: 300,
+            minHeight: 80,
+            maxWidth: 380,
+          ),
+          decoration: BoxDecoration(
+            color: buttonColor,
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Center(
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: action.isEmpty ? 'Then That' : 'Then ',
+                          style: TextStyle(
+                            fontFamily: 'Archivo',
+                            color: const Color(0xFF1D1D1D),
+                            fontSize: 35.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (!action.isEmpty)
+                          TextSpan(
+                            text: formatTriggerName(action['name']),
+                            style: TextStyle(
+                              fontFamily: 'Archivo',
+                              color: const Color(0xFF1D1D1D),
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              if (!action.isEmpty)
+                IconButton(
+                  icon: Icon(
+                    Icons.delete,
+                    color: const Color(0xFF1D1D1D),
+                  ),
+                  onPressed: () {
+                    int actionIndex = _areaState.actions.indexOf(action);
+                    _areaState.removeAction(actionIndex);
+                  },
+                )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSelectedContainer(
+    String text,
+    Color buttonColor,
+    VoidCallback onPressed,
+    double titleFontSize,
+    FontWeight titleFontWeight,
+    double itemFontSize,
+    FontWeight itemFontWeight,
+  ) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        constraints: BoxConstraints(
+          minWidth: 300,
+          minHeight: 80,
+          maxWidth: 380,
+        ),
+        decoration: BoxDecoration(
+          color: buttonColor,
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: text.split(' ').first,
+                        style: TextStyle(
+                          fontFamily: 'Archivo',
+                          color: const Color(0xFF1D1D1D),
+                          fontSize: titleFontSize,
+                          fontWeight: titleFontWeight,
+                        ),
+                      ),
+                      TextSpan(
+                        text: formatTriggerName(' ' +
+                            text
+                                .split(' ')
+                                .last),
+                        style: TextStyle(
+                          fontFamily: 'Archivo',
+                          color: const Color(0xFF1D1D1D),
+                          fontSize: itemFontSize,
+                          fontWeight: itemFontWeight,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.delete,
+                color: const Color(0xFF1D1D1D),
+              ),
+              onPressed: onPressed,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -85,6 +278,8 @@ class _CreatePageState extends State<CreatePage> {
       body: Consumer<AreaCreationState>(
         builder: (context, areaState, child) {
           Color buttonColor = Colors.white;
+          Color thenButtonColor =
+              areaState.trigger.isEmpty ? Colors.grey : Colors.white;
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,168 +315,80 @@ class _CreatePageState extends State<CreatePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      GestureDetector(
-                        onTap: areaState.trigger.isEmpty
-                            ? () => _navigateToSelectTrigger(context)
-                            : null,
-                        child: Container(
-                          constraints: BoxConstraints(
-                            minWidth: 300,
-                            minHeight: 70,
-                            maxWidth: 320,
-                          ),
-                          decoration: BoxDecoration(
-                            color: buttonColor,
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Center(
-                                  child: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: areaState.trigger.isEmpty
-                                              ? 'If This'
-                                              : 'If ',
-                                          style: TextStyle(
-                                            fontFamily: 'Archivo',
-                                            color: const Color(0xFF1D1D1D),
-                                            fontSize: 40.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        if (!areaState.trigger.isEmpty)
-                                          TextSpan(
-                                            text: formatTriggerName(
-                                                areaState.trigger['name']),
-                                            style: TextStyle(
-                                              fontFamily: 'Archivo',
-                                              color: const Color(0xFF1D1D1D),
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.normal,
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              if (!areaState.trigger.isEmpty)
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.delete,
-                                    color: const Color(0xFF1D1D1D),
-                                  ),
-                                  onPressed: () {
-                                    areaState.setTrigger({});
-                                  },
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      _areaState.trigger.isEmpty
+                          ? _buildContainer(
+                              'If This',
+                              buttonColor,
+                              () => _navigateToSelectTrigger(context))
+                          : _buildSelectedContainer(
+                              "If   ${_areaState.trigger['name']}",
+                              buttonColor,
+                              () => _areaState.setTrigger({}),
+                              35.0,
+                              FontWeight.bold,
+                              15.0,
+                              FontWeight.normal),
                       SizedBox(height: 50),
-                      GestureDetector(
-                        onTap: areaState.trigger.isEmpty ||
-                                areaState.action.isNotEmpty
-                            ? null
-                            : () => _navigateToSelectAction(context),
-                        child: Container(
-                          constraints: BoxConstraints(
-                            minWidth: 300,
-                            minHeight: 70,
-                            maxWidth: 320,
+                      for (int i = 0; i < numberOfThenThatButtons; i++) 
+                        if (i < _areaState.actions.length) 
+                          _buildActionContainer(_areaState.actions[i], buttonColor)
+                        else 
+                          _buildContainer(
+                            'Then That',
+                            thenButtonColor,
+                            _areaState.trigger.isEmpty 
+                                ? null 
+                                : () => _navigateToSelectAction(context),
                           ),
-                          decoration: BoxDecoration(
-                            color: areaState.trigger.isEmpty
-                                ? Colors.grey
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Center(
-                                  child: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: areaState.action.isEmpty
-                                              ? 'Then That'
-                                              : 'Then ',
-                                          style: TextStyle(
-                                            fontFamily: 'Archivo',
-                                            color: const Color(0xFF1D1D1D),
-                                            fontSize: 40.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        if (!areaState.action.isEmpty)
-                                          TextSpan(
-                                            text: formatTriggerName(
-                                                areaState.action['name']),
-                                            style: TextStyle(
-                                              fontFamily: 'Archivo',
-                                              color: const Color(0xFF1D1D1D),
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.normal,
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              if (!areaState.action.isEmpty)
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.delete,
-                                    color: const Color(0xFF1D1D1D),
-                                  ),
-                                  onPressed: () {
-                                    areaState.setAction({});
-                                  },
-                                ),
-                            ],
-                          ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 140.0),
+                        child: IconButton(
+                          icon: Icon(Icons.add_circle_outline, color: Colors.white, size: 40),
+                          onPressed: () {
+                            setState(() {
+                              numberOfThenThatButtons += 1;
+                            });
+                          },
                         ),
                       ),
+                      SizedBox(height: 30),
                     ],
                   ),
                 ),
               ),
+
               if (areaState.trigger.isNotEmpty &&
-                  areaState.action.isNotEmpty) ...[
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 10.0),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        await createArea(areaState.trigger, areaState.action);
-                        Navigator.popUntil(context, (route) => route.isFirst);
-                      } catch (e) {
-                        // Handle the exception or show an error message to the user
-                        print('Error: $e');
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
-                      onPrimary: Color(0xFF1D1D1D),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
+                  areaState.actions.isNotEmpty) ...[
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 10.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        try {
+                          await createArea(
+                              areaState.trigger,
+                              areaState
+                                  .actions); // Note: passing all actions as a list
+                          Navigator.popUntil(context, (route) => route.isFirst);
+                        } catch (e) {
+                          print('Error: $e');
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.white,
+                        onPrimary: Color(0xFF1D1D1D),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 16.0),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 50, vertical: 16.0),
+                      child: Text("Create", style: TextStyle(fontSize: 18)),
                     ),
-                    child: Text("Create", style: TextStyle(fontSize: 18)),
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 30),
               ],
             ],
           );

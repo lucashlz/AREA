@@ -129,7 +129,7 @@ class _ActionParameterInputPageState extends State<ActionParameterInputPage> {
                   };
                 }).toList();
 
-                areaState.setAction({
+                areaState.addAction({
                   'service': widget.service.name,
                   'name': widget.action.name,
                   'parameters': parameters,

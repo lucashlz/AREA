@@ -30,14 +30,15 @@ class AreaAction {
 
 class Area {
   final Map<String, dynamic> trigger;
-  final Map<String, dynamic> action;
+  final List<Map<String, dynamic>> actions;
 
-  Area(this.trigger, this.action);
+  Area(this.trigger, this.actions);
 
   Map<String, dynamic> toJson() {
     return {
       'trigger': trigger,
-      'action': action,
+      'actions': actions,
     };
   }
 }
+

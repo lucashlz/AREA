@@ -7,10 +7,8 @@ import 'triggers_parameter_input_view.dart';
 import '../components/area_creation_state.dart';
 import 'package:provider/provider.dart';
 
-
-
 Future<Service> fetchTriggers(String serviceName) async {
-  const String url = 'http://10.0.2.2:8080/about/about.json';
+  const String url = 'https://techparisarea.com/about/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
@@ -53,7 +51,7 @@ class ListTriggersView extends StatelessWidget {
 
   ListTriggersView({Key? key, required this.selectedService}) : super(key: key);
 
-   @override
+  @override
   Widget build(BuildContext context) {
     Color backgroundColor =
         Color(int.parse('0xFF${selectedService.color.substring(1)}'));
@@ -143,25 +141,28 @@ class ListTriggersView extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                                if (trigger.parameters.isEmpty) {
-                                    // Step 2 & 3: Use the obtained instance to set the trigger
-                                    areaState.setTrigger({
-                                      'service': service.name,
-                                      'name': trigger.name,
-                                      'parameters': [], // Since there are no parameters
-                                    });
-                                    Navigator.popUntil(context, (route) => route.isFirst);
-                                } else {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => TriggerParameterInputPage(
-                                          service: service,
-                                          trigger: trigger,
-                                        ),
-                                      ),
-                                    );
-                                }
+                              if (trigger.parameters.isEmpty) {
+                                // Step 2 & 3: Use the obtained instance to set the trigger
+                                areaState.setTrigger({
+                                  'service': service.name,
+                                  'name': trigger.name,
+                                  'parameters':
+                                      [], // Since there are no parameters
+                                });
+                                Navigator.popUntil(
+                                    context, (route) => route.isFirst);
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        TriggerParameterInputPage(
+                                      service: service,
+                                      trigger: trigger,
+                                    ),
+                                  ),
+                                );
+                              }
                             },
                             child: Align(
                               alignment: Alignment.centerLeft,

@@ -9,11 +9,10 @@ import '../services/list_actions.dart';
 class ServiceCardActions extends StatelessWidget {
   final Service service;
 
-  const ServiceCardActions({Key? key, required this.service})
-      : super(key: key);
+  const ServiceCardActions({Key? key, required this.service}) : super(key: key);
 
   Future<void> _loadProfileFromAPI(BuildContext context) async {
-    const String url = 'http://10.0.2.2:8080/profile';
+    const String url = 'https://techparisarea.com/profile';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -46,7 +45,8 @@ class ServiceCardActions extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => ConnectServiceView(
-                service: service), // Pass the service data to the view
+                service: service,
+                sourceType: "actions"), // Pass the service data to the view
           ),
         );
       }

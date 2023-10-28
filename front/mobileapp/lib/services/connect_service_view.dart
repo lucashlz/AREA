@@ -4,7 +4,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'oauth_service.dart';
-import 'package:flutter_web_browser/flutter_web_browser.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'list_triggers.dart';
+import 'list_actions.dart';
 
 String capitalize(String input) {
   if (input.isEmpty) {
@@ -13,14 +15,26 @@ String capitalize(String input) {
   return input[0].toUpperCase() + input.substring(1);
 }
 
-class ConnectServiceView extends StatelessWidget {
+class ConnectServiceView extends StatefulWidget {
   final Service service;
+  final String sourceType;
 
-  const ConnectServiceView({Key? key, required this.service}) : super(key: key);
+  const ConnectServiceView({
+    Key? key,
+    required this.service,
+    required this.sourceType,
+  }) : super(key: key);
+
+  @override
+  _ConnectServiceViewState createState() => _ConnectServiceViewState();
+}
+
+class _ConnectServiceViewState extends State<ConnectServiceView> {
+  late final WebViewController _controller = WebViewController();
 
   Future<void> connectService(String serviceName) async {
     final String url =
-        'http://10.0.2.2:8080/connect/get${Uri.encodeComponent(serviceName)}OAuthConstants';
+        'https://techparisarea.com/connect/get${Uri.encodeComponent(serviceName)}OAuthConstants';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -52,7 +66,18 @@ class ConnectServiceView extends StatelessWidget {
         );
 
         print('Opening URL : $authorizationUrl');
-        FlutterWebBrowser.openWebPage(url: authorizationUrl);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              _controller.loadRequest(Uri.parse(authorizationUrl));
+              _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+
+              return WebViewScreen(
+                  service: widget.service, controller: _controller, sourceType: widget.sourceType);
+            },
+          ),
+        );
       } else {
         print('Request failed with status code : ${response.statusCode}.');
       }
@@ -64,13 +89,13 @@ class ConnectServiceView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color backgroundColor =
-        Color(int.parse('0xFF${service.color.substring(1)}'));
+        Color(int.parse('0xFF${widget.service.color.substring(1)}'));
     HSLColor hslColor = HSLColor.fromColor(backgroundColor);
     HSLColor hslDarkerColor =
         hslColor.withLightness((hslColor.lightness - 0.1).clamp(0.0, 1.0));
     Color darkerBackgroundColor = hslDarkerColor.toColor();
-    String serviceName = capitalize(service.name);
-    String logoAssetName = 'assets/servicesLogo/${service.name}.png';
+    String serviceName = capitalize(widget.service.name);
+    String logoAssetName = 'assets/servicesLogo/${widget.service.name}.png';
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -134,7 +159,7 @@ class ConnectServiceView extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        connectService(service.name);
+                        connectService(widget.service.name);
                       },
                       child: Text('Connect'),
                     ),
@@ -145,6 +170,65 @@ class ConnectServiceView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class WebViewScreen extends StatefulWidget {
+  final Service service;
+  final WebViewController controller;
+  final String sourceType;
+
+  WebViewScreen({required this.service, required this.controller, required this.sourceType});
+
+  @override
+  _WebViewScreenState createState() => _WebViewScreenState();
+}
+
+class _WebViewScreenState extends State<WebViewScreen> {
+  late final WebViewController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = widget.controller;
+
+    _controller.setNavigationDelegate(
+      NavigationDelegate(
+        onPageFinished: (String url) {
+          if (url.startsWith("https://techparisarea.com/connect/")) {
+            // Once the page is loaded, redirect the user to triggerView
+            Navigator.of(context).pop();
+            if (widget.sourceType == "triggers") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ListTriggersView(
+                    selectedService: widget.service,
+                  ),
+                ),
+              );
+            } else if ((widget.sourceType == "actions")){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ListActionsView(
+                    selectedService: widget.service,
+                  ),
+                ),
+              );
+            }
+          }
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: WebViewWidget(controller: _controller),
     );
   }
 }
