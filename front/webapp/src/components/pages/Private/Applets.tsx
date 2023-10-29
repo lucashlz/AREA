@@ -7,6 +7,7 @@ import axios from 'axios';
 import Input from '../../Input';
 import { postService } from '../../../interfaces/postArea';
 import SearchBar from '../../SearchBar';
+import { getRadioUtilityClass } from '@mui/material';
 
 interface AppletProps<T> {
   item: postService;
@@ -16,6 +17,24 @@ interface AppletProps<T> {
 const Applet: React.FC<AppletProps<any>> = ({ item, setReload }) => {
   const [status, setStatus] = useState(item.isActive);
   const { token } = useContext(UserContext) as IUserContext;
+  let logos: string[] = [];
+
+  logos.push(item.trigger.service);
+  for (let i = 0; i < item.actions.length; i++) {
+    const service = item.actions[i].service;
+    if (!logos.includes(service)) {
+      logos.push(service);
+    }
+  }
+  
+  function generateRandomColor() {
+    const randomR = () => Math.floor(Math.random() * 256);
+    const randomG = () => Math.floor(Math.random() * 256);
+    const randomB = () => Math.floor(Math.random() * 256);
+    const rgb = `rgb(${randomR()}, ${randomG()}, ${randomB()})`;
+
+    return rgb;
+  }
 
   const toogleStatus = async () => {
     try {
@@ -37,13 +56,11 @@ const Applet: React.FC<AppletProps<any>> = ({ item, setReload }) => {
       }
   }
 
-
   return (
-    <div className="applet-content-holder" style={{ backgroundColor: status === true ? "#0066FF" : "#565656" }}>
+    <div className="applet-content-holder" style={{ backgroundColor: status === true ? generateRandomColor() : "#565656" }}>
       <div className='applet-content-container'>
-        <img alt="logo" className="applet-logo" src={`${process.env.PUBLIC_URL}/servicesLogo/${item.trigger ? item.trigger.service : ''}.png`}></img>
-        {item.actions.map((item, index) => (
-          <img alt="logo" className="applet-logo" src={`${process.env.PUBLIC_URL}/servicesLogo/${item.service}.png`} key={index}></img>
+        {logos.map((item, index) => (
+          <img alt="logo" className="applet-logo" src={`${process.env.PUBLIC_URL}/servicesLogo/${item}.png`} key={index}></img>
         ))}
       </div>
       <div className="applet-description">

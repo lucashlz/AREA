@@ -131,9 +131,15 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
             for (let i = 0; i < mode.infos.parameters.length; i++) {
                 if (mode.type === "trigger") {
                     selectedArea.trigger.parameters[i] = {name: parametersNames[i], input: parametersInput[i]}
+                    if (parametersNames[i] === undefined || parametersInput[i] === undefined) {
+                        selectedArea.trigger.parameters[i] = {name: mode.infos.parameters[i].name, input: ""}
+                    }
                 }
                 if (mode.type === "actions") {
                     selectedArea.actions[selectedArea.actions.length - 1].parameters[i] = {name: parametersNames[i], input: parametersInput[i]}
+                    if (parametersNames[i] === undefined || parametersInput[i] === undefined) {
+                        selectedArea.actions[selectedArea.actions.length - 1].parameters[i] = {name: mode.infos.parameters[i].name, input: ""}
+                    }
                 }
             }
         }
