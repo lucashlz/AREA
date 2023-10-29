@@ -1,11 +1,11 @@
 version: '3'
 
 services:
-  # mobileapp:
+  # mobile:
   #   privileged: true
-  #   image: mobileapp:latest
+  #   image: mobile:latest
   #   build:
-  #     context: ./front/mobileapp
+  #     context: ./front/mobile
   #     dockerfile: ./Dockerfile
   #   volumes:
   #     - apk-volume:/apk
@@ -19,20 +19,20 @@ services:
     environment:
       MONGO_URI: "mongodb://mongo:27017/area"
 
-  webapp:
+  web:
     privileged: true
-    build: ./front/webapp/
+    build: ./front/web/
     ports:
       - "8081:8081"
     environment:
       - NODE_ENV=development
     volumes:
       - type: bind
-        source: ./front/webapp
+        source: ./front/web
         target: /app
       - apk-volume:/app/public/apk
     depends_on:
-      # - mobileapp
+      # - mobile
       - server
 
   mongo:
