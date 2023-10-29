@@ -27,8 +27,8 @@ connectDB();
 setupRoutes(app);
 
 const PORT = 8080;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on http://localhost:8080:${PORT}`);
     const REFRESH_INTERVAL = 60 * 60 * 1000;
 
     function recursiveRefresh() {
