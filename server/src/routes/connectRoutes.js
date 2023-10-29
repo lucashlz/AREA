@@ -2,6 +2,11 @@ const express = require("express");
 const router = express.Router();
 const connectController = require("../controllers/connectController");
 const { ensureAuthenticated } = require("../middleware/middleware");
+const spotifyOAuthMiddleware = require("../middleware/spotifyMiddleware");
+const githubOAuthMiddleware = require("../middleware/githubMiddleware");
+const youtubeOAuthMiddleware = require("../middleware/youtubeMiddleware");
+const gmailOAuthMiddleware = require("../middleware/gmailMiddleware");
+const twitchOAuthMiddleware = require("../middleware/twitchMiddleware");
 
 /**
  * @swagger
@@ -86,7 +91,7 @@ router.get("/getYoutubeOAuthConstants", ensureAuthenticated, connectController.g
  *                 message:
  *                   type: string
  */
-router.get("/youtube/callback", connectController.youtubeCallback);
+router.get('/youtube/callback', youtubeOAuthMiddleware, connectController.youtubeCallback);
 
 /**
  * @swagger
@@ -171,7 +176,7 @@ router.get("/getGmailOAuthConstants", ensureAuthenticated, connectController.get
  *                 message:
  *                   type: string
  */
-router.get("/gmail/callback", connectController.gmailCallback);
+router.get('/gmail/callback', gmailOAuthMiddleware, connectController.gmailCallback);
 
 /**
  * @swagger
@@ -256,7 +261,7 @@ router.get("/getGithubOAuthConstants", ensureAuthenticated, connectController.ge
  *                 message:
  *                   type: string
  */
-router.get("/github/callback", connectController.githubCallback);
+router.get('/github/callback', githubOAuthMiddleware, connectController.githubCallback);
 
 /**
  * @swagger
@@ -341,7 +346,7 @@ router.get("/getSpotifyOAuthConstants", ensureAuthenticated, connectController.g
  *                 message:
  *                   type: string
  */
-router.get("/spotify/callback", connectController.spotifyCallback);
+router.get("/spotify/callback", spotifyOAuthMiddleware, connectController.spotifyCallback);
 
 /**
  * @swagger
@@ -426,6 +431,6 @@ router.get("/getTwitchOAuthConstants", ensureAuthenticated, connectController.ge
  *                 message:
  *                   type: string
  */
-router.get("/twitch/callback", connectController.twitchCallback);
+router.get('/twitch/callback', twitchOAuthMiddleware, connectController.twitchCallback);
 
 module.exports = router;

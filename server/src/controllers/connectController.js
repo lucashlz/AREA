@@ -1,10 +1,4 @@
-const passport = require("passport");
 const { registerOAuthSession, verifyOAuthSession } = require("../utils/OAuthSessionUtils");
-require("../connection/youtubeStrategy");
-require("../connection/gmailStrategy");
-require("../connection/githubStrategy");
-require("../connection/spotifyStrategy");
-require("../connection/twitchStrategy");
 
 exports.getYoutubeOAuthConstants = async (req, res) => {
     const oAuthSessionId = await registerOAuthSession(req.user.id, "youtube");
@@ -14,41 +8,34 @@ exports.getYoutubeOAuthConstants = async (req, res) => {
     return res.json({
         clientId: process.env.GOOGLE_CLIENT_ID,
         redirectUri: "http://localhost:8080/connect/youtube/callback",
-        scopes: [
-            "profile",
-            "https://www.googleapis.com/auth/youtube.readonly",
-            "https://www.googleapis.com/auth/youtube.force-ssl"
-        ],
+        scopes: ["profile", "https://www.googleapis.com/auth/youtube.readonly", "https://www.googleapis.com/auth/youtube.force-ssl"],
         oAuthSessionId: oAuthSessionId,
     });
 };
 
-exports.youtubeCallback = async (req, res, next) => {
+exports.youtubeCallback = async (req, res) => {
     try {
         const { state: oAuthSessionIdFromState } = req.query;
         const { user } = await verifyOAuthSession(oAuthSessionIdFromState, "youtube");
-
         if (!user) {
-            return res
-                .status(400)
-                .json({ status: "error", message: "Invalid state or session expired" });
+            return res.status(400).json({ status: "error", message: "Invalid state or session expired" });
         }
-        req.user = user;
-        passport.authenticate("youtube-connect", (err, authenticatedUser) => {
-            if (err) {
-                return res.status(500).json({ status: "error", message: "Internal server error." });
-            }
-            if (!authenticatedUser) {
-                return res
-                    .status(401)
-                    .json({ status: "failed", message: "Authentication failed." });
-            }
-            res.json({
-                status: "success",
-                message: "Successfully connected with Youtube.",
-            });
-        })(req, res, next);
+        const { accessToken, refreshToken, expiresIn, profile } = req.youtubeData;
+        const youtubeService = {
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            expires_in: expiresIn * 1000,
+            tokenIssuedAt: Date.now(),
+            data: profile,
+        };
+        user.connectServices.set("youtube", youtubeService);
+        await user.save();
+        res.json({
+            status: "success",
+            message: "Successfully connected with Youtube.",
+        });
     } catch (error) {
+        console.error("Error during YouTube connection:", error);
         return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
     }
 };
@@ -61,46 +48,37 @@ exports.getGmailOAuthConstants = async (req, res) => {
     return res.json({
         clientId: process.env.GOOGLE_CLIENT_ID,
         redirectUri: "http://localhost:8080/connect/gmail/callback",
-        scopes: [
-            "profile",
-            "email",
-            "https://www.googleapis.com/auth/gmail.readonly",
-            "https://www.googleapis.com/auth/gmail.send"
-        ],
+        scopes: ["profile", "email", "https://www.googleapis.com/auth/gmail.readonly", "https://www.googleapis.com/auth/gmail.send"],
         oAuthSessionId: oAuthSessionId,
     });
 };
 
-exports.gmailCallback = async (req, res, next) => {
+exports.gmailCallback = async (req, res) => {
     try {
         const { state: oAuthSessionIdFromState } = req.query;
         const { user } = await verifyOAuthSession(oAuthSessionIdFromState, "gmail");
-
         if (!user) {
-            return res
-                .status(400)
-                .json({ status: "error", message: "Invalid state or session expired" });
+            return res.status(400).json({ status: "error", message: "Invalid state or session expired" });
         }
-        req.user = user;
-        passport.authenticate("gmail-connect", (err, authenticatedUser) => {
-            if (err) {
-                return res.status(500).json({ status: "error", message: "Internal server error." });
-            }
-            if (!authenticatedUser) {
-                return res
-                    .status(401)
-                    .json({ status: "failed", message: "Authentication failed." });
-            }
-            res.json({
-                status: "success",
-                message: "Successfully connected with Gmail.",
-            });
-        })(req, res, next);
+        const { accessToken, refreshToken, expiresIn, profile } = req.gmailData;
+        const gmailService = {
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            expires_in: expiresIn * 1000,
+            tokenIssuedAt: Date.now(),
+            data: profile,
+        };
+        user.connectServices.set("gmail", gmailService);
+        await user.save();
+        res.json({
+            status: "success",
+            message: "Successfully connected with Gmail.",
+        });
     } catch (error) {
+        console.error("Error during Gmail connection:", error);
         return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
     }
 };
-
 
 exports.getGithubOAuthConstants = async (req, res) => {
     const oAuthSessionId = await registerOAuthSession(req.user.id, "github");
@@ -119,27 +97,26 @@ exports.githubCallback = async (req, res, next) => {
     try {
         const { state: oAuthSessionIdFromState } = req.query;
         const { user } = await verifyOAuthSession(oAuthSessionIdFromState, "github");
+
         if (!user) {
-            return res
-                .status(400)
-                .json({ status: "error", message: "Invalid state or session expired" });
+            return res.status(400).json({ status: "error", message: "Invalid state or session expired" });
         }
         req.user = user;
-        passport.authenticate("github-connect", (err, authenticatedUser) => {
-            if (err) {
-                return res.status(500).json({ status: "error", message: "Internal server error." });
-            }
-            if (!authenticatedUser) {
-                return res
-                    .status(401)
-                    .json({ status: "failed", message: "Authentication failed." });
-            }
-            res.json({
-                status: "success",
-                message: "Successfully connected with Github.",
-            });
-        })(req, res, next);
+        const { accessToken, profile } = req.githubData;
+        const githubService = {
+            access_token: accessToken,
+            refresh_token: accessToken,
+            tokenIssuedAt: Date.now(),
+            data: profile,
+        };
+        user.connectServices.set("github", githubService);
+        await user.save();
+        res.json({
+            status: "success",
+            message: "Successfully connected with Github.",
+        });
     } catch (error) {
+        console.error("Error during GitHub connection:", error);
         return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
     }
 };
@@ -167,31 +144,31 @@ exports.getSpotifyOAuthConstants = async (req, res) => {
 
 exports.spotifyCallback = async (req, res, next) => {
     try {
-        console.log("CALL_BACK");
         const { state: oAuthSessionIdFromState } = req.query;
         const { user } = await verifyOAuthSession(oAuthSessionIdFromState, "spotify");
-
         if (!user) {
-            return res
-                .status(400)
-                .json({ status: "error", message: "Invalid state or session expired" });
+            return res.status(400).json({ status: "error", message: "Invalid state or session expired" });
         }
         req.user = user;
-        passport.authenticate("spotify-connect", (err, authenticatedUser) => {
-            if (err) {
-                return res.status(500).json({ status: "error", message: "Internal server error." });
-            }
-            if (!authenticatedUser) {
-                return res
-                    .status(401)
-                    .json({ status: "failed", message: "Authentication failed." });
-            }
-            res.json({
-                status: "success",
-                message: "Successfully connected with Spotify.",
-            });
-        })(req, res, next);
+        const { accessToken, refreshToken, expiresIn, profile } = req.spotifyData;
+        const spotifyService = {
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            expires_in: expiresIn * 1000,
+            tokenIssuedAt: Date.now(),
+            data: profile,
+        };
+        console.log("SpotifyService: ", spotifyService);
+
+        user.connectServices.set("spotify", spotifyService);
+        await user.save();
+
+        res.json({
+            status: "success",
+            message: "Successfully connected with Spotify.",
+        });
     } catch (error) {
+        console.error("Error during Spotify connection:", error);
         return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
     }
 };
@@ -209,31 +186,29 @@ exports.getTwitchOAuthConstants = async (req, res) => {
     });
 };
 
-exports.twitchCallback = async (req, res, next) => {
+exports.twitchCallback = async (req, res) => {
     try {
         const { state: oAuthSessionIdFromState } = req.query;
         const { user } = await verifyOAuthSession(oAuthSessionIdFromState, "twitch");
         if (!user) {
-            return res
-                .status(400)
-                .json({ status: "error", message: "Invalid state or session expired" });
+            return res.status(400).json({ status: "error", message: "Invalid state or session expired" });
         }
-        req.user = user;
-        passport.authenticate("twitch-connect", (err, authenticatedUser) => {
-            if (err) {
-                return res.status(500).json({ status: "error", message: "Internal server error." });
-            }
-            if (!authenticatedUser) {
-                return res
-                    .status(401)
-                    .json({ status: "failed", message: "Authentication failed." });
-            }
-            res.json({
-                status: "success",
-                message: "Successfully connected with Twitch.",
-            });
-        })(req, res, next);
+        const { accessToken, refreshToken, expiresIn, profile } = req.twitchData;
+        const twitchService = {
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            expires_in: expiresIn * 1000,
+            tokenIssuedAt: Date.now(),
+            data: profile,
+        };
+        user.connectServices.set("twitch", twitchService);
+        await user.save();
+        res.json({
+            status: "success",
+            message: "Successfully connected with Twitch.",
+        });
     } catch (error) {
+        console.error("Error during Twitch connection:", error);
         return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
     }
 };

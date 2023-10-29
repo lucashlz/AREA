@@ -1,10 +1,10 @@
 const User = require("../models/userModels");
+const axios = require("axios");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const passport = require("passport");
 const emailService = require("../utils/emailUtils");
-require("../auth/googleStrategy");
+const { findUserByExternalId, createNewExternalUser } = require("../utils/authUtils");
 
 exports.sign_up = async (req, res) => {
     try {
@@ -115,30 +115,41 @@ exports.sign_in = async (req, res) => {
     }
 };
 
-exports.redirectToGoogle = passport.authenticate("google-auth", {
-    scope: [
-        "profile",
-        "email",
-    ],
-});
+exports.redirectToGoogle = (req, res) => {
+    const redirectUri = "http://localhost:8080/auth/google/callback";
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&scope=profile%20email`;
+    res.redirect(authUrl);
+};
 
-exports.handleGoogleCallback = (req, res, next) => {
-    passport.authenticate("google-auth", (err, user, info) => {
-        if (err) {
-            console.error("error : ", err.message);
-            return res.status(500).json({ message: "Server error during authentication." });
+exports.handleGoogleCallback = async (req, res) => {
+    const code = req.query.code;
+    const redirectUri = "http://localhost:8080/auth/google/callback";
+
+    try {
+        const response = await axios.post('https://oauth2.googleapis.com/token', {
+            code: code,
+            client_id: process.env.GOOGLE_CLIENT_ID,
+            client_secret: process.env.GOOGLE_CLIENT_SECRET,
+            redirect_uri: redirectUri,
+            grant_type: 'authorization_code'
+        });
+        const { access_token } = response.data;
+        const profileResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: {
+                'Authorization': 'Bearer ' + access_token,
+            }
+        });
+        const email = profileResponse.data.email;
+        let existingUser = await findUserByExternalId("google", email);
+        if (existingUser) {
+            const token = jwt.sign({ id: existingUser._id }, process.env.SECRET_JWT, { expiresIn: '24h' });
+            return res.status(200).redirect(`http://localhost:8081/applets?token=${token}`);
         }
-        if (!user) {
-            return res.status(401).json({ message: info.message || "Authentication failed." });
-        }
-        try {
-            const token = jwt.sign({ id: user._id }, process.env.SECRET_JWT, {
-                expiresIn: "24h",
-            });
-            res.status(200).redirect(`http://localhost:8081/applets?token=${token}`);
-        } catch (error) {
-            console.error("try: ", error.message);
-            res.status(500).json({ message: "Server error generating token." });
-        }
-    })(req, res, next);
+        const newUser = await createNewExternalUser("google", email);
+        const token = jwt.sign({ id: newUser._id }, process.env.SECRET_JWT, { expiresIn: '24h' });
+        res.status(200).redirect(`http://localhost:8081/applets?token=${token}`);
+    } catch (error) {
+        console.error("Error during Google authentication:", error);
+        return res.status(500).json({ message: "Server error during authentication." });
+    }
 };
