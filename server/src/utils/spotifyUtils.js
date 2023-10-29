@@ -1,6 +1,12 @@
 const SpotifyWebApi = require("spotify-web-api-node");
 const User = require("../models/userModels");
 
+const ALLOWED_INGREDIENTS_FOR_ACTIONS = {
+    "add_track_to_playlist_by_id": ["song_id"],
+    "save_track": ["song_id"],
+    "follow_playlist": []
+};
+
 const spotifyApi = new SpotifyWebApi({
     clientId: process.env.SPOTIFY_CLIENT_ID,
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
@@ -43,9 +49,28 @@ async function checkTrackIdValid(user, trackId) {
     }
 }
 
-async function checkSpotifyParameters(userId, parameters) {
+function isIngredient(input) {
+    return input.startsWith('<') && input.endsWith('>');
+}
+
+function getIngredientName(input) {
+    if (isIngredient(input)) {
+        return input.slice(1, -1);
+    }
+    return null;
+}
+
+async function checkSpotifyParameters(userId, parameters, actionName) {
     const user = await User.findById(userId);
     for (let param of parameters) {
+        const ingredientName = getIngredientName(param.input);
+        if (ingredientName) {
+            const allowedIngredients = ALLOWED_INGREDIENTS_FOR_ACTIONS[actionName];
+            if (!allowedIngredients.includes(ingredientName)) {
+                throw new Error(`Invalid ingredient: ${ingredientName} for action: ${actionName}`);
+            }
+            continue;
+        }
         if (param.name === "track_id" && !(await checkTrackIdValid(user, param.input))) {
             throw new Error("Invalid track ID provided");
         }
