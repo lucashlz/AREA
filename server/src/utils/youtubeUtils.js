@@ -4,11 +4,7 @@ const User = require("../models/userModels");
 async function setYouTubeToken(userId) {
     const user = await User.findById(userId);
     if (user && user.connectServices && user.connectServices.get("youtube")) {
-        const oauth2Client = new google.auth.OAuth2(
-            process.env.GOOGLE_CLIENT_ID,
-            process.env.GOOGLE_CLIENT_SECRET,
-            "http://localhost:8080/connect/google/callback"
-        );
+        const oauth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET, "http://localhost:8080/connect/google/callback");
 
         oauth2Client.setCredentials({ access_token: user.connectServices.get("youtube").access_token });
         return google.youtube({ version: "v3", auth: oauth2Client });
@@ -43,9 +39,15 @@ async function checkVideoExists(youtube, videoId) {
     }
 }
 
-async function checkYoutubeParameters(userId, parameters) {
+async function checkYoutubeParameters(userId, parameters, actionName) {
     const youtube = await setYouTubeToken(userId);
-
+    if (actionName === "like_video") {
+        for (let param of parameters) {
+            if (param.input.startsWith("<") && param.input.endsWith(">")) {
+                throw new Error(`Ingredients wrapped in <> are not allowed for the ${actionName} action.`);
+            }
+        }
+    }
     for (let param of parameters) {
         if (param.name === "channel_id" && !(await checkChannelExists(youtube, param.input))) {
             throw new Error(`Invalid channel ID provided: ${param.input}`);
