@@ -74,6 +74,7 @@ const SPOTIFY_TRIGGERS = [
         newSavedTrack,
         [
             { name: "song_name", description: "Name of the saved song" },
+            { name: "song_id", description: "ID of the saved song" },
             { name: "artist", description: "Artist of the saved song" },
             { name: "trackURL", description: "URL of the saved track" },
             { name: "coverURL", description: "Cover image URL of the saved track" },
@@ -86,6 +87,7 @@ const SPOTIFY_TRIGGERS = [
         newSavedAlbum,
         [
             { name: "album_name", description: "Name of the saved album" },
+            { name: "album_id", description: "ID of the saved album" },
             { name: "artist", description: "Artist of the saved album" },
             { name: "albumURL", description: "URL of the saved album" },
             { name: "coverURL", description: "Cover image URL of the saved album" },
@@ -98,6 +100,7 @@ const SPOTIFY_TRIGGERS = [
         newRecentlyPlayedTrack,
         [
             { name: "song_name", description: "Name of the recently played song" },
+            { name: "song_id", description: "ID of the recently played song" },
             { name: "artist", description: "Artist of the recently played song" },
             { name: "trackURL", description: "URL of the recently played track" },
             { name: "coverURL", description: "Cover image URL of the recently played track" },
@@ -110,6 +113,9 @@ const SPOTIFY_TRIGGERS = [
         newTrackAddedToPlaylist,
         [
             { name: "song_name", description: "Name of the song added to the playlist" },
+            { name: "song_id", description: "ID of the song added to the playlist" },
+            { name: "playlist_name", description: "Name of the target playlist" },
+            { name: "playlist_id", description: "ID of the target playlist" },
             { name: "artist", description: "Artist of the song added to the playlist" },
             { name: "trackURL", description: "URL of the track added to the playlist" },
             { name: "coverURL", description: "Cover image URL of the track added to the playlist" },
@@ -147,28 +153,54 @@ const GITHUB_TRIGGERS = [
         "Triggers every time a new commit in a repo is created on Github",
         [{ name: "repository_name", input: "Repository name" }],
         anyNewCommit,
-        []
+        [
+            { name: "commit_message", description: "The commit message" },
+            { name: "committer_name", description: "Name of the person who made the commit" },
+            { name: "commit_date", description: "The date and time the commit was made" },
+            { name: "commit_url", description: "URL to view the commit on GitHub" },
+            { name: "repository_name", description: "Name of the repository where the commit was made" }
+        ]
     ),
     new Trigger(
         "any_new_issue",
-        "Triggers every time any new issue is opened in a repository you own or collaborate on",
+        "Triggers every time a new issue is created by the authenticated user on Github",
         [],
         anyNewIssue,
-        []
+        [
+            { name: "issue_title", description: "Title of the issue" },
+            { name: "issue_url", description: "URL of the issue" },
+            { name: "issue_body", description: "Description of the issue" },
+            { name: "issue_creator", description: "Username of the issue creator" },
+            { name: "issue_date", description: "Date the issue was created" },
+            { name: "repository_name", description: "Name of the repository where the issue was created" }
+        ]
     ),
     new Trigger(
         "new_issue_assigned_to_you",
-        "Triggers every time a new issue is assigned to you",
+        "Triggers every time a new issue is assigned to the authenticated user on Github",
         [],
         newIssueAssignedToYou,
-        []
+        [
+            { name: "issue_title", description: "Title of the issue" },
+            { name: "issue_url", description: "URL of the issue" },
+            { name: "issue_body", description: "Description of the issue" },
+            { name: "issue_creator", description: "Username of the issue creator" },
+            { name: "assigned_to_you_date", description: "Date the issue was assigned to you" },
+            { name: "repository_name", description: "Name of the repository where the issue was created" }
+        ]
     ),
     new Trigger(
         "new_repository_by_user_or_org",
-        "Triggers every time a new repository is created by the username or organization you specify",
-        [{ name: "user_or_org_name", input: "Username or organization name" }],
+        "Triggers every time a new repository is created by a specified user or organization on Github",
+        [{ name: "username_or_orgname", input: "Username or Organization name" }],
         newRepositoryByUserOrOrg,
-        []
+        [
+            { name: "repository_name", description: "Name of the repository" },
+            { name: "repository_description", description: "Description of the repository" },
+            { name: "repository_url", description: "URL of the repository" },
+            { name: "repository_owner", description: "Username of the repository owner (either user or organization)" },
+            { name: "repository_date", description: "Date the repository was created" }
+        ]
     ),
 ];
 
@@ -185,6 +217,15 @@ const GITHUB_ACTIONS = [
     ),
 ];
 
+const DATETIME_INGREDIENTS = [
+    { name: "date", description: "The current date when the trigger is activated" },
+    { name: "day", description: "The current day (e.g., Monday, Tuesday) when the trigger is activated" },
+    { name: "month", description: "The current month when the trigger is activated" },
+    { name: "year", description: "The current year when the trigger is activated" },
+    { name: "hour", description: "The current hour when the trigger is activated" },
+    { name: "minute", description: "The current minute when the trigger is activated" }
+];
+
 const DATETIME_TRIGGERS = [
     new Trigger(
         "every_day_at",
@@ -194,14 +235,14 @@ const DATETIME_TRIGGERS = [
             { name: "target_minute", input: "Minute (0-59)" },
         ],
         everyDayAt,
-        []
+        DATETIME_INGREDIENTS
     ),
     new Trigger(
         "every_hour_at",
         "Triggers once an hour at :00, :15, :30, or :45 minutes past the hour",
         [{ name: "target_minute", input: "Minute (0, 15, 30, 45)" }],
         everyHourAt,
-        []
+        DATETIME_INGREDIENTS
     ),
     new Trigger(
         "every_day_of_the_week_at",
@@ -211,7 +252,8 @@ const DATETIME_TRIGGERS = [
             { name: "target_hour", input: "Hour (0-23)" },
             { name: "target_minute", input: "Minute (0-59)" },
         ],
-        everyDayOfTheWeekAt
+        everyDayOfTheWeekAt,
+        DATETIME_INGREDIENTS
     ),
     new Trigger(
         "every_month_on_the",
@@ -222,7 +264,7 @@ const DATETIME_TRIGGERS = [
             { name: "target_minute", input: "Minute (0-59)" },
         ],
         everyMonthOnThe,
-        []
+        DATETIME_INGREDIENTS
     ),
     new Trigger(
         "every_year_on",
@@ -234,7 +276,7 @@ const DATETIME_TRIGGERS = [
             { name: "target_minute", input: "Minute (0-59)" },
         ],
         everyYearOn,
-        []
+        DATETIME_INGREDIENTS
     ),
 ];
 
@@ -246,21 +288,38 @@ const TWITCH_TRIGGERS = [
         "Triggers every time a stream is going live for the specified Channel that you follow",
         [{ name: "channel_name", input: "Name of the channel" }],
         streamGoingLiveForChannel,
-        []
+        [
+            { name: "twitch_stream_title", description: "Title of the live stream" },
+            { name: "twitch_streamer_name", description: "Name of the streamer" },
+            { name: "twitch_stream_url", description: "URL to the live stream" },
+            { name: "twitch_viewers_count", description: "Current number of viewers" },
+            { name: "twitch_stream_started_at", description: "Date and time when the stream started" },
+            { name: "twitch_game_being_played", description: "Name of the game being streamed" }
+        ]
     ),
     new Trigger(
         "you_follow_new_channel",
         "This trigger fires every time you follow a new channel on Twitch",
         [],
         youFollowNewChannel,
-        []
+        [
+            { name: "twitch_channel_name", description: "Name of the channel you followed" },
+            { name: "twitch_channel_url", description: "URL to the channel's page" },
+            { name: "twitch_channel_followers_count", description: "Number of followers of the channel" },
+            { name: "twitch_channel_total_views", description: "Total views on the channel" },
+            { name: "twitch_followed_date", description: "Date when you followed the channel" }
+        ]
     ),
     new Trigger(
         "new_follower_on_your_channel",
         "This trigger fires every time there is a new follower of your channel",
         [],
         newFollowerOnYourChannel,
-        []
+        [
+            { name: "twitch_follower_username", description: "Username of the new follower" },
+            { name: "twitch_follower_profile_url", description: "URL to the follower's Twitch profile" },
+            { name: "twitch_followed_date", description: "Date when they followed your channel" }
+        ]
     ),
 ];
 
@@ -272,21 +331,37 @@ const YOUTUBE_TRIGGERS = [
         "Triggers every time you like a video on YouTube",
         [],
         newLikedVideo,
-        []
+        [
+            { name: "youtube_video_title", description: "Title of the liked video" },
+            { name: "youtube_channel_name", description: "Name of the channel that uploaded the video" },
+            { name: "youtube_video_url", description: "URL to the video" },
+            { name: "youtube_published_date", description: "Date and time when the video was published" },
+            { name: "youtube_video_description", description: "Description of the video" }
+        ]
     ),
     new Trigger(
         "new_video_by_channel",
         "Triggers every time a specific channel publishes a video",
         [{ name: "channel_id", input: "Enter the Channel ID" }],
         newVideoByChannel,
-        []
+        [
+            { name: "youtube_video_title", description: "Title of the new video" },
+            { name: "youtube_channel_name", description: "Name of the channel that uploaded the video" },
+            { name: "youtube_video_url", description: "URL to the video" },
+            { name: "youtube_published_date", description: "Date and time when the video was published" },
+            { name: "youtube_video_description", description: "Description of the video" }
+        ]
     ),
     new Trigger(
         "new_subscription",
         "This trigger fires when a new subscription is made by a specific channel",
         [{ name: "channel_id", input: "Channel id" }],
         newSubscription,
-        []
+        [
+            { name: "youtube_channel_name", description: "Name of the channel you subscribed to" },
+            { name: "youtube_channel_url", description: "URL to the channel's page" },
+            { name: "youtube_subscribed_date", description: "Date and time when you subscribed" }
+        ]
     ),
 ];
 
@@ -311,7 +386,8 @@ const GMAIL_ACTIONS = [
             { name: "body", input: "Body" },
             { name: "attachment_url", input: "Attachment URL (Optional)", optional: true },
         ],
-        sendEmail
+        sendEmail,
+        []
     ),
 
     new Action(

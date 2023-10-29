@@ -35,6 +35,20 @@ exports.createArea = async (req, res) => {
             return res.status(404).json({ message: "User not found." });
         }
         const { trigger, actions } = req.body;
+        console.log(JSON.stringify(req.body, null, 2));
+        const existingArea = await Area.findOne({
+            userId: user._id,
+            "trigger.service": trigger.service,
+            "trigger.name": trigger.name,
+            actions: { $all: actions.map(a => ({
+                service: a.service,
+                name: a.name,
+                parameters: a.parameters
+            })) }
+        });
+        if (existingArea) {
+            return res.status(400).json({ message: "An area with the same trigger and actions already exists." });
+        }
         const triggerServiceObj = AREAS[trigger.service];
         if (!triggerServiceObj) {
             return res.status(400).json({ message: "Invalid trigger service provided." });
