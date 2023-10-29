@@ -7,11 +7,7 @@ async function executeReaction(areaEntry, associatedReaction, reactionParameters
         let paramsValues = action.parameters || [];
         console.log("Action Parameters:", paramsValues);
         try {
-            if (action.service === "gmail") {
-                await associatedReaction.actionFunction(areaEntry.userId, ...paramsValues.map((param) => param.input), areaEntry.trigger.ingredients, ...reactionParameters);
-            } else {
-                await associatedReaction.actionFunction(areaEntry.userId, ...paramsValues.map((param) => param.input), ...reactionParameters);
-            }
+            await associatedReaction.actionFunction(areaEntry.userId, ...paramsValues.map((param) => param.input), areaEntry.trigger.ingredients, ...reactionParameters);
             console.log(`Successfully executed reaction for area ID: ${areaEntry._id}`);
         } catch (error) {
             console.error("Failed to execute reaction:", error);
