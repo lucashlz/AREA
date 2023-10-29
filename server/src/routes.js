@@ -16,6 +16,6 @@ module.exports = (app) => {
   app.use("/users", ensureAuthenticated, usersRoutes);
   app.use("/connect", connectRoutes);
   app.use("/areas", ensureAuthenticated, areaRoutes);
-  app.use("/about", ensureAuthenticated, aboutRoutes);
+  app.use("/about", aboutRoutes);
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 };
