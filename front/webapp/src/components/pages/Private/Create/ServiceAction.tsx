@@ -128,9 +128,9 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
 
     const submitParams = () => {
         if (mode && selectedArea) {
-            for (let i = 0; i < mode.infos.parameters.length - 1; i++) {
+            for (let i = 0; i < mode.infos.parameters.length; i++) {
                 if (mode.type === "trigger") {
-                    selectedArea.trigger.parameters[i] = {name: parametersNames[i], input: parametersNames[i]}
+                    selectedArea.trigger.parameters[i] = {name: parametersNames[i], input: parametersInput[i]}
                 }
                 if (mode.type === "actions") {
                     selectedArea.actions[selectedArea.actions.length - 1].parameters[i] = {name: parametersNames[i], input: parametersInput[i]}
@@ -138,7 +138,6 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
             }
         }
         localStorage.setItem('selectedArea', JSON.stringify(selectedArea));
-        localStorage.removeItem('selectedIngredients');
         setCurrentPage("create")
     }
 

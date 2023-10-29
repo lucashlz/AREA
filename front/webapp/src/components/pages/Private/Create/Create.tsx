@@ -185,8 +185,8 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
       } else {
         setError(response.data.message)
       }
-    } catch (error) {
-      setError("Incorrect Trigger/Actions Parameters")
+    } catch (error: any) {
+        setError(error.response.data.message)
     }
   }
 
