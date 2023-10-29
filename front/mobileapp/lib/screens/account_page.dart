@@ -45,7 +45,7 @@ class AccountPageState extends State<AccountPage> {
   }
 
   Future<void> _loadProfileFromAPI() async {
-    const String url = 'cprofile';
+    const String url = 'http://10.0.2.2:8080/profile';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -87,7 +87,7 @@ class AccountPageState extends State<AccountPage> {
   }
 
   Future<void> deleteUser() async {
-    const String url = 'https://techparisarea.com/users/delete';
+    const String url = 'http://10.0.2.2:8080/users/delete';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');

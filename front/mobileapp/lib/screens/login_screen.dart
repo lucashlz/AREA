@@ -83,132 +83,137 @@ class LoginScreenState extends State<LoginScreen> {
               child: Image.asset('assets/logo_ifttt.png'),
             ),
             const SizedBox(height: 60),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 20.0),
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                        fontFamily: 'Archivo',
-                        fontSize: 45,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                MyInput(
-                  hint: "Username",
-                  controller: emailController,
-                ),
-                const SizedBox(height: 20),
-                MyInput(
-                  hint: "Password",
-                  obscureText: true,
-                  controller: passwordController,
-                ),
-                const SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ResetPasswordScreen()),
-                      );
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.only(right: 23.0),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                 Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 35.0),
                       child: Text(
-                        "Forgot Password?",
-                        style: TextStyle(
+                        "Login",
+                        style: const TextStyle(
+                          fontFamily: 'Archivo',
+                          fontSize: 45,
+                          fontWeight: FontWeight.w900,
                           color: Colors.white,
-                          fontSize: 18,
                         ),
                       ),
                     ),
-                  ),
+                    Expanded(child: Container()),
+                  ],
                 ),
-                if (errorMessage != null)
-                  Text(
-                    errorMessage!,
-                    style: const TextStyle(color: Colors.red),
+                  const SizedBox(height: 20),
+                  MyInput(
+                    hint: "Username",
+                    controller: emailController,
                   ),
-                const SizedBox(height: 35),
-                Padding(
-                  padding: const EdgeInsets.only(top: 24),
-                  child: MyButton(
-                    onPressed: login,
-                    fontSize: 30,
+                  const SizedBox(height: 20),
+                  MyInput(
+                    hint: "Password",
+                    obscureText: true,
+                    controller: passwordController,
                   ),
-                ),
-                const SizedBox(height: 20),
-                RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: const TextStyle(
-                      color: Color(0xFF8E949A),
-                      fontFamily: 'Cabin',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                      height: 1.465,
-                    ),
-                    children: [
-                      const TextSpan(text: "Don't have an account? "),
-                      WidgetSpan(
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const RegisterScreen()),
-                            );
-                          },
-                          child: const Text(
-                            "Sign up",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                            ),
+                  const SizedBox(height: 12),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ResetPasswordScreen()),
+                        );
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.only(right: 23.0),
+                        child: Text(
+                          "Forgot Password?",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  "Or continue with",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF8E949A),
-                    fontSize: 18,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                GestureDetector(
-                  onTap: continueWithGoogle,
-                  child: Center(
-                    child: Image.asset(
-                      'assets/logo_google.png',
-                      width: 50,
                     ),
                   ),
-                ),
-              ],
+                  if (errorMessage != null)
+                    Text(
+                      errorMessage!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  const SizedBox(height: 35),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24),
+                    child: MyButton(
+                      onPressed: login,
+                      fontSize: 30,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: const TextStyle(
+                        color: Color(0xFF8E949A),
+                        fontFamily: 'Cabin',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        height: 1.465,
+                      ),
+                      children: [
+                        const TextSpan(text: "Don't have an account? "),
+                        WidgetSpan(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const RegisterScreen()),
+                              );
+                            },
+                            child: const Text(
+                              "Sign up",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    "Or continue with",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF8E949A),
+                      fontSize: 18,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: continueWithGoogle,
+                    child: Center(
+                      child: Image.asset(
+                        'assets/logo_google.png',
+                        width: 50,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
-}
 
 class LoginWebView extends StatefulWidget {
   const LoginWebView({Key? key}) : super(key: key);

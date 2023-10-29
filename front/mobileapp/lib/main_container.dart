@@ -20,38 +20,47 @@ class MainContainerState extends State<MainContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF1D1D1D),
-      body: _children[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
+    return Theme(
+      data: Theme.of(context).copyWith(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white70,
+          backgroundColor: const Color(0xFF1D1D1D),
+        ),
+      ),
+      child: Scaffold(
         backgroundColor: const Color(0xFF1D1D1D),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: CircleAvatar(
-              radius: 15,
-              backgroundColor: Colors.white,
-              child: Icon(Icons.add, color: Color(0xFF1D1D1D)),
+        body: _children[_currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: '',
             ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: '',
-          ),
-        ],
+            BottomNavigationBarItem(
+              icon: CircleAvatar(
+                radius: 15,
+                backgroundColor: Colors.white,
+                child: Icon(Icons.add, color: Color(0xFF1D1D1D)),
+              ),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle),
+              label: '',
+            ),
+          ],
+        ),
       ),
     );
   }
+
 }

@@ -1,16 +1,41 @@
 import 'package:flutter/material.dart';
 import '../components/search_bar.dart';
-import '../components/servicecard_triggers.dart';
+import '../components/area_card.dart';
 import '../services/service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
+Future<List<Area>> fetchAreas() async {
+  const String url = 'http://10.0.2.2:8080/areas';
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('token');
+
+  if (token == null) {
+    print("No token found");
+    throw Exception('Token not found');
+  }
+
+  final response = await http.get(Uri.parse(url), headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    List<dynamic> data = json.decode(response.body);
+    return data.map((areaJson) => Area.fromJson(areaJson)).toList();
+  } else {
+    print('Error fetching areas: ${response.statusCode}');
+    throw Exception('Failed to load areas');
+  }
+}
+
+
 Future<List<Service>> fetchServices() async {
   const String url = 'http://10.0.2.2:8080/about/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
-
   final response = await http.get(
     Uri.parse(url),
     headers: {
@@ -18,18 +43,9 @@ Future<List<Service>> fetchServices() async {
       'Authorization': 'Bearer $token',
     },
   );
-
   if (response.statusCode == 200) {
-    final Map<String, dynamic> data = json.decode(response.body);
-    final List<dynamic> servicesData = data['server']['services'] ?? [];
-
-    if (servicesData.isNotEmpty) {
-      return servicesData
-          .map((serviceData) => Service.fromJson(serviceData))
-          .toList();
-    } else {
-      throw Exception('No services found in the response');
-    }
+    List<dynamic> data = json.decode(response.body)['server']['services'];
+    return data.map((serviceJson) => Service.fromJson(serviceJson)).toList();
   } else {
     throw Exception('Failed to load services');
   }
@@ -43,16 +59,21 @@ class HomeView extends StatefulWidget {
 }
 
 class HomeViewState extends State<HomeView> {
+  final Future<List<Area>> futureAreas = fetchAreas();
   final Future<List<Service>> futureServices = fetchServices();
   String _searchQuery = '';
 
-  List<Service> _filterServices(List<Service> services) {
+  List<Area> _filterServices(List<Area> areas) {
     if (_searchQuery.isEmpty) {
-      return services;
+      return areas;
     }
-    return services
-        .where((service) =>
-            service.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+
+    for (Area area in areas) {
+      print(area);
+    }
+    return areas
+        .where((area) =>
+            area.description.toLowerCase().contains(_searchQuery.toLowerCase()))
         .toList();
   }
 
@@ -90,23 +111,43 @@ class HomeViewState extends State<HomeView> {
               ),
             ),
           ),
+          const SizedBox(height: 30),
           Expanded(
             child: FutureBuilder<List<Service>>(
-              future: futureServices,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else if (snapshot.data == null || snapshot.data!.isEmpty) {
-                  return const Text('No services found.');
-                } else {
-                  final services = _filterServices(snapshot.data!);
-                  return ListView.builder(
-                    itemCount: services.length,
-                    itemBuilder: (ctx, index) =>
-                        ServiceCardTriggers(service: services[index]),
+              future: fetchServices(),
+              builder: (context, serviceSnapshot) {
+                if (serviceSnapshot.connectionState == ConnectionState.done) {
+                  if (serviceSnapshot.hasError) {
+                    return Center(child: Text('Error: ${serviceSnapshot.error}'));
+                  }
+                  List<Service> services = serviceSnapshot.data!;
+                  return FutureBuilder<List<Area>>(
+                    future: futureAreas,
+                    builder: (context, areaSnapshot) {
+                      if (areaSnapshot.connectionState == ConnectionState.done) {
+                        if (areaSnapshot.hasError) {
+                          return Center(child: Text('Error: ${areaSnapshot.error}'));
+                        }
+                        List<Area> areas = _filterServices(areaSnapshot.data!);
+                        return ListView.builder(
+                          itemCount: areas.length,
+                          itemBuilder: (context, index) => AreaCard(
+                            area: areas[index],
+                            services: services,
+                            onDelete: () {
+                              setState(() {
+                                areas.removeAt(index);
+                              });
+                            },
+                          ),
+                        );
+                      } else {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                    },
                   );
+                } else {
+                  return const Center(child: CircularProgressIndicator());
                 }
               },
             ),
