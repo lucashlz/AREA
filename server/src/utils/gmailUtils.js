@@ -23,6 +23,7 @@ async function isValidURL(url) {
 
 async function checkGmailParameters(userId, parameters) {
     for (let param of parameters) {
+        if (!param) continue;
         if (param.name === "to_address" && !isValidEmail(param.input)) {
             throw new Error("Invalid 'To' email address provided");
         }
