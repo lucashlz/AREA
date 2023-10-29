@@ -14,6 +14,15 @@ async function processTriggerData(areaEntry, key, value) {
     return false;
 }
 
+function updateOrPushIngredient(ingredients, ingredient) {
+    const index = ingredients.findIndex((item) => item.name === ingredient.name);
+    if (index !== -1) {
+        ingredients[index].value = ingredient.value;
+    } else {
+        ingredients.push(ingredient);
+    }
+}
+
 async function streamGoingLiveForChannel(areaEntry) {
     try {
         const user = await User.findById(areaEntry.userId);
@@ -46,6 +55,13 @@ async function streamGoingLiveForChannel(areaEntry) {
             await processTriggerData(areaEntry, "streamStatus", false);
         }
         if (isChannelLive) {
+            const liveStream = allFollowedLiveStreams.find((stream) => stream.user_name.toLowerCase() === areaEntry.trigger.parameters[0].input.toLowerCase());
+            updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_stream_title", value: liveStream.title });
+            updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_streamer_name", value: liveStream.user_name });
+            updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_stream_url", value: `https://www.twitch.tv/${liveStream.user_name}` });
+            updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_viewers_count", value: liveStream.viewer_count.toString() });
+            updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_stream_started_at", value: liveStream.started_at });
+            updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_game_being_played", value: liveStream.game_name });
             return await processTriggerData(areaEntry, "streamStatus", true);
         } else {
             return await processTriggerData(areaEntry, "streamStatus", false);
@@ -76,6 +92,11 @@ async function youFollowNewChannel(areaEntry) {
         const followedChannels = response.data.data;
         const newFollowedChannel = followedChannels[0];
         if (!newFollowedChannel) return false;
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_channel_name", value: newFollowedChannel.broadcaster_name });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_channel_url", value: `https://www.twitch.tv/${newFollowedChannel.broadcaster_name}` });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_channel_followers_count", value: newFollowedChannel.broadcaster_followers_count.toString() });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_channel_total_views", value: newFollowedChannel.broadcaster_views_count.toString() });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_followed_date", value: newFollowedChannel.followed_date });
         return await processTriggerData(areaEntry, "followedChannelId", newFollowedChannel.broadcaster_id);
     } catch (error) {
         console.error("Error fetching followed channels:", error);
@@ -100,10 +121,12 @@ async function newFollowerOnYourChannel(areaEntry) {
         const followers = response.data.data;
         const newFollower = followers[0];
         if (!newFollower) return false;
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_follower_username", value: newFollower.user_name });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_follower_profile_url", value: `https://www.twitch.tv/${newFollower.user_name}` });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "twitch_followed_date", value: newFollower.followed_date });
         const hasNewFollower = await processTriggerData(areaEntry, "followerId", newFollower.user_id);
         user.lastFollowers = followers.map((follower) => follower.user_id);
         await user.save();
-
         if (hasNewFollower) {
             return newFollower;
         }

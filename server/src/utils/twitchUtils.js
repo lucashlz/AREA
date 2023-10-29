@@ -35,7 +35,7 @@ async function checkUserExists(apiClient, userName) {
     }
 }
 
-async function checkTwitchParameters(userId, parameters) {
+async function checkTwitchParameters(userId, parameters, actionName) {
     const twitchApiClient = await setTwitchToken(userId);
 
     for (let param of parameters) {
