@@ -11,6 +11,22 @@ async function setGitHubToken(userId) {
     }
 }
 
+function updateOrPushIngredient(ingredients, ingredient) {
+    const index = ingredients.findIndex((item) => item.name === ingredient.name);
+    if (index !== -1) {
+        ingredients[index].value = ingredient.value;
+    } else {
+        ingredients.push(ingredient);
+    }
+}
+
+function replacePlaceholdersWithIngredients(str, ingredients) {
+    return str.replace(/<([^>]+)>/g, (match, placeholder) => {
+        const ingredient = ingredients.find((ing) => ing.name === placeholder);
+        return ingredient ? ingredient.value : match;
+    });
+}
+
 async function processTriggerData(areaEntry, key, value) {
     if (!areaEntry.trigger.data) {
         areaEntry.trigger.data = { key, value };
@@ -35,10 +51,17 @@ async function anyNewCommit(areaEntry) {
         });
         const recentCommit = commits.data.length > 0 ? commits.data[0] : null;
         if (!recentCommit) return false;
+        if (!areaEntry.trigger.ingredients) {
+            areaEntry.trigger.ingredients = [];
+        }
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "commit_message", value: recentCommit.commit.message });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "committer_name", value: recentCommit.commit.committer.name });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "commit_date", value: recentCommit.commit.committer.date });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "commit_url", value: recentCommit.html_url });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "repository_name", value: areaEntry.trigger.parameters[0].input });
         return await processTriggerData(areaEntry, "commitId", recentCommit.node_id);
     } catch (error) {
-        if (!areaEntry.trigger.data)
-            await processTriggerData(areaEntry, "commitId", 0);
+        if (!areaEntry.trigger.data) await processTriggerData(areaEntry, "commitId", 0);
         return false;
     }
 }
@@ -52,10 +75,17 @@ async function anyNewIssue(areaEntry) {
         });
         const recentIssue = issues.data.length > 0 ? issues.data[0] : null;
         if (!recentIssue) return false;
+
+        if (!areaEntry.trigger.ingredients) areaEntry.trigger.ingredients = [];
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "issue_title", value: recentIssue.title });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "issue_url", value: recentIssue.html_url });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "issue_body", value: recentIssue.body });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "issue_creator", value: recentIssue.user.login });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "issue_date", value: recentIssue.created_at });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "repository_name", value: recentIssue.repository.full_name.split('/')[1] });
         return await processTriggerData(areaEntry, "issueId", recentIssue.id);
     } catch (error) {
-        if (!areaEntry.trigger.data)
-            await processTriggerData(areaEntry, "issueId", 0);
+        if (!areaEntry.trigger.data) await processTriggerData(areaEntry, "issueId", 0);
         return false;
     }
 }
@@ -69,13 +99,20 @@ async function newIssueAssignedToYou(areaEntry) {
         });
         const recentIssue = issues.data.length > 0 ? issues.data[0] : null;
         if (!recentIssue) return false;
+        if (!areaEntry.trigger.ingredients) areaEntry.trigger.ingredients = [];
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "issue_title", value: recentIssue.title });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "issue_url", value: recentIssue.html_url });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "issue_body", value: recentIssue.body });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "issue_creator", value: recentIssue.user.login });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "assigned_to_you_date", value: recentIssue.created_at });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "repository_name", value: recentIssue.repository.full_name.split('/')[1] });
         return await processTriggerData(areaEntry, "assignedIssueId", recentIssue.id);
     } catch (error) {
-        if (!areaEntry.trigger.data)
-            await processTriggerData(areaEntry, "assignedIssueId", 0);
+        if (!areaEntry.trigger.data) await processTriggerData(areaEntry, "assignedIssueId", 0);
         return false;
     }
 }
+
 async function newRepositoryByUserOrOrg(areaEntry) {
     try {
         const octokit = await setGitHubToken(areaEntry.userId);
@@ -91,28 +128,36 @@ async function newRepositoryByUserOrOrg(areaEntry) {
             });
         }
         repos.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        const recentRepo = repos.data.length > 0 ? repos.data[0] : null;
-        if (!recentRepo) return false;
-        return await processTriggerData(areaEntry, "repoId", recentRepo.id);
+        const recentRepository = repos.data.length > 0 ? repos.data[0] : null;
+        if (!recentRepository) return false;
+
+        if (!areaEntry.trigger.ingredients) areaEntry.trigger.ingredients = [];
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "repository_name", value: recentRepository.name });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "repository_url", value: recentRepository.html_url });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "repository_description", value: recentRepository.description });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "repositpry_owner", value: recentRepository.owner.login });
+        updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "repositpry_date", value: recentRepository.created_at });
+        return await processTriggerData(areaEntry, "repoId", recentRepository.id);
     } catch (error) {
         console.error("Error fetching repositories:", error);
-        if (!areaEntry.trigger.data)
-            await processTriggerData(areaEntry, "repoId", 0);
+        if (!areaEntry.trigger.data) await processTriggerData(areaEntry, "repoId", 0);
         return false;
     }
 }
 
-
-async function createIssue(userId, repoName, title, body) {
+async function createIssue(userId, repoName, title, body, ingredients) {
     try {
         const octokit = await setGitHubToken(userId);
         const user = await User.findById(userId);
         const githubUsername = user.connectServices.get("github").data.login;
+        title = replacePlaceholdersWithIngredients(title, ingredients);
+        body = replacePlaceholdersWithIngredients(body, ingredients);
+        repoName = replacePlaceholdersWithIngredients(repoName, ingredients);
         const issue = await octokit.issues.create({
             owner: githubUsername,
             repo: repoName,
             title: title,
-            body: body
+            body: body,
         });
         return issue.data;
     } catch (error) {
@@ -120,7 +165,6 @@ async function createIssue(userId, repoName, title, body) {
         throw error;
     }
 }
-
 
 module.exports = {
     anyNewCommit,
