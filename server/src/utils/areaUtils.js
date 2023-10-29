@@ -118,12 +118,14 @@ async function generateDescription(area) {
         throw error;
     }
 }
-
 const checkParameters = async (userId, trigger, actions) => {
-    const checkParams = async (parameters, service, triggerName = null) => {
+    const checkParams = async (parameters, service, actionOrTriggerName) => {
         if (Array.isArray(parameters)) {
             for (const param of parameters) {
-                if (!param) {
+                if (param === null) {
+                    continue;
+                }
+                if (Object.keys(param).length === 0) {
                     continue;
                 }
                 if ((!param.name || !param.input) && !param.optional) {
@@ -137,9 +139,9 @@ const checkParameters = async (userId, trigger, actions) => {
             try {
                 console.log("Checking parameters:", JSON.stringify(parameters));
                 if (service === "dateTime") {
-                    await serviceCheckFunctions[service](triggerName, parameters);
+                    await serviceCheckFunctions[service](actionOrTriggerName, parameters);
                 } else {
-                    await serviceCheckFunctions[service](userId, parameters);
+                    await serviceCheckFunctions[service](userId, parameters, actionOrTriggerName);
                 }
             } catch (error) {
                 throw error;
@@ -152,7 +154,7 @@ const checkParameters = async (userId, trigger, actions) => {
             throw new Error("Trigger parameter check failed");
         }
         for (const action of actions) {
-            if (!(await checkParams(action.parameters, action.service))) {
+            if (!(await checkParams(action.parameters, action.service, action.name))) {
                 throw new Error("Action parameter check failed");
             }
         }
