@@ -28,8 +28,8 @@ services:
       - NODE_ENV=development
     volumes:
       - type: bind
-        source: ./front/web
-        target: /app
+        source: ./front/web/src
+        target: /app/src
       - apk-volume:/app/public/apk
     depends_on:
       # - mobile
