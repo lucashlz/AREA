@@ -76,7 +76,6 @@ const ParameterSchema = new Schema({
     },
     input: {
         type: String,
-        required: true,
     },
     optional: {
         type: Boolean,
