@@ -12,6 +12,15 @@ exports.listAllAreas = async (req, res) => {
     }
 };
 
+exports.discoverAreas = async (req, res) => {
+    try {
+        const areas = await Area.find({ userId: { $ne: req.user.id } }).select("-userId");
+        res.status(200).json(areas);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching areas", error });
+    }
+};
+
 exports.switchAreaActivationStatus = async (req, res) => {
     try {
         const area = await Area.findById(req.params.id);
@@ -35,6 +44,20 @@ exports.createArea = async (req, res) => {
             return res.status(404).json({ message: "User not found." });
         }
         const { trigger, actions } = req.body;
+        const doesDuplicateActionExist = (actions) => {
+            const actionStrings = actions.map((a) => {
+                const sortedParameters = a.parameters.sort((p1, p2) => p1.name.localeCompare(p2.name));
+                return JSON.stringify({
+                    service: a.service,
+                    name: a.name,
+                    parameters: sortedParameters,
+                });
+            });
+            return new Set(actionStrings).size !== actionStrings.length;
+        };
+        if (doesDuplicateActionExist(actions)) {
+            return res.status(400).json({ message: "Duplicate actions provided." });
+        }
         console.log(JSON.stringify(req.body, null, 2));
         const potentialAreas = await Area.find({
             userId: user._id,
@@ -42,7 +65,6 @@ exports.createArea = async (req, res) => {
             "trigger.name": trigger.name,
         });
         const isSameParameter = (param1, param2) => {
-            console.log("param1: ", param1, "param2: ", param2)
             return param1.name === param2.name && param1.input === param2.input;
         };
         const isSameAction = (action1, action2) => {
@@ -111,58 +133,6 @@ exports.getAreaById = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ message: "Error fetching the area", error });
-    }
-};
-
-exports.updateAreaById = async (req, res) => {
-    const id = req.params.id;
-    const { actionService, reactionService, actionName, reactionName, actionParameters, reactionParameters } = req.body;
-    try {
-        const user = await User.findById(req.user.id);
-        if (!user) {
-            return res.status(404).json({ message: "User not found." });
-        }
-        const actionServiceObj = AREAS[actionService];
-        const reactionServiceObj = AREAS[reactionService];
-        if (!actionServiceObj || !reactionServiceObj) {
-            return res.status(400).json({ message: "Invalid services provided." });
-        }
-        const action = actionServiceObj.actions.find((a) => a.name === actionName);
-        const reaction = reactionServiceObj.reactions.find((r) => r.name === reactionName);
-        if (!action || !reaction) {
-            return res.status(400).json({ message: "Invalid action or reaction provided." });
-        }
-        const mapParameters = (provided, original) => {
-            return original.map((param) => {
-                const providedParam = provided.find((p) => p.name === param.name);
-                return { ...param, input: providedParam ? providedParam.input : undefined };
-            });
-        };
-        const updatedArea = await Area.findByIdAndUpdate(
-            id,
-            {
-                userId: user._id,
-                trigger: {
-                    ...action,
-                    parameters: mapParameters(actionParameters, action.parameters),
-                },
-                reactions: [
-                    {
-                        ...reaction,
-                        parameters: mapParameters(reactionParameters, reaction.parameters),
-                    },
-                ],
-            },
-            { new: true }
-        );
-        if (updatedArea) {
-            res.status(200).json(updatedArea);
-        } else {
-            res.status(404).json({ message: "Area not found for the given ID" });
-        }
-    } catch (error) {
-        console.error("Detailed Error:", error);
-        res.status(500).json({ message: "Error updating the area", error });
     }
 };
 

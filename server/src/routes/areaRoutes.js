@@ -43,6 +43,45 @@ router.get("/", areaController.listAllAreas);
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     AreaWithoutUserId:
+ *       type: object
+ *       properties:
+ *         trigger:
+ *           $ref: '#/components/schemas/Trigger'
+ *         actions:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Action'
+ *         isActive:
+ *           type: boolean
+ *           description: Indicates if the area is active or not.
+ *         area_description:
+ *           type: string
+ *           description: Description of the area.
+ * /areas/discover:
+ *   get:
+ *     summary: Retrieve all areas associated with other user, excluding the userId field
+ *     tags: [areas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all areas returned successfully for other users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/AreaWithoutUserId'
+ *       500:
+ *         description: Server error
+ */
+router.get("/discover", areaController.discoverAreas);
+
+/**
+ * @swagger
  * /areas:
  *   post:
  *     summary: Create a new area by specifying the services, names, and parameters for action and reactions
@@ -140,117 +179,6 @@ router.post("/", areaController.createArea);
  *         description: Server error
  */
 router.get("/:id", areaController.getAreaById);
-
-/**
- * @swagger
- * /areas/{id}/switch_activation:
- *   put:
- *     summary: Toggle the activation status of an area by its ID
- *     tags: [areas]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the area
- *     responses:
- *       200:
- *         description: Area activation status toggled successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Area activated successfully"
- *       404:
- *         description: Area not found for the given ID
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Area not found."
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Server error"
- */
-router.put("/:id/switch_activation", areaController.switchAreaActivationStatus);
-
-/**
- * @swagger
- * /areas/{id}:
- *   put:
- *     summary: Update an area by its ID
- *     tags: [areas]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the area
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               actionService:
- *                 type: string
- *                 description: The name of the service for the action (e.g., "github", "spotify")
- *               reactionService:
- *                 type: string
- *                 description: The name of the service for the reaction (e.g., "github", "spotify")
- *               actionName:
- *                 type: string
- *                 description: The name of the selected action within the action service
- *               reactionName:
- *                 type: string
- *                 description: The name of the selected reaction within the reaction service
- *               actionParameters:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     name:
- *                       type: string
- *                     input:
- *                       type: string
- *                 description: The parameters required for the selected action
- *               reactionParameters:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     name:
- *                       type: string
- *                     input:
- *                       type: string
- *                 description: The parameters required for the selected reaction
- *     responses:
- *       200:
- *         description: Area updated successfully
- *       400:
- *         description: Invalid services provided, specified action or reaction does not exist, or other bad request scenarios
- *       404:
- *         description: Area or user not found for the given ID
- *       500:
- *         description: Server error
- */
-router.put("/:id", areaController.updateAreaById);
 
 /**
  * @swagger
