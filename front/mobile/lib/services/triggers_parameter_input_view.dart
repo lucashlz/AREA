@@ -76,8 +76,7 @@ class _TriggerParameterInputPageState extends State<TriggerParameterInputPage> {
                 itemBuilder: (context, index) {
                   final parameter = widget.trigger.parameters[index];
                   return Padding(
-                    padding:
-                        const EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 15.0),
+                    padding: const EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 15.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -87,18 +86,19 @@ class _TriggerParameterInputPageState extends State<TriggerParameterInputPage> {
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
+                            fontFamily: 'Archivo',
                           ),
                         ),
                         SizedBox(height: 8),
                         TextFormField(
                           controller: _controllers[index],
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.white, fontFamily: 'Archivo'),
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Color(0xFF1D1D1D),
                             hintText: parameter['input'],
-                            labelStyle: TextStyle(color: Colors.white),
-                            hintStyle: TextStyle(color: Colors.white54),
+                            labelStyle: TextStyle(color: Colors.white, fontFamily: 'Archivo'),
+                            hintStyle: TextStyle(color: Colors.white54, fontFamily: 'Archivo'),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                               borderSide: BorderSide.none,
@@ -121,8 +121,7 @@ class _TriggerParameterInputPageState extends State<TriggerParameterInputPage> {
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
             child: ElevatedButton(
               onPressed: () {
-                final parameters = widget.trigger.parameters.asMap().entries
-                    .map((entry) {
+                final parameters = widget.trigger.parameters.asMap().entries.map((entry) {
                   int idx = entry.key;
                   var param = entry.value;
                   return {
@@ -130,15 +129,17 @@ class _TriggerParameterInputPageState extends State<TriggerParameterInputPage> {
                     'input': _controllers[idx].text
                   };
                 }).toList();
-
+              
                 areaState.setTrigger({
                   'service': widget.service.name,
                   'name': widget.trigger.name,
                   'parameters': parameters,
+                  'ingredients': widget.trigger.ingredients
                 });
-
+              
                 Navigator.popUntil(context, (route) => route.isFirst);
               },
+
               style: ElevatedButton.styleFrom(
                 primary: Colors.white,
                 onPrimary: Color(0xFF1D1D1D),
@@ -147,7 +148,7 @@ class _TriggerParameterInputPageState extends State<TriggerParameterInputPage> {
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 16.0),
               ),
-              child: Text("Add", style: TextStyle(fontSize: 18)),
+              child: Text("Add", style: TextStyle(fontSize: 18, fontFamily: 'Archivo')),
             ),
           ),
           SizedBox(height: 10),

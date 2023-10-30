@@ -156,8 +156,9 @@ class ListActionsView extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder: (context) =>
                                         ActionParameterInputPage(
-                                      service: service,
+                                      actionService: service,
                                       action: action,
+                                      ingredients: areaState.trigger['ingredients'],
                                     ),
                                   ),
                                 );
