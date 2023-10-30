@@ -52,6 +52,7 @@
 
 .register-form {
     margin-top: 0;
+    margin-bottom: 7%;
 }
 
 @media screen and (max-width: 960px) {
@@ -76,5 +77,11 @@
 
     .get-started {
         height: 100%;
+    }
+    .register-form {
+        margin-bottom: 0;
+    }
+    .register-container {
+        height: 90%;
     }
 }

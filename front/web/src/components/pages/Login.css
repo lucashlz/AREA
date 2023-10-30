@@ -1,35 +1,31 @@
 .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 60vh;
-    margin-top: 10%;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 93%;
+}
 
-  form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    height: 100%;
-    margin-top: -30rem;
-  }
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
 
 .field-container {
   display: flex;
   justify-content: center;
 }
 
+.login-form {
+  margin-top: 0;
+  margin-bottom: 7%;
+}
+
 ::placeholder {
   color: lightgray;
   font-weight: 900;
-}
-
-.login {
-  font-size: 4rem;
-  font-weight: 900;
-  margin-bottom: 10%;
 }
 
 .button {
@@ -49,8 +45,28 @@
   color: red;
 }
 
-@media screen and (max-width: 550px) {
-  .login {
-    font-size: 3rem;
+.login-title {
+  margin-bottom: 10%;
+}
+
+.login-auth {
+  font-weight: 500;
+  font-size: 25px;
+  margin-top: 10%;
+}
+
+@media screen and (max-height: 960px) and (orientation: landscape) {
+  .login-title {
+    margin-bottom: 2%;
+  }
+  .login-auth {
+    font-size: 20px;
+    margin-top: 2%;
+  }
+  .login-form {
+    margin-bottom: 0;
+  }
+  .login-container {
+    height: 90%;
   }
 }

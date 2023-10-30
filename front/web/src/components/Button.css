@@ -66,7 +66,26 @@
 
 @media screen and (max-width: 960px) {
     .btn--large {
-        font-size: 20px;
+        font-size: 15px;
+        padding-top: 3%;
+        padding-bottom: 3%;
+        padding-left: 8%;
+        padding-right: 8%;
+    }
+
+    .btn--medium {
+        font-size: 15px;
+        padding: 23px 37px;
+    }
+}
+
+@media screen and (max-height: 960px) and (orientation: landscape) {
+    .btn--large {
+        font-size: 15px;
+        padding-top: 3%;
+        padding-bottom: 3%;
+        padding-left: 8%;
+        padding-right: 8%;
     }
 
     .btn--medium {

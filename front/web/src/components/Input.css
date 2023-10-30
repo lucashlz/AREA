@@ -45,4 +45,17 @@
   ::placeholder {
     font-size: 5vh;
   }
+  .input {
+    width: 60%;
+    height: 7vh;
+    border: 4px solid;
+    border-radius: 13px;
+    color: black;
+    border-color: lightgray;
+    padding-bottom: 20px;
+  }
+
+  .input-icon {
+    margin-left: 25%;
+  }
 }
