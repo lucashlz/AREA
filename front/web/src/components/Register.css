@@ -60,6 +60,9 @@
         height: 80%;
         padding: 0;
     }
+    .register-main-container {
+        width: 60%;
+    }
 }
 
 @media screen and (max-height: 960px) and (orientation: landscape) {

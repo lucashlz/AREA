@@ -37,6 +37,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="login-container">
+      <div className='login-main-container'>
       <form className='login-form'>
         <div className='login-title'>
         <Title title='Log in' />
@@ -45,10 +46,11 @@ const Login: React.FC = () => {
         <Input onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='password' value={password}/>
         {message && <div className="login-response-message">{message}</div>}
         {error && <p>{error}</p>}
-        <div className='underline-text' style={{fontSize: 20}} onClick={() => setPasswordPage(true)} >Forgot your password ?</div>
+        <div className='forgot-password underline-text' onClick={() => setPasswordPage(true)} >Forgot your password ?</div>
         <button type="button" className="btn btn--primary-inverted btn--large" onClick={handleSubmit}>Log in</button>
         <div className='login-auth' >Continue with <a href="http://localhost:8080/auth/google" className='underline-text'>Google</a></div>
       </form>
+      </div>
     </div>
   );
 };

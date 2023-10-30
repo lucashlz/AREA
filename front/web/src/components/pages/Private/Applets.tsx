@@ -1,14 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import './Applets.css';
-import { Button } from '../../Button';
 import { Navigate, redirect } from 'react-router-dom';
 import { IUserContext, UserContext } from '../../../context/userContext';
 import axios from 'axios';
-import Input from '../../Input';
 import { postService } from '../../../interfaces/postArea';
 import SearchBar from '../../SearchBar';
-import { getRadioUtilityClass } from '@mui/material';
-import { TriggerReaction } from '../../../interfaces/postArea';
 import { aboutService } from '../../../interfaces/aboutDotJson';
 
 interface AppletProps<T> {
@@ -168,7 +164,9 @@ export default function Applets() {
       <div className="applets-msg-holder">
         <p className="applets-msg">My Applets</p>
       </div>
+      <div className='applets-searchbar'>
       <SearchBar searchInput={searchInput} setSearchInput={setSearchInput} items={areas} name={['trigger.service', 'actions[0].service']} setItems={setAreas} />
+      </div>
       <div className="applets-holder">
         <div style={{ opacity: 0.5 }}>{areas.length > 0 ? '' : 'No areas created for now'}</div>
         {services ?

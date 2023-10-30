@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import Input from "./Input";
 import _ from "lodash";
+import "./SearchBar.css";
 
 type SearchBarProps = {
   style?: React.CSSProperties;

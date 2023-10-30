@@ -172,8 +172,14 @@
   }
   .navbar-inverted {
     height: 10%;
+    padding-top: 2%;
   }
   .nav-menu {
     height: 90%;
+    top: 10%;
+  }
+  .navbar {
+    height: 10%;
+    padding-top: 2%;
   }
 }
