@@ -3,9 +3,11 @@
     font-size: xx-large;
     text-align: center;
     width: 50%;
-    margin-left: 18%;
     justify-content: center;
     align-items: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .services-container {
@@ -38,6 +40,7 @@
 
 .service-logo-holder {
     width: 25%;
+    min-width: 60px;
     height: auto;
     overflow: hidden;
     border-radius: 50%;
@@ -75,7 +78,6 @@
     }
     .service-txt {
         font-size:x-large;
-        margin-left: 9%;
     }
     .services-container {
         margin-right: 7%;

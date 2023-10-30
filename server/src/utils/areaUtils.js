@@ -1,4 +1,5 @@
 const axios = require("axios");
+const AREAS = require("../core/areaServices");
 
 const { checkSpotifyParameters } = require("./spotifyUtils");
 const { checkDatetimeParameters } = require("./datetimeUtils");
@@ -14,6 +15,21 @@ const serviceCheckFunctions = {
     github: checkGithubParameters,
     youtube: checkYoutubeParameters,
     gmail: checkGmailParameters,
+};
+
+const isParameterOptional = (service, actionOrTriggerName, paramName) => {
+    const area = AREAS[service];
+    if (!area) return false;
+    const findParam = (arr) => {
+        for (const item of arr) {
+            if (item.name === actionOrTriggerName) {
+                return item.parameters.find((p) => p.name === paramName);
+            }
+        }
+        return null;
+    };
+    const param = findParam(area.triggers) || findParam(area.actions);
+    return param ? param.optional : false;
 };
 
 async function generateDescription(area) {
@@ -118,6 +134,7 @@ async function generateDescription(area) {
         throw error;
     }
 }
+
 const checkParameters = async (userId, trigger, actions) => {
     const checkParams = async (parameters, service, actionOrTriggerName) => {
         if (Array.isArray(parameters)) {
@@ -128,7 +145,7 @@ const checkParameters = async (userId, trigger, actions) => {
                 if (Object.keys(param).length === 0) {
                     continue;
                 }
-                if ((!param.name || !param.input) && !param.optional) {
+                if ((!param.name || !param.input) && !isParameterOptional(service, actionOrTriggerName, param.name)) {
                     throw new Error(`Parameter validation failed: missing name or input for parameter ${JSON.stringify(param)}`);
                 }
             }

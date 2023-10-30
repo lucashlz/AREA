@@ -6,7 +6,6 @@ const ALLOWED_INGREDIENTS_FOR_ACTIONS = {
         repository: ["repository_name"],
         title: [
             "commit_date",
-            "commit_url",
             "committer_name",
             "commit_message",
             "repository_name",
@@ -56,7 +55,6 @@ const ALLOWED_INGREDIENTS_FOR_ACTIONS = {
             "repository_date",
             "repository_url",
             "issue_url",
-            "commit_url",
             "date",
             "day",
             "month",

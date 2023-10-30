@@ -109,7 +109,7 @@ const SPOTIFY_TRIGGERS = [
     new Trigger(
         "new_track_added_to_playlist",
         "Triggers every time a new track is added to a specified Spotify playlist",
-        [{ name: "playlist_id", input: "ID of the Spotify playlist to monitor" }],
+        [{ name: "playlist_id", input: "ID of the Spotify playlist to monitor", optional: false }],
         newTrackAddedToPlaylist,
         [
             { name: "song_name", description: "Name of the song added to the playlist" },
@@ -151,7 +151,7 @@ const GITHUB_TRIGGERS = [
     new Trigger(
         "any_new_commit",
         "Triggers every time a new commit in a repo is created on Github",
-        [{ name: "repository_name", input: "Repository name" }],
+        [{ name: "repository_name", input: "Repository name", optional: false }],
         anyNewCommit,
         [
             { name: "commit_message", description: "The commit message" },
@@ -192,13 +192,13 @@ const GITHUB_TRIGGERS = [
     new Trigger(
         "new_repository_by_user_or_org",
         "Triggers every time a new repository is created by a specified user or organization on Github",
-        [{ name: "username_or_orgname", input: "Username or Organization name" }],
+        [{ name: "username_or_orgname", input: "Username or Organization name", optional: false }],
         newRepositoryByUserOrOrg,
         [
             { name: "repository_name", description: "Name of the repository" },
             { name: "repository_description", description: "Description of the repository" },
             { name: "repository_url", description: "URL of the repository" },
-            { name: "repository_owner", description: "Username of the repository owner (either user or organization)" },
+            { name: "repository_owner", description: "Username of the repository owner" },
             { name: "repository_date", description: "Date the repository was created" }
         ]
     ),
@@ -231,8 +231,8 @@ const DATETIME_TRIGGERS = [
         "every_day_at",
         "Triggers every single day at a specific time set by you",
         [
-            { name: "target_hour", input: "Hour (0-23)" },
-            { name: "target_minute", input: "Minute (0-59)" },
+            { name: "target_hour", input: "Hour (0-23)", optional: false },
+            { name: "target_minute", input: "Minute (0-59)", optional: false },
         ],
         everyDayAt,
         DATETIME_INGREDIENTS
@@ -240,7 +240,7 @@ const DATETIME_TRIGGERS = [
     new Trigger(
         "every_hour_at",
         "Triggers once an hour at :00, :15, :30, or :45 minutes past the hour",
-        [{ name: "target_minute", input: "Minute (0, 15, 30, 45)" }],
+        [{ name: "target_minute", input: "Minute (0, 15, 30, 45)", optional: false }],
         everyHourAt,
         DATETIME_INGREDIENTS
     ),
@@ -248,9 +248,9 @@ const DATETIME_TRIGGERS = [
         "every_day_of_the_week_at",
         "Triggers only on specific days of the week at the time you provide",
         [
-            { name: "days_array", input: "Days (e.g., Monday, Wednesday)" },
-            { name: "target_hour", input: "Hour (0-23)" },
-            { name: "target_minute", input: "Minute (0-59)" },
+            { name: "days_array", input: "Days (e.g., Monday, Wednesday)", optional: false },
+            { name: "target_hour", input: "Hour (0-23)", optional: false },
+            { name: "target_minute", input: "Minute (0-59)", optional: false },
         ],
         everyDayOfTheWeekAt,
         DATETIME_INGREDIENTS
@@ -259,9 +259,9 @@ const DATETIME_TRIGGERS = [
         "every_month_on_the",
         "Triggers every month on the day and time you specify",
         [
-            { name: "target_day", input: "Day of the month (1-31)" },
-            { name: "target_hour", input: "Hour (0-23)" },
-            { name: "target_minute", input: "Minute (0-59)" },
+            { name: "target_day", input: "Day of the month (1-31)", optional: false },
+            { name: "target_hour", input: "Hour (0-23)", optional: false },
+            { name: "target_minute", input: "Minute (0-59)", optional: false },
         ],
         everyMonthOnThe,
         DATETIME_INGREDIENTS
@@ -270,10 +270,10 @@ const DATETIME_TRIGGERS = [
         "every_year_on",
         "Triggers once a year on the date and time you specify",
         [
-            { name: "target_month", input: "Month (1-12)" },
-            { name: "target_day", input: "Day of the month (1-31)" },
-            { name: "target_hour", input: "Hour (0-23)" },
-            { name: "target_minute", input: "Minute (0-59)" },
+            { name: "target_month", input: "Month (1-12)", optional: false },
+            { name: "target_day", input: "Day of the month (1-31)", optional: false },
+            { name: "target_hour", input: "Hour (0-23)", optional: false },
+            { name: "target_minute", input: "Minute (0-59)", optional: false },
         ],
         everyYearOn,
         DATETIME_INGREDIENTS
@@ -286,7 +286,7 @@ const TWITCH_TRIGGERS = [
     new Trigger(
         "stream_going_live_for_channel",
         "Triggers every time a stream is going live for the specified Channel that you follow",
-        [{ name: "channel_name", input: "Name of the channel" }],
+        [{ name: "channel_name", input: "Name of the channel", optional: false }],
         streamGoingLiveForChannel,
         [
             { name: "twitch_stream_title", description: "Title of the live stream" },
@@ -342,7 +342,7 @@ const YOUTUBE_TRIGGERS = [
     new Trigger(
         "new_video_by_channel",
         "Triggers every time a specific channel publishes a video",
-        [{ name: "channel_id", input: "Enter the Channel ID" }],
+        [{ name: "channel_id", input: "Enter the Channel ID", optional: false }],
         newVideoByChannel,
         [
             { name: "youtube_video_title", description: "Title of the new video" },
@@ -355,7 +355,7 @@ const YOUTUBE_TRIGGERS = [
     new Trigger(
         "new_subscription",
         "This trigger fires when a new subscription is made by a specific channel",
-        [{ name: "channel_id", input: "Channel id" }],
+        [{ name: "channel_id", input: "Channel id", optional: false }],
         newSubscription,
         [
             { name: "youtube_channel_name", description: "Name of the channel you subscribed to" },
@@ -369,7 +369,7 @@ const YOUTUBE_ACTIONS = [
     new Action(
         "like_video",
         "Likes a specified video",
-        [{ name: "video_id", input: "YouTube Video ID to like" }],
+        [{ name: "video_id", input: "YouTube Video ID to like", optional: false }],
         likeVideo
     ),
 ];
@@ -379,11 +379,11 @@ const GMAIL_ACTIONS = [
         "send_email",
         "This Action will send an email to up to 20 recipients from your Gmail account.",
         [
-            { name: "to_address", input: "To address" },
+            { name: "to_address", input: "To address", optional: false },
             { name: "cc_address", input: "CC address (Optional)", optional: true },
             { name: "bcc_address", input: "BCC address (Optional)", optional: true },
-            { name: "subject", input: "Subject" },
-            { name: "body", input: "Body" },
+            { name: "subject", input: "Subject", optional: false },
+            { name: "body", input: "Body", optional: false },
             { name: "attachment_url", input: "Attachment URL (Optional)", optional: true },
         ],
         sendEmail,
@@ -394,8 +394,8 @@ const GMAIL_ACTIONS = [
         "send_email_to_self",
         "This action will send yourself an email. HTML, images and links are supported.",
         [
-            { name: "subject", input: "Subject" },
-            { name: "body", input: "Body" },
+            { name: "subject", input: "Subject", optional: false },
+            { name: "body", input: "Body", optional: false },
             { name: "attachment_url", input: "Attachment URL (Optional)", optional: true },
         ],
         sendEmailToSelf

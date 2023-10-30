@@ -71,9 +71,13 @@
     outline: none;
     cursor: pointer;
     border: 1px solid;
-    color: black;
+    border-color: gray;
     border-radius: 60px;
     padding-left: 0.5rem;
+    font-size: medium;
+    padding: 1%;
+    padding-left: 2%;
+    color: black;
 }
 
 .selection-action-button {

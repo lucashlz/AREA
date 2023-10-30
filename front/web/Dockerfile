@@ -1,13 +1,11 @@
-FROM node:20
+FROM node:16
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY src/ public/ package* ./
 
-RUN npm install
+RUN npm install --force
 
 RUN npm i react-scripts
-
-COPY . .
 
 CMD [ "npm", "start" ]

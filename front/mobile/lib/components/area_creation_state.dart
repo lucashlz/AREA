@@ -28,6 +28,16 @@ class AreaCreationState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearTrigger() {
+    _trigger = {};
+    notifyListeners();
+  }
+
+  void clearArea() {
+    clearActions();
+    clearTrigger();
+  }
+
   Area compileArea() {
     return Area(_trigger, _actions);
   }

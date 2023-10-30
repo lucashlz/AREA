@@ -147,6 +147,7 @@ class ListTriggersView extends StatelessWidget {
                                   'name': trigger.name,
                                   'parameters':
                                       [],
+                                  'ingredients': trigger.ingredients,
                                 });
                                 Navigator.popUntil(
                                     context, (route) => route.isFirst);

@@ -6,15 +6,20 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 
-Future<void> createArea(
+Future<String> createArea(
     Map<String, dynamic> trigger, List<Map<String, dynamic>> actions) async {
   final url = 'http://10.0.2.2:8080/areas';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
+  // Create a copy of the trigger and remove the ingredients key
+  final triggerCopy = Map<String, dynamic>.from(trigger);
+  triggerCopy.remove('ingredients');
+
   final payload = {
-    "trigger": trigger,
+    "trigger": triggerCopy,
     "actions": actions,
   };
 
@@ -27,10 +32,12 @@ Future<void> createArea(
     body: json.encode(payload),
   );
 
-  print(json.encode(payload));
-  if (response.statusCode != 200) {
-    throw Exception(
-        'Failed to create area ${response.statusCode}       ${response.body}');
+  if (response.statusCode == 200) {
+    print(response.body);
+    return json.decode(response.body)['message'];  // <-- parse the message
+  } else {
+    print(response.body);
+    throw Exception(json.decode(response.body)['message']);  // <-- parse the error message
   }
 }
 
@@ -51,6 +58,8 @@ class CreatePage extends StatefulWidget {
 class _CreatePageState extends State<CreatePage> {
   late final AreaCreationState _areaState;
   int numberOfThenThatButtons = 1;
+  String _serverMessage = ''; // to store the server's response message
+  Color _serverMessageColor = Colors.green;
 
   @override
   void initState() {
@@ -83,7 +92,8 @@ class _CreatePageState extends State<CreatePage> {
     }
   }
 
-  Widget _buildContainer(String text, Color buttonColor, VoidCallback? onTap, [int? index]) {
+  Widget _buildContainer(String text, Color buttonColor, VoidCallback? onTap,
+      [int? index]) {
     bool showAddButton = text != 'Then That' || (_areaState.trigger.isNotEmpty);
     bool showTrashButton = text == 'Then That' && index != null && index > 0;
 
@@ -120,12 +130,16 @@ class _CreatePageState extends State<CreatePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               textWidget,
-              if (showAddButton)
-                SizedBox(width: 20.0),
+              if (showAddButton) SizedBox(width: 20.0),
               if (showAddButton)
                 ElevatedButton(
                   onPressed: onTap,
-                  child: Text('Add'),
+                  child: Text(
+                    "Add",
+                    style: TextStyle(
+                      fontFamily: 'Archivo',
+                    ),
+                  ),
                   style: ElevatedButton.styleFrom(
                     primary: const Color(0xFF1D1D1D),
                     onPrimary: Colors.white,
@@ -156,8 +170,8 @@ class _CreatePageState extends State<CreatePage> {
     );
   }
 
-
-  Widget _buildActionContainer(Map<String, dynamic> action, Color buttonColor, int index) {
+  Widget _buildActionContainer(
+      Map<String, dynamic> action, Color buttonColor, int index) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: GestureDetector(
@@ -231,9 +245,6 @@ class _CreatePageState extends State<CreatePage> {
     );
   }
 
-
-
-  
   Widget _buildSelectedContainer(
     String text,
     Color buttonColor,
@@ -311,11 +322,12 @@ class _CreatePageState extends State<CreatePage> {
               areaState.trigger.isEmpty ? Colors.grey : Colors.white;
 
           return SingleChildScrollView(
-            child: Column (
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 60.0),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 60.0),
                   child: Center(
                     child: Text(
                       'CREATE',
@@ -329,52 +341,69 @@ class _CreatePageState extends State<CreatePage> {
                   ),
                 ),
                 SizedBox(height: 50.0),
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _areaState.trigger.isEmpty
-                            ? _buildContainer('If This', buttonColor,
-                                () => _navigateToSelectTrigger(context))
-                            : _buildSelectedContainer(
-                                "If   ${_areaState.trigger['name']}",
-                                buttonColor,
-                                () => _areaState.setTrigger({}),
-                                35.0,
-                                FontWeight.bold,
-                                15.0,
-                                FontWeight.normal),
-                        SizedBox(height: 50),
-                        for (int i = 0; i < numberOfThenThatButtons; i++)
-                          if (i < _areaState.actions.length)
-                            _buildActionContainer(i < _areaState.actions.length ? _areaState.actions[i] : {}, buttonColor, i)
-
-                          else
-                            _buildContainer(
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _areaState.trigger.isEmpty
+                          ? _buildContainer('If This', buttonColor,
+                              () => _navigateToSelectTrigger(context))
+                          : _buildSelectedContainer(
+                              "If   ${_areaState.trigger['name']}",
+                              buttonColor,
+                              () => _areaState.setTrigger({}),
+                              35.0,
+                              FontWeight.bold,
+                              15.0,
+                              FontWeight.normal),
+                      SizedBox(height: 50),
+                      for (int i = 0; i < numberOfThenThatButtons; i++)
+                        if (i < _areaState.actions.length)
+                          _buildActionContainer(
+                              i < _areaState.actions.length
+                                  ? _areaState.actions[i]
+                                  : {},
+                              buttonColor,
+                              i)
+                        else
+                          _buildContainer(
                               'Then That',
                               thenButtonColor,
-                              _areaState.trigger.isEmpty ? null : () => _navigateToSelectAction(context),
-                              i
-                            ),
-                        if (_areaState.trigger.isNotEmpty && numberOfThenThatButtons == _areaState.actions.length)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 140.0),
-                            child: IconButton(
-                              icon: Icon(Icons.add_circle_outline, color: Colors.white, size: 40),
-                              onPressed: () {
-                                setState(() {
-                                  numberOfThenThatButtons += 1;
-                                });
-                              },
-                            ),
+                              _areaState.trigger.isEmpty
+                                  ? null
+                                  : () => _navigateToSelectAction(context),
+                              i),
+                      if (_areaState.trigger.isNotEmpty &&
+                          numberOfThenThatButtons == _areaState.actions.length)
+                        Padding(
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 140.0),
+                          child: IconButton(
+                            icon: Icon(Icons.add_circle_outline,
+                                color: Colors.white, size: 40),
+                            onPressed: () {
+                              setState(() {
+                                numberOfThenThatButtons += 1;
+                              });
+                            },
                           ),
-                        SizedBox(height: 30),
-                      ],
-                    ),
+                        ),
+                      SizedBox(height: 30),
+                    ],
                   ),
-
+                ),
                 if (areaState.trigger.isNotEmpty &&
                     areaState.actions.isNotEmpty) ...[
+                  if (_serverMessage.isNotEmpty)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 10.0),
+                        child: Text(
+                          _serverMessage,
+                          style: TextStyle(color: _serverMessageColor, fontSize: 16),
+                        ),
+                      ),
+                    ),
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -382,13 +411,21 @@ class _CreatePageState extends State<CreatePage> {
                       child: ElevatedButton(
                         onPressed: () async {
                           try {
-                            await createArea(
-                                areaState.trigger,
-                                areaState
-                                    .actions);
-                            Navigator.popUntil(context, (route) => route.isFirst);
+                            String message = await createArea(
+                                areaState.trigger, areaState.actions);
+                            setState(() {
+                              _serverMessage = message;
+                              _serverMessageColor = Colors.green;
+                            });
+                            // Display toast notification
+                            Fluttertoast.showToast(msg: message);
+                            // Clear the area state
+                            areaState.clearArea();
                           } catch (e) {
-                            print('Error: $e');
+                            setState(() {
+                              _serverMessage = e.toString();
+                              _serverMessageColor = Colors.red;
+                            });
                           }
                         },
                         style: ElevatedButton.styleFrom(
