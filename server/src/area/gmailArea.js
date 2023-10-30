@@ -40,8 +40,8 @@ async function sendEmail(userId, to, cc, bcc, subject, body, attachmentUrl, ingr
         }
     }
     to = to.split(/[\s,]+/);
-    cc = cc ? cc.split(/[\s,]+/) : [];
-    bcc = bcc ? bcc.split(/[\s,]+/) : [];
+    cc = cc && cc.trim() ? cc.split(/[\s,]+/) : [];
+    bcc = bcc && bcc.trim() ? bcc.split(/[\s,]+/) : [];
     let emailLines = [];
     const boundary = "foo_bar_baz";
     const iftttLogoUrl = "https://images.ctfassets.net/mrsnpomeucef/4FcLBcGJLV3Tru34MImgA3/3a4c836ebf29d4363c4a172e62ee5e80/Wordmark_on_gray.png";
@@ -62,7 +62,7 @@ async function sendEmail(userId, to, cc, bcc, subject, body, attachmentUrl, ingr
     emailLines.push(`<div style="margin-bottom: 30px; background-color: #f9f9f9; padding: 20px; border-radius: 10px;">`);
     emailLines.push(`<p style="font-size: 20px;">${body}</p>`);
     emailLines.push(`</div>`);
-    if (attachmentUrl) {
+    if (attachmentUrl && attachmentUrl.trim()) {
         const isImageURL = /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(attachmentUrl) || attachmentUrl.startsWith("https://i.scdn.co/image/");
         if (isImageURL) {
             emailLines.push(`<div style="text-align: center; margin-bottom: 30px;">`);

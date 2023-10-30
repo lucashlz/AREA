@@ -24,17 +24,20 @@ async function isValidURL(url) {
 async function checkGmailParameters(userId, parameters) {
     for (let param of parameters) {
         if (!param) continue;
+
         if (param.name === "to_address" && !isValidEmail(param.input)) {
             throw new Error("Invalid 'To' email address provided");
         }
-        if (param.name === "cc_address" && param.input && !isValidEmail(param.input)) {
+        if (param.name === "cc_address" && param.input && param.input.trim() !== "" && !isValidEmail(param.input)) {
             throw new Error("Invalid 'CC' email address provided");
         }
-        if (param.name === "bcc_address" && param.input && !isValidEmail(param.input)) {
+        if (param.name === "bcc_address" && param.input && param.input.trim() !== "" && !isValidEmail(param.input)) {
             throw new Error("Invalid 'BCC' email address provided");
         }
-        if (param.name === "attachment_url" && param.input && !await isValidURL(param.input)) {
-            throw new Error("Invalid attachment URL or the URL is not accessible");
+        if (param.name === "attachment_url" && param.input && param.input.trim() !== "") {
+            if (!(await isValidURL(param.input))) {
+                throw new Error("Invalid attachment URL or the URL is not accessible");
+            }
         }
         if (param.name === "subject" && (!param.input || param.input.trim() === "")) {
             throw new Error("Subject cannot be empty");
