@@ -197,7 +197,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                         Back
                     </button>
                     <div className='service-txt' style={{ color: 'white' }}>
-                        <div>{selectedArea?.trigger?.name?.length == 0 ? "Choose a trigger" : mode ? "Choose parameters" : "Choose an action"}</div>
+                        {selectedArea?.trigger?.name?.length == 0 ? "Choose a trigger" : mode ? "Choose parameters" : "Choose an action"}
                     </div>
                 </div>
                 <div className='thin-line' style={{ backgroundColor: 'white', opacity: 0.5 }}></div>

@@ -18,8 +18,7 @@ import jwtDecode from 'jwt-decode';
 import { ReactNotifications } from 'react-notifications-component';
 import ResetPassword from './components/pages/ResetPassword';
 
-function App() {
-  
+function App() {  
   const userContext = useContext(UserContext);
   let token = userContext ? userContext.token : null;
   const location = useLocation();

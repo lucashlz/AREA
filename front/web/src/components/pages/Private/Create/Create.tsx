@@ -7,9 +7,10 @@ import { aboutService } from "../../../../interfaces/aboutDotJson";
 import axios from "axios";
 import { getBetterNames } from "./ServiceAction";
 import { Navigate } from 'react-router-dom';
-import { FaFileSignature } from "react-icons/fa";
+import { FaAcquisitionsIncorporated, FaFileSignature } from "react-icons/fa";
 import { getLocalSelectedArea } from "../../../../interfaces/postArea";
 import { selectClasses } from "@mui/material";
+import { TriggerReactionParameters } from "../../../../interfaces/postArea";
 
 interface IftttProps {
   ifttt_name: string;
@@ -21,23 +22,51 @@ interface IftttProps {
   refreshPageContent: () => void;
 }
 
+export function getParams(params: TriggerReactionParameters[]) {
+  let betterName = ''
+  let paramLength = params.length
+  let allParamLength = 0
+
+  for (let i = 0; i < paramLength; i++) {
+    allParamLength += params[i].input.length
+  }
+
+  for (let i = 0; i < paramLength; i++) {
+    if (params[i].input.length !== 0) {
+      if (i != 0) {
+        if (allParamLength < 30) {
+          betterName += ' - '
+        } else
+          betterName += '\n-\n'
+      }
+      betterName += params[i].input
+    }
+  }
+
+  return (betterName)
+}
+
 const IftttSquare: React.FC<IftttProps> = ({ ifttt_name, is_current, setCurrentPage, selectedArea, JSONservices, index, refreshPageContent }) => {
   var serviceName = ''
   var action = ''
   var services
+  let actionName = ''
+  let actionParams = ''
 
   if (ifttt_name == "If This" && selectedArea.trigger && selectedArea.trigger.name.length > 0) {
     serviceName = selectedArea.trigger.service
     action = selectedArea.trigger.name
     ifttt_name = "If"
+    actionName = getBetterNames(action)
+    actionParams = getParams(selectedArea.trigger.parameters)
   }
   if (ifttt_name == "Then That" && selectedArea.actions && selectedArea.actions[index].name.length > 0) {
     serviceName = selectedArea.actions[index].service
     action = selectedArea.actions[index].name
     ifttt_name = "Then"
+    actionName = getBetterNames(action)
+    actionParams = getParams(selectedArea.actions[index].parameters)
   }
-
-  let actionName = getBetterNames(action)
 
   if (JSONservices) {
     const serv = JSONservices.find((JSONservice: aboutService) => JSONservice.name === serviceName);
@@ -84,21 +113,26 @@ const IftttSquare: React.FC<IftttProps> = ({ ifttt_name, is_current, setCurrentP
         : ''}
       {services ?
         <>
-          <div className="service-logo-holder" style={{ width: '15%', marginBottom: '0%', marginLeft: '3%' }}>
-            <img
-              alt="logo"
-              className="service-logo"
-              src={services ? require(`../../../../../public/servicesLogo/${services.name}.png`) : ''}
-            />
-          </div>
+          <img
+            alt="logo"
+            style={{ width: '30px', margin: '20px' }}
+            src={services ? require(`../../../../../public/servicesLogo/${services.name}.png`) : ''}
+          />
           <div className="create-action-name-container">
             <div className="create-action-name">
-              {actionName}
+              <div style={{ fontWeight: 'bolder' }}>{actionName}</div>
+              {actionParams !== '' ? (
+                <>
+                  {actionParams.length > 40 ? <br /> : ''}
+                  <div style={{ whiteSpace: 'pre-line' }}>{actionParams}</div>
+                </>
+              ) : ''}
             </div>
           </div>
-            <button className="delete-applet" style={{ height: '35%' }} onClick={deleteStep}>
+
+          {/* <button className="delete-applet" style={{ height: '35%' }} onClick={deleteStep}>
               <img className="delete-applet-img" src={`${process.env.PUBLIC_URL}/bin.png`}></img>
-            </button>
+            </button> */}
         </>
         : ''}
       {!services && (index > 0 || selectedArea.actions.length > 1) && !(index === -1 && selectedArea.trigger.name === '') ?
@@ -186,7 +220,7 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
         setError(response.data.message)
       }
     } catch (error: any) {
-        setError(error.response.data.message)
+      setError(error.response.data.message)
     }
   }
 
@@ -214,7 +248,7 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
             <button className='add-then-button' style={{ marginLeft: 0, border: '1px solid' }} onClick={() => { addBlankAction() }}>
               +
             </button>
-            <div className="ifttt-add-btn-link" style={{ justifyContent: 'space-around' }}>
+            <div className="ifttt-add-btn-link" style={{ justifyContent: 'space-around', marginBottom: '5%'}}>
               <button className='add-action-btn' style={{ marginLeft: 0, border: '1px solid' }} onClick={() => { setCreation() }}>
                 Add
               </button>
