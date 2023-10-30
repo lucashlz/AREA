@@ -36,16 +36,30 @@ exports.createArea = async (req, res) => {
         }
         const { trigger, actions } = req.body;
         console.log(JSON.stringify(req.body, null, 2));
-        const existingArea = await Area.findOne({
+        const potentialAreas = await Area.find({
             userId: user._id,
             "trigger.service": trigger.service,
             "trigger.name": trigger.name,
-            actions: { $all: actions.map(a => ({
-                service: a.service,
-                name: a.name,
-                parameters: a.parameters
-            })) }
         });
+        const isSameParameter = (param1, param2) => {
+            console.log("param1: ", param1, "param2: ", param2)
+            return param1.name === param2.name && param1.input === param2.input;
+        };
+        const isSameAction = (action1, action2) => {
+            return (
+                action1.service === action2.service &&
+                action1.name === action2.name &&
+                action1.parameters.length === action2.parameters.length &&
+                action1.parameters.every((p, index) => isSameParameter(p, action2.parameters[index]))
+            );
+        };
+        const existingArea = potentialAreas.find(
+            (area) =>
+                area.actions.length === actions.length &&
+                area.actions.every((a, index) => isSameAction(a, actions[index])) &&
+                trigger.parameters.every((p, index) => isSameParameter(p, area.trigger.parameters[index]))
+        );
+
         if (existingArea) {
             return res.status(400).json({ message: "An area with the same trigger and actions already exists." });
         }
@@ -102,36 +116,28 @@ exports.getAreaById = async (req, res) => {
 
 exports.updateAreaById = async (req, res) => {
     const id = req.params.id;
-
     const { actionService, reactionService, actionName, reactionName, actionParameters, reactionParameters } = req.body;
-
     try {
         const user = await User.findById(req.user.id);
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
-
         const actionServiceObj = AREAS[actionService];
         const reactionServiceObj = AREAS[reactionService];
-
         if (!actionServiceObj || !reactionServiceObj) {
             return res.status(400).json({ message: "Invalid services provided." });
         }
-
         const action = actionServiceObj.actions.find((a) => a.name === actionName);
         const reaction = reactionServiceObj.reactions.find((r) => r.name === reactionName);
-
         if (!action || !reaction) {
             return res.status(400).json({ message: "Invalid action or reaction provided." });
         }
-
         const mapParameters = (provided, original) => {
             return original.map((param) => {
                 const providedParam = provided.find((p) => p.name === param.name);
                 return { ...param, input: providedParam ? providedParam.input : undefined };
             });
         };
-
         const updatedArea = await Area.findByIdAndUpdate(
             id,
             {
@@ -149,7 +155,6 @@ exports.updateAreaById = async (req, res) => {
             },
             { new: true }
         );
-
         if (updatedArea) {
             res.status(200).json(updatedArea);
         } else {
