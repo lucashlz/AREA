@@ -7,6 +7,7 @@ const githubOAuthMiddleware = require("../middleware/githubMiddleware");
 const youtubeOAuthMiddleware = require("../middleware/youtubeMiddleware");
 const gmailOAuthMiddleware = require("../middleware/gmailMiddleware");
 const twitchOAuthMiddleware = require("../middleware/twitchMiddleware");
+const dropboxOAuthMiddleware = require("../middleware/dropboxMiddleware");
 
 /**
  * @swagger
@@ -432,5 +433,90 @@ router.get("/getTwitchOAuthConstants", ensureAuthenticated, connectController.ge
  *                   type: string
  */
 router.get('/twitch/callback', twitchOAuthMiddleware, connectController.twitchCallback);
+
+/**
+ * @swagger
+ * /connect/getDropboxOAuthConstants:
+ *   get:
+ *     tags:
+ *       - connect
+ *     security:
+ *       - bearerAuth: []
+ *     description: Fetches Dropbox OAuth constants
+ *     responses:
+ *       200:
+ *         description: Returns Dropbox OAuth constants.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 clientId:
+ *                   type: string
+ *                   description: The client ID for Dropbox API.
+ *                 redirectUri:
+ *                   type: string
+ *                   description: The redirect URI for Dropbox authentication callback.
+ *                 scopes:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: The scopes required for Dropbox authentication.
+ *                 oAuthSessionId:
+ *                   type: string
+ *                   description: The OAuth session ID for the current user.
+ *       500:
+ *         description: Failed to initiate OAuth session.
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: Failed to initiate OAuth session.
+ */
+router.get("/getDropboxOAuthConstants", ensureAuthenticated, connectController.getDropboxOAuthConstants);
+
+/**
+ * @swagger
+ * /connect/dropbox/callback:
+ *   get:
+ *     tags:
+ *       - connect
+ *     description: Callback from Dropbox authentication
+ *     responses:
+ *       200:
+ *         description: Dropbox connection successful.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       401:
+ *         description: Authentication failed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Internal server error or failed to save user data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ */
+router.get('/dropbox/callback', dropboxOAuthMiddleware, connectController.dropboxCallback);
 
 module.exports = router;
