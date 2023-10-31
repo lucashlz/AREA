@@ -33,7 +33,6 @@ exports.checkAndReact = async () => {
                 console.warn(`Trigger not found for ${areaEntry.trigger.name}`);
                 continue;
             }
-
             const hasTriggered = await detectedTrigger.triggerFunction(areaEntry);
             if (!hasTriggered) continue;
             for (const action of areaEntry.actions) {
