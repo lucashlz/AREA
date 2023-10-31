@@ -7,19 +7,86 @@ let fetch;
     fetch = nodeFetch.default;
 })();
 
-const allowedExtensions = [
-    '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.ico', '.webp', '.heic',
-    '.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.odt', '.ods', '.odp',
-    '.csv', '.rtf', '.tex', '.md',
-    '.mp3', '.wav', '.ogg', '.m4a', '.flac',
-    '.mp4', '.avi', '.mkv', '.mov', '.flv', '.wmv', '.webm',
-    '.zip', '.rar', '.7z', '.tar', '.gz', '.bz2',
-    '.html', '.htm', '.xml', '.css', '.js', '.php', '.py', '.java', '.c', '.cpp', '.h', '.hpp', '.sh', '.go', '.swift',
-    '.sql', '.db', '.dbf', '.mdb',
-    '.ttf', '.otf', '.fon', '.woff',
-    '.json', '.yml', '.yaml', '.svg', '.eps', '.ai', '.psd', '.indd', '.acsm',
-];
+const ALLOWED_INGREDIENTS_FOR_ACTIONS = {
+    file_url: ["coverURL"],
+};
 
+const allowedExtensions = [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+    ".bmp",
+    ".tiff",
+    ".ico",
+    ".webp",
+    ".heic",
+    ".txt",
+    ".pdf",
+    ".doc",
+    ".docx",
+    ".xls",
+    ".xlsx",
+    ".ppt",
+    ".pptx",
+    ".odt",
+    ".ods",
+    ".odp",
+    ".csv",
+    ".rtf",
+    ".tex",
+    ".md",
+    ".mp3",
+    ".wav",
+    ".ogg",
+    ".m4a",
+    ".flac",
+    ".mp4",
+    ".avi",
+    ".mkv",
+    ".mov",
+    ".flv",
+    ".wmv",
+    ".webm",
+    ".zip",
+    ".rar",
+    ".7z",
+    ".tar",
+    ".gz",
+    ".bz2",
+    ".html",
+    ".htm",
+    ".xml",
+    ".css",
+    ".js",
+    ".php",
+    ".py",
+    ".java",
+    ".c",
+    ".cpp",
+    ".h",
+    ".hpp",
+    ".sh",
+    ".go",
+    ".swift",
+    ".sql",
+    ".db",
+    ".dbf",
+    ".mdb",
+    ".ttf",
+    ".otf",
+    ".fon",
+    ".woff",
+    ".json",
+    ".yml",
+    ".yaml",
+    ".svg",
+    ".eps",
+    ".ai",
+    ".psd",
+    ".indd",
+    ".acsm",
+];
 
 async function getDropboxClientForUser(userId) {
     const user = await User.findById(userId);
@@ -50,10 +117,17 @@ async function checkPathExists(userId, path, isMoveDestination = false) {
     }
 }
 
+function isIngredient(input) {
+    return input.startsWith("<") && input.endsWith(">");
+}
+
 async function isValidURL(url) {
     try {
+        if (url.startsWith("https://i.scdn.co/image/")) {
+            return true;
+        }
         const extension = (url.match(/\.([a-zA-Z0-9]+)(?:[\?\#]|$)/) || [])[1];
-        if(!extension || !allowedExtensions.includes('.' + extension.toLowerCase())) {
+        if (!extension || !allowedExtensions.includes("." + extension.toLowerCase())) {
             throw new Error(`Invalid file extension: ${extension}`);
         }
         const response = await axios.head(url);
@@ -62,9 +136,19 @@ async function isValidURL(url) {
         return false;
     }
 }
+
 async function checkDropboxParameters(userId, parameters, actionName) {
     for (let param of parameters) {
-        if (param.name === "destination_path" || param.name === "dropbox_folder_path" || param.name === "original_path") {
+        if (actionName === "add_file_from_url") {
+            if (isIngredient(param.input)) {
+                const ingredientName = param.input.slice(1, -1);
+                const allowedIngredients = ALLOWED_INGREDIENTS_FOR_ACTIONS[param.name];
+                if (!allowedIngredients || !allowedIngredients.includes(ingredientName)) {
+                    throw new Error(`Invalid ingredient: ${ingredientName} for parameter: ${param.name} in action: ${actionName}`);
+                }
+            }
+        }
+        if (!isIngredient(param.input) && (param.name === "destination_path" || param.name === "dropbox_folder_path" || param.name === "original_path")) {
             let pathToCheck;
             pathToCheck = param.input.substring(0, param.input.lastIndexOf("/"));
             if (pathToCheck === "") pathToCheck = "/";
@@ -72,10 +156,10 @@ async function checkDropboxParameters(userId, parameters, actionName) {
                 throw new Error(`Invalid destination provided: ${pathToCheck}`);
             }
         }
-        if (param.name === "file_url" && !(await isValidURL(param.input))) {
+        if (!isIngredient(param.input) && param.name === "file_url" && !(await isValidURL(param.input))) {
             throw new Error(`Invalid file URL provided: ${param.input}`);
         }
-        if (param.name === "file_name") {
+        if (!isIngredient(param.input) && param.name === "file_name") {
             const invalidFileNameChars = ["<", ">", ":", '"', "/", "\\", "|", "?", "*"];
             if (invalidFileNameChars.some((char) => param.input.includes(char))) {
                 throw new Error(`Invalid filename provided: ${param.input}. The filename contains illegal characters.`);

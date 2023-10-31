@@ -457,13 +457,13 @@ const DROPBOX_ACTIONS = [
 ];
 
 const AREAS = {
-    dateTime: new Area(DATETIME_TRIGGERS, DATETIME_ACTIONS, "#000000"),
-    spotify: new Area(SPOTIFY_TRIGGERS, SPOTIFY_ACTIONS, "#3CC339"),
-    github: new Area(GITHUB_TRIGGERS, GITHUB_ACTIONS, "#282828"),
-    twitch: new Area(TWITCH_TRIGGERS, TWITCH_ACTIONS, "#702fe0"),
+    dateTime: new Area(DATETIME_TRIGGERS, DATETIME_ACTIONS, "#333333"),
+    spotify: new Area(SPOTIFY_TRIGGERS, SPOTIFY_ACTIONS, "#1DB954"),
+    github: new Area(GITHUB_TRIGGERS, GITHUB_ACTIONS, "#4078C0"),
+    twitch: new Area(TWITCH_TRIGGERS, TWITCH_ACTIONS, "#6441A5"),
     youtube: new Area(YOUTUBE_TRIGGERS, YOUTUBE_ACTIONS, "#FF0000"),
     gmail: new Area(GMAIL_TRIGGERS, GMAIL_ACTIONS, "#BF02AF"),
-    dropbox: new Area(DROPBOX_TRIGGERS, DROPBOX_ACTIONS, "#0068e8"),
+    dropbox: new Area(DROPBOX_TRIGGERS, DROPBOX_ACTIONS, "#0062FE"),
 };
 
 module.exports = AREAS;
