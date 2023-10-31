@@ -4,6 +4,7 @@ const Map<String, String> servicesAuthorize = {
   'gmail': 'https://accounts.google.com/o/oauth2/v2/auth',
   'github': 'https://github.com/login/oauth/authorize',
   'twitch': 'https://id.twitch.tv/oauth2/authorize',
+  'dropbox': 'https://www.dropbox.com/oauth2/authorize',
 };
 
 String? getServiceAuthorizeByName(String key) {

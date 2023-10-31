@@ -2,8 +2,8 @@
     height: 7vh;
     display: flex;
     align-items: center;
-    padding-left: 2%;
-    position: relative;
+    justify-content: start;
+    padding-left: 3%;
 }
 
 .ifttt-error-message {
@@ -18,11 +18,14 @@
 
 .back-button {
     background: none;
+    border: none;
+    padding: 0;
+    margin-left: 0;
     cursor: pointer;
     height: 50%;
-    width: 5%;
-    min-width: 4rem;
+    width: 5rem;
     border: 1px solid;
+    color: black;
     border-radius: 60px;
     text-align: center;
 }
@@ -43,10 +46,11 @@
 .ifttt {
     display: flex;
     flex-direction: column;
+    padding-left: 20%;
+    padding-right: 20%;
     height: 100%;
     padding-top: 10%;
     align-items: center;
-    min-width: 100%;
 }
 
 .ifttt-link-line {
@@ -58,8 +62,8 @@
 }
 
 .ifttt-rectangle {
-    min-height: 10vh;
-    max-width: 55%;
+    height: 10vh;
+    width: 30vw;
     background-color: black;
     border-radius: 10px;
     align-self: center;
@@ -67,8 +71,6 @@
     align-items: center;
     display: flex;
     flex-direction: row;
-    padding-left: 3%;
-    padding-right: 3%;
 }
 
 .ifttt-rectangle-text {
@@ -117,26 +119,30 @@
 
 .create-action-name-container {
     display: flex;
+    justify-content: center;
     align-items: center;
-    margin-top: 3.5%;
-    margin-bottom: 3.5%;
-    max-width: 70%;
 }
 
 .create-action-name {
-    color: white;
-    max-width: 100%;
-    word-break: keep-all;
-    overflow: scroll;
+    font-weight: bolder;
+    color: white
 }
 
 @media screen and (max-width: 960px) {
+    .ifttt {
+        padding-left: 0%;
+        padding-right: 0%;
+    }
+
+    .ifttt-rectangle {
+        height: 10vh;
+        width: 70%;
+    }
     .ifttt-rectangle-text {
-        font-size: 130%;
+        font-size: 120%;
     }
     .ifttt-rectangle {
-        padding-left: 5%;
-        padding-right: 5%;
-        max-width: 90%;
+        height: 10vh;
+        width: 80vw;
     }
 }

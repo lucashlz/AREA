@@ -280,9 +280,10 @@ class _ActionParameterInputPageState extends State<ActionParameterInputPage> {
                   var param = entry.value;
                   return {
                     'name': param['name'],
-                    'input': _controllers[idx].text
+                    'input': _controllers[idx].text.isEmpty ? "" : _controllers[idx].text  // Check if the text is empty
                   };
                 }).toList();
+
 
                 areaState.addAction({
                   'service': widget.actionService.name,
