@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'oauth_service.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'list_triggers.dart';
 import 'list_actions.dart';
+import 'package:url_launcher/url_launcher.dart';  // Added import for url_launcher
 
 String capitalize(String input) {
   if (input.isEmpty) {
@@ -30,11 +30,10 @@ class ConnectServiceView extends StatefulWidget {
 }
 
 class _ConnectServiceViewState extends State<ConnectServiceView> {
-  late final WebViewController _controller = WebViewController();
-
+  
   Future<void> connectService(String serviceName) async {
     final String url =
-        'http://10.0.2.2:8080/connect/get${Uri.encodeComponent(serviceName)}OAuthConstants';
+        'https://api.techparisarea.com/connect/get${Uri.encodeComponent(serviceName)}OAuthConstants';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -57,7 +56,7 @@ class _ConnectServiceViewState extends State<ConnectServiceView> {
         final List<String> scopes = List<String>.from(data['scopes']);
         final String oAuthSessionId = data['oAuthSessionId'];
 
-        String authorizationUrl = buildAuthorizationUrl(
+        String authorizationUrlString = buildAuthorizationUrl(
           serviceName: serviceName,
           clientId: clientId,
           redirectUri: redirectUri,
@@ -65,28 +64,46 @@ class _ConnectServiceViewState extends State<ConnectServiceView> {
           oAuthSessionId: oAuthSessionId,
         );
 
-        print('Opening URL : $authorizationUrl');
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              _controller.loadRequest(Uri.parse(authorizationUrl));
-              _controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+        Uri authorizationUrl = Uri.parse(authorizationUrlString);
 
-              return WebViewScreen(
-                  service: widget.service,
-                  controller: _controller,
-                  sourceType: widget.sourceType);
-            },
-          ),
-        );
+        print('Opening URL : $authorizationUrl');
+
+        if (!await launchUrl(authorizationUrl)) {
+          throw Exception('Could not launch $authorizationUrl');
+        }
       } else {
         print('Request failed with status code : ${response.statusCode}.');
       }
     } catch (e) {
       print('Error occurred: $e');
     }
-  }
+}
+
+void handleRedirect(String url) {
+    // Handle the redirect logic here
+    Navigator.of(context).pop();
+
+    if (widget.sourceType == "triggers") {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ListTriggersView(
+                    selectedService: widget.service,
+                ),
+            ),
+        );
+    } else if (widget.sourceType == "actions") {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ListActionsView(
+                    selectedService: widget.service,
+                ),
+            ),
+        );
+    }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -172,68 +189,6 @@ class _ConnectServiceViewState extends State<ConnectServiceView> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class WebViewScreen extends StatefulWidget {
-  final Service service;
-  final WebViewController controller;
-  final String sourceType;
-
-  WebViewScreen(
-      {required this.service,
-      required this.controller,
-      required this.sourceType});
-
-  @override
-  _WebViewScreenState createState() => _WebViewScreenState();
-}
-
-class _WebViewScreenState extends State<WebViewScreen> {
-  late final WebViewController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = widget.controller;
-
-    _controller.setNavigationDelegate(
-      NavigationDelegate(
-        onPageFinished: (String url) {
-          if (url.startsWith("http://10.0.2.2:8080/connect/")) {
-            // Once the page is loaded, redirect the user to triggerView
-            Navigator.of(context).pop();
-            if (widget.sourceType == "triggers") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ListTriggersView(
-                    selectedService: widget.service,
-                  ),
-                ),
-              );
-            } else if ((widget.sourceType == "actions")) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ListActionsView(
-                    selectedService: widget.service,
-                  ),
-                ),
-              );
-            }
-          }
-        },
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: WebViewWidget(controller: _controller),
     );
   }
 }

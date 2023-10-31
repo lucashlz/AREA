@@ -14,7 +14,7 @@ class ServiceCardTriggers extends StatelessWidget {
       : super(key: key);
 
   Future<void> _loadProfileFromAPI(BuildContext context) async {
-    const String url = 'http://10.0.2.2:8080/profile';
+    const String url = 'https://api.techparisarea.com/profile';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -34,13 +34,15 @@ class ServiceCardTriggers extends StatelessWidget {
       List<String> connectedServices =
           List<String>.from(data['connectServices'] ?? []);
 
-      if (connectedServices.contains(service.name) && servicesAuthorize.containsKey(service.name)) {
+      if (connectedServices.contains(service.name) &&
+          servicesAuthorize.containsKey(service.name)) {
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => ListTriggersView(selectedService: service)),
         );
-      } else if (!connectedServices.contains(service.name) && !servicesAuthorize.containsKey(service.name)) {
+      } else if (!connectedServices.contains(service.name) &&
+          !servicesAuthorize.containsKey(service.name)) {
         Navigator.push(
           context,
           MaterialPageRoute(

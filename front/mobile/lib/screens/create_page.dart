@@ -9,40 +9,40 @@ import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 
 Future<String> getServiceColor(String serviceName) async {
-    const String url = 'http://10.0.2.2:8080/about/about.json';
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
+  const String url = 'https://api.techparisarea.com/about/about.json';
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
 
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+  final response = await http.get(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> data = json.decode(response.body);
+    final List<dynamic> servicesData = data['server']['services'] ?? [];
+
+    final service = servicesData.firstWhere(
+      (service) => service['name'] == serviceName,
+      orElse: () => null,
     );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      final List<dynamic> servicesData = data['server']['services'] ?? [];
-
-      final service = servicesData.firstWhere(
-        (service) => service['name'] == serviceName,
-        orElse: () => null,
-      );
-
-      if (service != null) {
-        return service['color'];
-      } else {
-        throw Exception('Service with the given name not found');
-      }
+    if (service != null) {
+      return service['color'];
     } else {
-      throw Exception('Failed to load services');
+      throw Exception('Service with the given name not found');
     }
+  } else {
+    throw Exception('Failed to load services');
   }
+}
 
 Future<String> createArea(
     Map<String, dynamic> trigger, List<Map<String, dynamic>> actions) async {
-  final url = 'http://10.0.2.2:8080/areas';
+  final url = 'https://api.techparisarea.com/areas';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
@@ -53,6 +53,8 @@ Future<String> createArea(
     "trigger": triggerCopy,
     "actions": actions,
   };
+
+  print("Sending JSON payload to server: ${json.encode(payload)}");
 
   final response = await http.post(
     Uri.parse(url),
@@ -203,24 +205,129 @@ class _CreatePageState extends State<CreatePage> {
     );
   }
 
- Widget _buildActionContainer(
-  Map<String, dynamic> action, String serviceName, int index) {
-  return FutureBuilder<String>(
-    future: getServiceColor(serviceName),
-    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-      if (snapshot.connectionState == ConnectionState.done) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+  Widget _buildActionContainer(
+      Map<String, dynamic> action, String serviceName, int index) {
+    return FutureBuilder<String>(
+      future: getServiceColor(serviceName),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+
+          final buttonColor =
+              Color(int.parse('0xFF${snapshot.data!.substring(1)}'));
+          final textColor =
+              action.isEmpty ? const Color(0xFF1D1D1D) : Colors.white;
+          String logoAssetName = 'assets/servicesLogo/$serviceName.png';
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 10.0),
+            child: GestureDetector(
+              onTap: () => _navigateToSelectAction(context),
+              child: Container(
+                constraints: BoxConstraints(
+                  minWidth: 300,
+                  minHeight: 80,
+                  maxWidth: 380,
+                ),
+                decoration: BoxDecoration(
+                  color: buttonColor,
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 30),
+                      child: Text(
+                        action.isEmpty ? 'Then That' : 'Then',
+                        style: TextStyle(
+                          fontFamily: 'Archivo',
+                          color: textColor,
+                          fontSize: 35.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    if (!action.isEmpty)
+                      Image.asset(
+                        logoAssetName,
+                        height: 40,
+                        fit: BoxFit.cover,
+                      ),
+                    SizedBox(width: 20),
+                    Expanded(
+                      child: Text(
+                        action.isEmpty ? '' : formatTriggerName(action['name']),
+                        style: TextStyle(
+                          fontFamily: 'Archivo',
+                          color: textColor,
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                    if (index > 0 || !action.isEmpty)
+                      IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                          color: textColor,
+                        ),
+                        onPressed: () {
+                          if (!action.isEmpty) {
+                            int actionIndex =
+                                _areaState.actions.indexOf(action);
+                            _areaState.removeAction(actionIndex);
+                            setState(() {
+                              numberOfThenThatButtons =
+                                  _areaState.actions.length + 1;
+                            });
+                          } else {
+                            setState(() {
+                              numberOfThenThatButtons--;
+                            });
+                          }
+                        },
+                      )
+                  ],
+                ),
+              ),
+            ),
+          );
+        } else {
+          return CircularProgressIndicator();
         }
+      },
+    );
+  }
 
-        final buttonColor = Color(int.parse('0xFF${snapshot.data!.substring(1)}'));
-        final textColor = action.isEmpty ? const Color(0xFF1D1D1D) : Colors.white;
-        String logoAssetName = 'assets/servicesLogo/$serviceName.png';
+  Widget _buildSelectedContainer(
+    String text,
+    String serviceName,
+    double titleFontSize,
+    FontWeight titleFontWeight,
+    double itemFontSize,
+    FontWeight itemFontWeight,
+  ) {
+    return FutureBuilder<String>(
+      future: getServiceColor(serviceName),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
 
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10.0),
-          child: GestureDetector(
-            onTap: () => _navigateToSelectAction(context),
+          final buttonColor =
+              Color(int.parse('0xFF${snapshot.data!.substring(1)}'));
+          String logoAssetName = 'assets/servicesLogo/$serviceName.png';
+
+          return GestureDetector(
+            onTap: () {
+              _areaState.clearArea();
+            },
             child: Container(
               constraints: BoxConstraints(
                 minWidth: 300,
@@ -238,160 +345,52 @@ class _CreatePageState extends State<CreatePage> {
                   Padding(
                     padding: EdgeInsets.only(left: 30),
                     child: Text(
-                      action.isEmpty ? 'Then That' : 'Then',
+                      text.split(' ').first,
                       style: TextStyle(
                         fontFamily: 'Archivo',
-                        color: textColor,
-                        fontSize: 35.0,
-                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: titleFontSize,
+                        fontWeight: titleFontWeight,
                       ),
                     ),
                   ),
                   SizedBox(width: 20),
-                  if (!action.isEmpty)
-                    Image.asset(
-                      logoAssetName,
-                      height: 40,
-                      fit: BoxFit.cover,
-                    ),
+                  Image.asset(
+                    logoAssetName,
+                    height: 40,
+                    fit: BoxFit.cover,
+                  ),
                   SizedBox(width: 20),
                   Expanded(
                     child: Text(
-                      action.isEmpty ? '' : formatTriggerName(action['name']),
+                      formatTriggerName(text.split(' ').last),
                       style: TextStyle(
                         fontFamily: 'Archivo',
-                        color: textColor,
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                        fontSize: itemFontSize,
+                        fontWeight: itemFontWeight,
                       ),
                     ),
                   ),
-                  if (index > 0 || !action.isEmpty)
-                    IconButton(
-                      icon: Icon(
-                        Icons.delete,
-                        color: textColor,
-                      ),
-                      onPressed: () {
-                        if (!action.isEmpty) {
-                          int actionIndex = _areaState.actions.indexOf(action);
-                          _areaState.removeAction(actionIndex);
-                          setState(() {
-                            numberOfThenThatButtons = _areaState.actions.length + 1;
-                          });
-                        } else {
-                          setState(() {
-                            numberOfThenThatButtons--;
-                          });
-                        }
-                      },
-                    )
+                  IconButton(
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      _areaState.clearArea();
+                    },
+                  ),
                 ],
               ),
             ),
-          ),
-        );
-      } else {
-        return CircularProgressIndicator();
-      }
-    },
-  );
-}
-
-
-
-
-
-
-
-  Widget _buildSelectedContainer(
-  String text,
-  String serviceName,
-  double titleFontSize,
-  FontWeight titleFontWeight,
-  double itemFontSize,
-  FontWeight itemFontWeight,
-) {
-  return FutureBuilder<String>(
-    future: getServiceColor(serviceName),
-    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-      if (snapshot.connectionState == ConnectionState.done) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+          );
+        } else {
+          return CircularProgressIndicator();
         }
-
-        final buttonColor = Color(int.parse('0xFF${snapshot.data!.substring(1)}'));
-        String logoAssetName = 'assets/servicesLogo/$serviceName.png';
-
-        return GestureDetector(
-          onTap: () {
-            _areaState.clearArea();
-          },
-          child: Container(
-            constraints: BoxConstraints(
-              minWidth: 300,
-              minHeight: 80,
-              maxWidth: 380,
-            ),
-            decoration: BoxDecoration(
-              color: buttonColor,
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 30),
-                  child: Text(
-                    text.split(' ').first,
-                    style: TextStyle(
-                      fontFamily: 'Archivo',
-                      color: Colors.white,
-                      fontSize: titleFontSize,
-                      fontWeight: titleFontWeight,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 20),
-                Image.asset(
-                  logoAssetName,
-                  height: 40,
-                  fit: BoxFit.cover,
-                ),
-                SizedBox(width: 20),
-                Expanded(
-                  child: Text(
-                    formatTriggerName(text.split(' ').last),
-                    style: TextStyle(
-                      fontFamily: 'Archivo',
-                      color: Colors.white,
-                      fontSize: itemFontSize,
-                      fontWeight: itemFontWeight,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.delete,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    _areaState.clearArea();
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      } else {
-        return CircularProgressIndicator();
-      }
-    },
-  );
-}
-
-
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -431,7 +430,8 @@ class _CreatePageState extends State<CreatePage> {
                         Builder(
                           builder: (BuildContext context) {
                             if (numberOfThenThatButtons != 1) {
-                              WidgetsBinding.instance?.addPostFrameCallback((_) {
+                              WidgetsBinding.instance
+                                  ?.addPostFrameCallback((_) {
                                 setState(() {
                                   numberOfThenThatButtons = 1;
                                 });
@@ -452,10 +452,8 @@ class _CreatePageState extends State<CreatePage> {
                       SizedBox(height: 50),
                       for (int i = 0; i < numberOfThenThatButtons; i++)
                         if (i < _areaState.actions.length)
-                          _buildActionContainer(
-                              _areaState.actions[i],
-                              _areaState.actions[i]['service'],
-                              i)
+                          _buildActionContainer(_areaState.actions[i],
+                              _areaState.actions[i]['service'], i)
                         else
                           _buildContainer(
                               'Then That',
@@ -467,9 +465,11 @@ class _CreatePageState extends State<CreatePage> {
                       if (_areaState.trigger.isNotEmpty &&
                           numberOfThenThatButtons == _areaState.actions.length)
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 140.0),
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 140.0),
                           child: IconButton(
-                            icon: Icon(Icons.add_circle_outline, color: Colors.white, size: 40),
+                            icon: Icon(Icons.add_circle_outline,
+                                color: Colors.white, size: 40),
                             onPressed: () {
                               setState(() {
                                 numberOfThenThatButtons += 1;
@@ -479,7 +479,6 @@ class _CreatePageState extends State<CreatePage> {
                         ),
                       SizedBox(height: 30),
                     ],
-
                   ),
                 ),
                 if (areaState.trigger.isNotEmpty &&
@@ -502,7 +501,8 @@ class _CreatePageState extends State<CreatePage> {
                       child: ElevatedButton(
                         onPressed: () async {
                           try {
-                            String message = await createArea(areaState.trigger, areaState.actions);
+                            String message = await createArea(
+                                areaState.trigger, areaState.actions);
                             setState(() {
                               _serverMessage = message;
                               _serverMessageColor = Colors.green;
@@ -510,8 +510,10 @@ class _CreatePageState extends State<CreatePage> {
                             // Display toast notification
                             Fluttertoast.showToast(
                               msg: message,
-                              backgroundColor: Colors.green,  // Set the toast background color to green
-                              textColor: Colors.white,  // Set the toast text color to white
+                              backgroundColor: Colors
+                                  .green, // Set the toast background color to green
+                              textColor: Colors
+                                  .white, // Set the toast text color to white
                             );
                             // Clear the area state
                             areaState.clearArea();
@@ -522,7 +524,6 @@ class _CreatePageState extends State<CreatePage> {
                             });
                           }
                         },
-
                         style: ElevatedButton.styleFrom(
                           primary: Colors.white,
                           onPrimary: Color(0xFF1D1D1D),
