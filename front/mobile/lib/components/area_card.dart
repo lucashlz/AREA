@@ -42,8 +42,8 @@ class AreaCard extends StatefulWidget {
   final VoidCallback onDelete;
 
   AreaCard({
-    required this.area, 
-    required this.services, 
+    required this.area,
+    required this.services,
     required this.onDelete,
   });
 
@@ -52,13 +52,13 @@ class AreaCard extends StatefulWidget {
 }
 
 class _AreaCardState extends State<AreaCard> {
-
   Color _getServiceColor(String serviceName) {
     print("Looking for service: $serviceName");
     for (var service in widget.services) {
       print("Checking against service: ${service.name}");
       if (service.name == serviceName) {
-        return Color(int.parse(service.color.substring(1, 7), radix: 16) + 0xFF000000);
+        return Color(
+            int.parse(service.color.substring(1, 7), radix: 16) + 0xFF000000);
       }
     }
     print("Service not found for: $serviceName");
@@ -66,7 +66,8 @@ class _AreaCardState extends State<AreaCard> {
   }
 
   Future<void> _toggleActivation() async {
-    final String url = 'http://10.0.2.2:8080/areas/${widget.area.id}/switch_activation';
+    final String url =
+        'https://api.techparisarea.com/areas/${widget.area.id}/switch_activation';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token == null) {
@@ -88,7 +89,7 @@ class _AreaCardState extends State<AreaCard> {
   }
 
   Future<void> _deleteArea() async {
-    final String url = 'http://10.0.2.2:8080/areas/${widget.area.id}';
+    final String url = 'https://api.techparisarea.com/areas/${widget.area.id}';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token == null) {
@@ -164,9 +165,12 @@ class _AreaCardState extends State<AreaCard> {
 
   @override
   Widget build(BuildContext context) {
-    Color cardColor = widget.area.isActive ? _getServiceColor(widget.area.trigger['service']) : Colors.grey;
+    Color cardColor = widget.area.isActive
+        ? _getServiceColor(widget.area.trigger['service'])
+        : Colors.grey;
     HSLColor hslColor = HSLColor.fromColor(cardColor);
-    HSLColor hslDarkerColor = hslColor.withLightness((hslColor.lightness - 0.3).clamp(0.0, 3.0));
+    HSLColor hslDarkerColor =
+        hslColor.withLightness((hslColor.lightness - 0.3).clamp(0.0, 3.0));
     Color darkerCardColor = hslDarkerColor.toColor();
     List<String> services = _getUniqueServices();
     double logoWidth = 40.0;

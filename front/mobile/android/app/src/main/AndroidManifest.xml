@@ -1,9 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:label="mobileapp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -25,6 +28,17 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <!-- Add the Google services meta-data -->
+        <meta-data
+           android:name="com.google.android.gms.wallet.api.enabled"
+           android:value="true" />
+
+        <!-- Add your OAuth 2.0 client ID here -->
+        <meta-data
+            android:name="com.google.android.gms.identity.lso.CLIENT_ID"
+            android:value="871944599231-dgcugtv5f0pqq16k4j1fcucg9o3b8rf5.apps.googleusercontent.com" /> <!-- Replace YOUR_OAUTH_2.0_CLIENT_ID with your actual client ID -->
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

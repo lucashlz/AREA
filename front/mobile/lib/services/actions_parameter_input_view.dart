@@ -9,9 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'connect_service_view.dart';
 import 'dart:ui';
 
-
 Future<String?> fetchServiceColor(String serviceName) async {
-  const String url = 'http://10.0.2.2:8080/about/about.json';
+  const String url = 'https://api.techparisarea.com/about/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
@@ -165,100 +164,130 @@ class _ActionParameterInputPageState extends State<ActionParameterInputPage> {
                                 color: Colors.black,
                                 fontWeight: FontWeight.w800,
                                 fontSize: 18,
-                                fontFamily: 'Archivo'), 
+                                fontFamily: 'Archivo'),
                           ),
                           onPressed: () async {
-                            String? triggerServiceColor = await fetchServiceColor(areaState.trigger['service']);
+                            String? triggerServiceColor =
+                                await fetchServiceColor(
+                                    areaState.trigger['service']);
                             showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                builder: (BuildContext context) {
-                                  return BackdropFilter(
-                                    filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                    child: FractionallySizedBox(
-                                      heightFactor: 0.6,
-                                      alignment: Alignment.bottomCenter,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                        ),
-                                        child: Drawer(
-                                          child: MediaQuery.removePadding(
-                                            context: context,
-                                            removeLeft: true,
-                                            child: Column(
-                                              children: [
-                                                Container(
-                                                  width: MediaQuery.of(context).size.width,
-                                                  color: Color(int.parse('0xFF${triggerServiceColor!.substring(1)}')),
-                                                  child: Column(
-                                                    children: [
-                                                      SizedBox(height: 20),
-                                                      Image.asset(
-                                                        'assets/servicesLogo/${areaState.trigger['service']}.png',
-                                                        height: 64,
-                                                        width: 64,
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (BuildContext context) {
+                                return BackdropFilter(
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                  child: FractionallySizedBox(
+                                    heightFactor: 0.6,
+                                    alignment: Alignment.bottomCenter,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                      ),
+                                      child: Drawer(
+                                        child: MediaQuery.removePadding(
+                                          context: context,
+                                          removeLeft: true,
+                                          child: Column(
+                                            children: [
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                color: Color(int.parse(
+                                                    '0xFF${triggerServiceColor!.substring(1)}')),
+                                                child: Column(
+                                                  children: [
+                                                    SizedBox(height: 20),
+                                                    Image.asset(
+                                                      'assets/servicesLogo/${areaState.trigger['service']}.png',
+                                                      height: 64,
+                                                      width: 64,
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Text(
+                                                      capitalize(areaState
+                                                          .trigger['service']),
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 24,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontFamily: 'Archivo',
                                                       ),
-                                                      SizedBox(height: 10),
-                                                      Text(
-                                                        capitalize(areaState.trigger['service']),
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 24,
-                                                          fontWeight: FontWeight.bold,
-                                                          fontFamily: 'Archivo',
-                                                        ),
-                                                      ),
-                                                      const SizedBox(height: 20),
-                                                    ],
-                                                  ),
+                                                    ),
+                                                    const SizedBox(height: 20),
+                                                  ],
                                                 ),
-                                                const SizedBox(height: 20),
-                                                Expanded(
-                                                  child: ListView.builder(
-                                                    itemCount: widget.ingredients.length,
-                                                    itemBuilder: (context, ingredientIndex) {
-                                                      final ingredient = widget.ingredients[ingredientIndex];
-                                                      return Padding(
-                                                        padding: const EdgeInsets.symmetric(vertical: 5.0),  // Increased vertical space
-                                                        child: ListTile(
-                                                          title: Container(
-                                                            padding: EdgeInsets.all(12.0),  // Some padding for the text
-                                                            decoration: BoxDecoration(
-                                                              color: Color(int.parse('0xFF${triggerServiceColor!.substring(1)}')),  // Using the triggerServiceColor
-                                                              borderRadius: BorderRadius.circular(8.0),  // Rounded corners
-                                                            ),
-                                                            child: Text(
-                                                              ingredient['description']!,
-                                                              style: TextStyle(color: Colors.white, fontFamily: 'Archivo', fontSize: 18, fontWeight: FontWeight.w600),
-                                                            ),
+                                              ),
+                                              const SizedBox(height: 20),
+                                              Expanded(
+                                                child: ListView.builder(
+                                                  itemCount:
+                                                      widget.ingredients.length,
+                                                  itemBuilder: (context,
+                                                      ingredientIndex) {
+                                                    final ingredient =
+                                                        widget.ingredients[
+                                                            ingredientIndex];
+                                                    return Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical:
+                                                              5.0), // Increased vertical space
+                                                      child: ListTile(
+                                                        title: Container(
+                                                          padding: EdgeInsets.all(
+                                                              12.0), // Some padding for the text
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Color(int.parse(
+                                                                '0xFF${triggerServiceColor!.substring(1)}')), // Using the triggerServiceColor
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.0), // Rounded corners
                                                           ),
-                                                          onTap: () {
-                                                            _controllers[index].text = '${_controllers[index].text}<${ingredient['name']}>';
-                                                            Navigator.pop(context);
-                                                          },
-
+                                                          child: Text(
+                                                            ingredient[
+                                                                'description']!,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontFamily:
+                                                                    'Archivo',
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600),
+                                                          ),
                                                         ),
-                                                      );
-                                                    },
-                                                  ),
+                                                        onTap: () {
+                                                          _controllers[index]
+                                                                  .text =
+                                                              '${_controllers[index].text}<${ingredient['name']}>';
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                    );
+                                                  },
                                                 ),
-
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
                                     ),
-                                  );
-                                },
-                              );
-
+                                  ),
+                                );
+                              },
+                            );
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.white, 
+                            primary: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(7), 
+                              borderRadius: BorderRadius.circular(7),
                             ),
                           ),
                         ),
@@ -280,10 +309,11 @@ class _ActionParameterInputPageState extends State<ActionParameterInputPage> {
                   var param = entry.value;
                   return {
                     'name': param['name'],
-                    'input': _controllers[idx].text.isEmpty ? "" : _controllers[idx].text  // Check if the text is empty
+                    'input': _controllers[idx].text.isEmpty
+                        ? ""
+                        : _controllers[idx].text
                   };
                 }).toList();
-
 
                 areaState.addAction({
                   'service': widget.actionService.name,
