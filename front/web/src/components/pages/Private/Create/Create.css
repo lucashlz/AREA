@@ -2,7 +2,7 @@
     height: 7vh;
     display: flex;
     align-items: center;
-    justify-content: start;
+    justify-content: flex-start;
     padding-left: 3%;
 }
 
@@ -15,6 +15,19 @@
     margin-top: 1rem;
     margin-bottom: 1rem;
 }
+
+.ifttt-delete-applet {
+    margin-left: 3%;
+    padding: 1%;
+    width: 10%;
+    border: none;
+    outline: none;
+    background: none;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: black;
+    border-radius: 50%;
+}  
 
 .back-button {
     background: none;
@@ -46,9 +59,8 @@
 .ifttt {
     display: flex;
     flex-direction: column;
-    padding-left: 20%;
-    padding-right: 20%;
     height: 100%;
+    width: 100%;
     padding-top: 10%;
     align-items: center;
 }

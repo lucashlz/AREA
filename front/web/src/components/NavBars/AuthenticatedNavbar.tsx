@@ -2,17 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '../Button';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { useContext } from 'react';
-import { UserContext } from '../../context/userContext';
 import './AuthenticatedNavbar.css';
 
 
 function Navbar() {
-  const [click, setClick] = useState(false);
   const [button, setButton] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleClick = () => setClick(!click);
   const closeMobileMenu = () => setMobileMenuOpen(false);
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
@@ -53,7 +49,7 @@ function Navbar() {
           <Link to="/applets" className="navbar-logo">
             <img src={logoSrc} alt="Logo" className="logo" />
           </Link>
-          {button ? <button className="get-apk-button" onClick={() => window.location.href=`${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
+          {button ? <button className="get-apk-button" onClick={() => window.location.href = `${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
         </div>
 
         <div className="menu-icon" onClick={toggleMobileMenu}>
@@ -63,7 +59,7 @@ function Navbar() {
         {mobileMenuOpen && (
           <ul className="nav-menu active">
             <li>
-              <Link to='/applets' className='nav-links' style={{marginBottom: "-50px"}} onClick={closeMobileMenu}>
+              <Link to='/applets' className='nav-links' style={{ marginBottom: "-50px" }} onClick={closeMobileMenu}>
                 My Applets
               </Link>
             </li>
@@ -80,7 +76,7 @@ function Navbar() {
               </div>
             </li>
             <li>
-              {!button ? <button className="get-apk-button" onClick={() => window.location.href=`${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
+              {!button ? <button className="get-apk-button" onClick={() => window.location.href = `${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
             </li>
           </ul>
         )}
@@ -90,8 +86,8 @@ function Navbar() {
             My Applets
           </Link>
           <Link to='/create' className='nav-links'>
-              Create
-            </Link>
+            Create
+          </Link>
           <Button linkTo="/account" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
             Account
           </Button>
