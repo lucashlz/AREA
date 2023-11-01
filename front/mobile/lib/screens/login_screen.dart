@@ -9,6 +9,7 @@ import 'reset_password_screen.dart';
 import '../components/my_button.dart';
 import '../components/my_input.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -21,6 +22,7 @@ class LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   String? errorMessage;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
   void navigateToHome() {
     Navigator.pushReplacement(
@@ -29,15 +31,46 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void continueWithGoogle() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginWebView()),
-    );
+  void continueWithGoogle() async {
+  try {
+    final GoogleSignInAccount? account = await _googleSignIn.signIn();
+    if (account != null) {
+      final GoogleSignInAuthentication auth = await account.authentication;
+      final String? accessToken = auth.accessToken;
+      print("Access token: $accessToken");
+
+      if (accessToken != null) {
+        final response = await http.post(
+          Uri.parse('https://api.techparisarea.com/auth/mobile/google'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: json.encode({
+            'access_token': accessToken,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          final Map<String, dynamic> data = json.decode(response.body);
+          final token = data['token'];
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', token);
+          navigateToHome();
+        } else {
+          // Handle other status codes and possible errors
+          print('Server responded with status code: ${response.statusCode}');
+        }
+      }
+    }
+  } catch (error) {
+    print(error);
+    // Handle the error appropriately.
   }
+}
+
 
   Future<void> login() async {
-    const String url = 'http://10.0.2.2:8080/auth/sign-in';
+    const String url = 'https://api.techparisarea.com/auth/sign-in';
     final response = await http.post(
       Uri.parse(url),
       headers: {
@@ -88,23 +121,23 @@ class LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                 Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 35.0),
-                      child: Text(
-                        "Login",
-                        style: const TextStyle(
-                          fontFamily: 'Archivo',
-                          fontSize: 45,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 35.0),
+                        child: Text(
+                          "Login",
+                          style: const TextStyle(
+                            fontFamily: 'Archivo',
+                            fontSize: 45,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                    ),
-                    Expanded(child: Container()),
-                  ],
-                ),
+                      Expanded(child: Container()),
+                    ],
+                  ),
                   const SizedBox(height: 20),
                   MyInput(
                     hint: "Username",
@@ -124,7 +157,8 @@ class LoginScreenState extends State<LoginScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const ResetPasswordScreen()),
+                              builder: (context) =>
+                                  const ResetPasswordScreen()),
                         );
                       },
                       child: const Padding(
@@ -171,7 +205,8 @@ class LoginScreenState extends State<LoginScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const RegisterScreen()),
+                                    builder: (context) =>
+                                        const RegisterScreen()),
                               );
                             },
                             child: const Text(
@@ -208,12 +243,12 @@ class LoginScreenState extends State<LoginScreen> {
                 ],
               ),
             ),
-            ],
-          ),
+          ],
         ),
-      );
-    }
+      ),
+    );
   }
+}
 
 class LoginWebView extends StatefulWidget {
   const LoginWebView({Key? key}) : super(key: key);
@@ -223,7 +258,7 @@ class LoginWebView extends StatefulWidget {
 }
 
 class LoginWebViewState extends State<LoginWebView> {
-  final String url = "http://10.0.2.2:8080/auth/google";
+  final String url = "https://api.techparisarea.com/auth/google";
   late final WebViewController _controller;
 
   @override
@@ -235,7 +270,8 @@ class LoginWebViewState extends State<LoginWebView> {
     _controller.setNavigationDelegate(
       NavigationDelegate(
         onNavigationRequest: (NavigationRequest request) {
-          if (request.url.startsWith('http://10.0.2.2:8080/auth/google')) {
+          if (request.url
+              .startsWith('https://api.techparisarea.com/auth/google')) {
             Navigator.of(context).pop();
             return NavigationDecision.prevent;
           }

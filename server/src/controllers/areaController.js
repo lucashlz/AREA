@@ -46,11 +46,10 @@ exports.createArea = async (req, res) => {
         const { trigger, actions } = req.body;
         const doesDuplicateActionExist = (actions) => {
             const actionStrings = actions.map((a) => {
-                const sortedParameters = a.parameters.sort((p1, p2) => p1.name.localeCompare(p2.name));
                 return JSON.stringify({
                     service: a.service,
                     name: a.name,
-                    parameters: sortedParameters,
+                    parameters: a.parameters,
                 });
             });
             return new Set(actionStrings).size !== actionStrings.length;

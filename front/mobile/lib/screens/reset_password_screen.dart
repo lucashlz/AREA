@@ -24,7 +24,8 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   Future<void> resetPassword() async {
-    const String url = 'http://10.0.2.2:8080/reset/request-password-reset';
+    const String url =
+        'https://api.techparisarea.com/reset/request-password-reset';
     final response = await http.post(
       Uri.parse(url),
       headers: {

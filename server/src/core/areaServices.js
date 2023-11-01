@@ -39,6 +39,13 @@ const {
 
 const { sendEmail, sendEmailToSelf } = require("../area/gmailArea");
 
+const {
+    newFileInFolder,
+    newSharedFileLink,
+    moveFileOrFolder,
+    addFileFromURL,
+} = require("../area/dropboxArea");
+
 class Area {
     constructor(triggers, actions, color) {
         this.triggers = triggers;
@@ -404,13 +411,59 @@ const GMAIL_ACTIONS = [
 
 const GMAIL_TRIGGERS = [];
 
+const DROPBOX_TRIGGERS = [
+    new Trigger(
+        "new_file_in_folder",
+        "This Trigger fires every time any file is saved in the folder you specify",
+        [{ name: "folder_path", input: "Path to the Dropbox folder", optional: false }],
+        newFileInFolder,
+        [
+            { name: "file_name", description: "Name of the new file" },
+            { name: "folder_path", description: "Path to the Dropbox folder where the file was added" },
+        ]
+    ),
+    new Trigger(
+        "new_shared_file_link",
+        "This trigger fires every time a shared link for a file is created. Note: doesn't include folders.",
+        [],
+        newSharedFileLink,
+        [
+            { name: "file_url", description: "Shared link URL of the file" },
+            { name: "file_name", description: "Name of the file" },
+        ]
+    ),
+];
+
+const DROPBOX_ACTIONS = [
+    new Action(
+        "move_file_or_folder",
+        "This action will move a file or a folder to new location.",
+        [
+            { name: "original_path", input: "Original path", optional: false },
+            { name: "destination_path", input: "Destination path", optional: false },
+        ],
+        moveFileOrFolder
+    ),
+    new Action(
+        "add_file_from_url",
+        "This Action will download a file at a given URL and add it to Dropbox at the path you specify. NOTE: 30 MB file size limit.",
+        [
+            { name: "file_url", input: "URL of the file to download", optional: false },
+            { name: "file_name", input: "Name of the file to be saved", optional: false },
+            { name: "dropbox_folder_path", input: "Path in Dropbox", optional: false },
+        ],
+        addFileFromURL
+    ),
+];
+
 const AREAS = {
-    dateTime: new Area(DATETIME_TRIGGERS, DATETIME_ACTIONS, "#000000"),
-    spotify: new Area(SPOTIFY_TRIGGERS, SPOTIFY_ACTIONS, "#3CC339"),
-    github: new Area(GITHUB_TRIGGERS, GITHUB_ACTIONS, "#282828"),
-    twitch: new Area(TWITCH_TRIGGERS, TWITCH_ACTIONS, "#5865F2"),
+    dateTime: new Area(DATETIME_TRIGGERS, DATETIME_ACTIONS, "#333333"),
+    spotify: new Area(SPOTIFY_TRIGGERS, SPOTIFY_ACTIONS, "#1DB954"),
+    github: new Area(GITHUB_TRIGGERS, GITHUB_ACTIONS, "#4078C0"),
+    twitch: new Area(TWITCH_TRIGGERS, TWITCH_ACTIONS, "#6441A5"),
     youtube: new Area(YOUTUBE_TRIGGERS, YOUTUBE_ACTIONS, "#FF0000"),
     gmail: new Area(GMAIL_TRIGGERS, GMAIL_ACTIONS, "#BF02AF"),
+    dropbox: new Area(DROPBOX_TRIGGERS, DROPBOX_ACTIONS, "#0062FE"),
 };
 
 module.exports = AREAS;

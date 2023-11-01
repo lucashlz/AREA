@@ -7,6 +7,7 @@ const { checkTwitchParameters } = require("./twitchUtils");
 const { checkYoutubeParameters } = require("./youtubeUtils");
 const { checkGmailParameters } = require("./gmailUtils");
 const { checkGithubParameters } = require("./githubUtils");
+const { checkDropboxParameters } = require("./dropboxUtils");
 
 const serviceCheckFunctions = {
     spotify: checkSpotifyParameters,
@@ -15,6 +16,7 @@ const serviceCheckFunctions = {
     github: checkGithubParameters,
     youtube: checkYoutubeParameters,
     gmail: checkGmailParameters,
+    dropbox: checkDropboxParameters,
 };
 
 const isParameterOptional = (service, actionOrTriggerName, paramName) => {

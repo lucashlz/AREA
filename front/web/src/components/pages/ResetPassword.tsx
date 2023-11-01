@@ -19,24 +19,26 @@ type PasswordProps = {
 
 const Password = (props: PasswordProps) => {
   return (
-    <div className="flex-container">
+    <form className="flex-container" onSubmit={props.onClick}>
       <Title title={props.title} />
-      <div style={{ fontWeight: 500, fontSize: 25 }}>{props.description}</div>
+      <div className="password-description-container">{props.description}</div>
+      <div className="password-input-container">
       <Input
         onChange={(e) => props.setInput(e.target.value)}
         placeholder={props.placeholder}
         type={props.type}
         value={props.value}
+        required
       />
+      </div>
       <Button
         buttonSize="btn--large"
         buttonStyle="btn--primary-inverted"
-        type="button"
-        onClick={props.onClick}
+        type="submit"
       >
         Submit
       </Button>
-    </div>
+    </form>
   );
 };
 

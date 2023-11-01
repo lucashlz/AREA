@@ -130,15 +130,15 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
         if (mode && selectedArea) {
             for (let i = 0; i < mode.infos.parameters.length; i++) {
                 if (mode.type === "trigger") {
-                    selectedArea.trigger.parameters[i] = {name: parametersNames[i], input: parametersInput[i]}
+                    selectedArea.trigger.parameters[i] = { name: parametersNames[i], input: parametersInput[i] }
                     if (parametersNames[i] === undefined || parametersInput[i] === undefined) {
-                        selectedArea.trigger.parameters[i] = {name: mode.infos.parameters[i].name, input: ""}
+                        selectedArea.trigger.parameters[i] = { name: mode.infos.parameters[i].name, input: "" }
                     }
                 }
                 if (mode.type === "actions") {
-                    selectedArea.actions[selectedArea.actions.length - 1].parameters[i] = {name: parametersNames[i], input: parametersInput[i]}
+                    selectedArea.actions[selectedArea.actions.length - 1].parameters[i] = { name: parametersNames[i], input: parametersInput[i] }
                     if (parametersNames[i] === undefined || parametersInput[i] === undefined) {
-                        selectedArea.actions[selectedArea.actions.length - 1].parameters[i] = {name: mode.infos.parameters[i].name, input: ""}
+                        selectedArea.actions[selectedArea.actions.length - 1].parameters[i] = { name: mode.infos.parameters[i].name, input: "" }
                     }
                 }
             }
@@ -183,6 +183,10 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                 <div className='cancel-bar' style={{ backgroundColor: services.color }}>
                     <button className='back-button' style={{ color: 'white' }} onClick={() => {
                         if (mode && mode.infos.parameters.length > 0) {
+                            for (let i = 0; i < parametersInput.length; i++) {
+                                parametersInput[i] = ''
+                                parametersNames[i] = ''
+                            }
                             if (mode.type == "trigger" && selectedArea) {
                                 selectedArea.trigger = { name: '', service: '', parameters: [{ name: '', input: '' }] };
                                 localStorage.removeItem('selectedIngredients');
@@ -224,7 +228,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                             <div key={index}>
                                 {selectedArea ?
                                     <Input
-                                        onChange={(e) => handleInputChange(index, e.target.value, item.name)}
+                                        onChange={(e) => { handleInputChange(index, e.target.value, item.name) }}
                                         placeholder={item.input}
                                         type='searchInput'
                                         value={parametersInput[index]}
@@ -233,14 +237,15 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                                     : ''}
                                 {selectedArea && mode.type === "actions" && ingredients.length > 0 ?
                                     <div>
-                                        <select className='ingredient-pick'>
-                                            <option key={-1} value={"Ingredients"} selected>{"Ingredients"}</option>
+                                        <select className='ingredient-pick' defaultValue={"Ingredients"} onChange={(e) => handleIngredientChange(e.target.value, index)}>
+                                            <option value={"Ingredients"}>{"Ingredients"}</option>
                                             {ingredients.map((ingredient, i) => (
-                                                <option key={i} value={ingredient.description} onClick={() => { handleIngredientChange(ingredient.name, index) }}>{ingredient.description}</option>
+                                                <option key={i} value={ingredient.name}>{ingredient.description}</option>
                                             ))}
                                         </select>
                                     </div>
-                                : ''}
+
+                                    : ''}
                             </div>
                         ))}
 

@@ -13,6 +13,7 @@ export const servicesAuthorize: { [key: string]: string }[] = [
     { gmail: 'https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&prompt=consent' },
     { github: 'https://github.com/login/oauth/authorize'},
     { twitch: 'https://id.twitch.tv/oauth2/authorize'},
+    { dropbox: 'https://www.dropbox.com/oauth2/authorize?token_access_type=offline'},
 ];
 
 

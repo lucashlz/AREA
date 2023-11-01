@@ -14,7 +14,11 @@ export default function Register() {
   const [error, setError] = useState("");
   const [login, setLogin] = useState(false);
 
-  const { createUser } = useContext(UserContext) as IUserContext;
+  const { createUser, token } = useContext(UserContext) as IUserContext;
+
+  if (token) {
+    return (<Navigate to={"/applets"} />)
+  }
 
   if (login) {
     return <Navigate to={"/login"} />;

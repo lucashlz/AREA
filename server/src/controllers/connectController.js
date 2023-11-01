@@ -212,3 +212,43 @@ exports.twitchCallback = async (req, res) => {
         return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
     }
 };
+
+exports.getDropboxOAuthConstants = async (req, res) => {
+    const oAuthSessionId = await registerOAuthSession(req.user.id, "dropbox");
+    if (!oAuthSessionId) {
+        return res.status(500).send("Failed to initiate OAuth session.");
+    }
+    return res.json({
+        clientId: process.env.DROPBOX_CLIENT_ID,
+        redirectUri: "http://localhost:8080/connect/dropbox/callback",
+        scopes: [],
+        oAuthSessionId: oAuthSessionId,
+    });
+};
+
+exports.dropboxCallback = async (req, res) => {
+    try {
+        const { state: oAuthSessionIdFromState } = req.query;
+        const { user } = await verifyOAuthSession(oAuthSessionIdFromState, "dropbox");
+        if (!user) {
+            return res.status(400).json({ status: "error", message: "Invalid state or session expired" });
+        }
+        const { accessToken, refreshToken, expiresIn, profile } = req.dropboxData;
+        const dropboxService = {
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            expires_in: expiresIn * 1000,
+            tokenIssuedAt: Date.now(),
+            data: profile,
+        };
+        user.connectServices.set("dropbox", dropboxService);
+        await user.save();
+        res.json({
+            status: "success",
+            message: "Successfully connected with Dropbox.",
+        });
+    } catch (error) {
+        console.error("Error during Dropbox connection:", error);
+        return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
+    }
+};

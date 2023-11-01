@@ -37,7 +37,7 @@ const ALLOWED_INGREDIENTS_FOR_ACTIONS = {
             "youtube_channel_name",
             "youtube_published_date",
             "youtube_video_description",
-            "youtube_subscribed_date"
+            "youtube_subscribed_date",
         ],
         body: [
             "commit_date",
@@ -79,7 +79,7 @@ const ALLOWED_INGREDIENTS_FOR_ACTIONS = {
             "youtube_video_url",
             "youtube_published_date",
             "youtube_video_description",
-            "youtube_subscribed_date"
+            "youtube_subscribed_date",
         ],
     },
 };
@@ -118,7 +118,6 @@ async function checkGithubParameters(userId, parameters, actionName) {
     if (actionName === "create_issue") {
         for (let param of parameters) {
             const ingredientNamesInInput = (param.input.match(/<([^>]+)>/g) || []).map((ingredient) => ingredient.slice(1, -1));
-
             for (const ingredientName of ingredientNamesInInput) {
                 const allowedIngredients = ALLOWED_INGREDIENTS_FOR_ACTIONS[actionName][param.name];
                 if (!allowedIngredients || !allowedIngredients.includes(ingredientName)) {

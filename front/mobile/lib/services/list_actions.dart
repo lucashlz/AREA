@@ -8,7 +8,7 @@ import '../components/area_creation_state.dart';
 import 'package:provider/provider.dart';
 
 Future<Service> fetchActions(String serviceName) async {
-  const String url = 'http://10.0.2.2:8080/about/about.json';
+  const String url = 'https://api.techparisarea.com/about/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
@@ -145,8 +145,7 @@ class ListActionsView extends StatelessWidget {
                                 areaState.addAction({
                                   'service': service.name,
                                   'name': action.name,
-                                  'parameters':
-                                      [],
+                                  'parameters': [],
                                 });
                                 Navigator.popUntil(
                                     context, (route) => route.isFirst);
@@ -158,7 +157,8 @@ class ListActionsView extends StatelessWidget {
                                         ActionParameterInputPage(
                                       actionService: service,
                                       action: action,
-                                      ingredients: areaState.trigger['ingredients'],
+                                      ingredients:
+                                          areaState.trigger['ingredients'],
                                     ),
                                   ),
                                 );
@@ -167,8 +167,7 @@ class ListActionsView extends StatelessWidget {
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16.0),
+                                padding: const EdgeInsets.only(left: 16.0),
                                 child: Text(formatActionName(action.name)),
                               ),
                             ),
