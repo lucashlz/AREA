@@ -39,8 +39,10 @@ export function getBetterNames(name: string) {
 }
 
 const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedArea, actionInfos, setCurrentPage, currentPage }) => {
-    let clearname = ''
+    let clearname = getBetterNames(actionInfos.name)
     let whatami = ''
+
+    console.log(actionInfos)
 
     const handleSelectionClick = () => {
         if (selectedArea.trigger && selectedArea.trigger.name.length > 0) {
