@@ -89,5 +89,17 @@
     .services-container {
         margin-right: 7%;
         margin-left: 7%;
+        height: 100%;
+    }
+    .services-main-container {
+        align-self: flex-start;
+        height: 90%;
+    }
+    .selection-button {
+        width: 85%;
+    }
+    .services-holder {
+        overflow: scroll;
+        padding-bottom: 30%;
     }
 }

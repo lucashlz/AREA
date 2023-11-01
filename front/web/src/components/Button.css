@@ -74,8 +74,11 @@
     }
 
     .btn--medium {
-        font-size: 15px;
-        padding: 23px 37px;
+        font-size: 12px;
+        padding-left: 5%;
+        padding-right: 5%;
+        padding-top: 3%;
+        padding-bottom: 3%;
     }
 }
 

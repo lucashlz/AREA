@@ -1,12 +1,13 @@
 import "./Input.css";
 
 export type InputProps = {
-  placeholder: string;
+  placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  value: string;
+  value?: string;
   type: string;
   icon?: string;
   required?: boolean;
+  name?: string;
 };
 
 export default function Input(props: InputProps) {
@@ -20,6 +21,7 @@ export default function Input(props: InputProps) {
         value={props.value}
         required={props.required === undefined ? false : props.required}
         onChange={props.onChange}
+        name={props.name}
       />
     </div>
   );

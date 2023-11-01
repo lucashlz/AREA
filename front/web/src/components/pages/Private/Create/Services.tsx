@@ -149,7 +149,7 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
         return <></>
 
     return (
-        <div>
+        <div className='services-main-container'>
             <div className='cancel-bar'>
                 <button className='back-button' onClick={() => { setCurrentPage("create") }}>
                     Cancel

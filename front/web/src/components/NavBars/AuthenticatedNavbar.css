@@ -75,9 +75,10 @@
     width: 40%;
   }
   .nav-links {
-    margin-bottom: 3rem;
+    margin-bottom: 0%;
     margin-right: 0%;
     justify-content: center;
+    height: auto;
   }
 
   .get-apk-button {

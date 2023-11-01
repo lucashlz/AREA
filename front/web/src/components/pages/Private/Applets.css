@@ -189,3 +189,20 @@
 .translated {
   transform: translateX(120%);
 }
+
+@media screen and (max-height: 960px) and (orientation: landscape) {
+  .applets-holder {
+    height: 100%;
+    padding: 1%;
+  }
+  .applet-content-holder {
+    border-radius: 10px;
+    width: 30%;
+  }
+  .applet-content-container {
+    border-radius: 5px;
+  }
+  .applet-description {
+    font-size: 10px;
+  }
+}
