@@ -1,15 +1,12 @@
-import { Button } from '../../../Button';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './Services.css';
 import axios from 'axios';
 import { ServiceOAuthConstants } from '../../../../interfaces/serviceConnect';
 import { getServiceAuthorizeByName } from '../../../../interfaces/serviceConnect';
 import { postService } from '../../../../interfaces/postArea';
-import Input from '../../../Input';
 import { TriggerReaction } from '../../../../interfaces/postArea';
 import { getLocalSelectedArea } from '../../../../interfaces/postArea';
 import SearchBar from '../../../SearchBar';
-import { InputProps } from '../../../Input';
 
 interface ServicesProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
@@ -28,11 +25,27 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
     const upperName = initialName[0].toUpperCase() + initialName.slice(1);
     const image = require(`../../../../../public/servicesLogo/${initialName}.png`);
     const token = localStorage.getItem('userToken');
-    let popup: any = undefined
+    const popup = useRef<any>();
+
+    const checkConnect = async () => {
+        const response = await axios.get('http://localhost:8080/profile', { headers: { Authorization: `Bearer ${token}` } });
+        if (response.status === 200) {
+            if (response.data.connectServices.includes(initialName)) {
+                setIsConnected(true)
+                if (popup.current !== undefined)
+                    popup.current.close()
+            }
+        } else {
+            console.error("Cannot get user datas")
+        }
+    }
 
     useEffect(() => {
-        checkConnect()
-        setSelectedArea(getLocalSelectedArea())
+        const getDatas = async () => {
+            await checkConnect()
+            setSelectedArea(getLocalSelectedArea())
+        }
+        getDatas();
     }, [])
 
     useEffect(() => {
@@ -50,9 +63,9 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
                 const popupWidth = 800;
                 const popupHeight = 600;
 
-                popup = window.open(serviceURL.href, '_blank', `width=${popupWidth},height=${popupHeight},menubar=no,toolbar=no,location=no`);
+                popup.current = window.open(serviceURL.href, '_blank', `width=${popupWidth},height=${popupHeight},menubar=no,toolbar=no,location=no`);
                 if (popup) {
-                    popup.focus();
+                    popup.current.focus();
                 }
             }
         } else {
@@ -60,26 +73,12 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
         }
     }, [serviceOAuthConstants])
 
-
-    const checkConnect = async () => {
-        const response = await axios.get('http://localhost:8080/profile', { headers: { Authorization: `Bearer ${token}` } });
-        if (response.status == 200) {
-            if (response.data.connectServices.includes(initialName)) {
-                setIsConnected(true)
-                if (popup !== undefined)
-                    popup.close()
-            }
-        } else {
-            console.error("Cannot get user datas")
-        }
-    }
-
     if (selectedArea) {
-        if (selectedArea.trigger.name.length == 0) {
-            if (serviceInfos.triggers.length == 0)
+        if (selectedArea.trigger.name.length === 0) {
+            if (serviceInfos.triggers.length === 0)
                 return <></>
         } else {
-            if (serviceInfos.actions.length == 0)
+            if (serviceInfos.actions.length === 0)
                 return <></>
         }
     }

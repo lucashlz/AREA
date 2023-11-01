@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Navigate} from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { UserContext, IUserContext } from '../../context/userContext';
 import './Login.css';
 import Input from '../Input';
@@ -14,7 +14,6 @@ const Login: React.FC = () => {
 
   const { signIn, token } = useContext(UserContext) as IUserContext;
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -28,7 +27,7 @@ const Login: React.FC = () => {
   };
 
   if (passwordPage) {
-    return (<Navigate to="/reset-password"/>)
+    return (<Navigate to="/reset-password" />)
   }
 
   if (token) {

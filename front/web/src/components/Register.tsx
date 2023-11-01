@@ -1,11 +1,11 @@
-import Title from "./Title";
-import "./Register.css";
-import { Navigate } from "react-router-dom";
-import { useContext, useState } from "react";
-import Input from "./Input";
-import { Button } from "./Button";
-import { IUserContext, UserContext } from "../context/userContext";
-import { Store } from "react-notifications-component";
+import Title from './Title'
+import './Register.css'
+import { Navigate } from 'react-router-dom';
+import { useContext, useState } from 'react';
+import Input from './Input';
+import { Button } from './Button';
+import { IUserContext, UserContext } from '../context/userContext';
+import { Store } from 'react-notifications-component';
 
 export default function Register() {
   const [username, setUsername] = useState("");

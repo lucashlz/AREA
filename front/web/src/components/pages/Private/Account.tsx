@@ -14,7 +14,6 @@ const AccountPage: React.FC = () => {
   const [connectedServices, setConnectedServices] = useState<string[]>([]);
   const [disconnectingService, setDisconnectingService] = useState<string | null>(null);
   const userContext = useContext(UserContext);
-  const [error, setError] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [statusCode, setStatusCode] = useState<number | null>(null);
   const [formData, setFormData] = useState({
@@ -64,7 +63,7 @@ const AccountPage: React.FC = () => {
     throw new Error("AccountPage must be used within a UserContextProvider");
   }
 
-  const { token, signOut, updateInfo, deleteUser } = userContext;
+  const { token, signOut, updateInfo } = userContext;
 
   if (!token) {
     return <Navigate to="/" />;
@@ -73,7 +72,7 @@ const AccountPage: React.FC = () => {
   const handleDisconnect = async (service: string) => {
     setDisconnectingService(service);
     const response = await userContext?.disconnectService(service);
-    if (response && response.status == 200) {
+    if (response && response.status === 200) {
       const updatedServices = connectedServices.filter(s => s !== service);
       setConnectedServices(updatedServices);
     }
