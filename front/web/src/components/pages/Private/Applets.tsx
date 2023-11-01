@@ -1,23 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import './Applets.css';
-import { Button } from '../../Button';
-import { Navigate, redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { IUserContext, UserContext } from '../../../context/userContext';
 import axios from 'axios';
-import Input from '../../Input';
 import { postService } from '../../../interfaces/postArea';
 import SearchBar from '../../SearchBar';
-import { getRadioUtilityClass } from '@mui/material';
-import { TriggerReaction } from '../../../interfaces/postArea';
 import { aboutService } from '../../../interfaces/aboutDotJson';
 
-interface AppletProps<T> {
+interface AppletProps {
   item: postService;
   setReload: React.Dispatch<React.SetStateAction<number>>
   services: any
 }
 
-const Applet: React.FC<AppletProps<any>> = ({ services, item, setReload }) => {
+const Applet: React.FC<AppletProps> = ({ services, item, setReload }) => {
   const [status, setStatus] = useState(item.isActive);
   const { token } = useContext(UserContext) as IUserContext;
   const currentService = services.find((service: aboutService) => service.name === item.trigger.service);
@@ -34,7 +30,7 @@ const Applet: React.FC<AppletProps<any>> = ({ services, item, setReload }) => {
   const toogleStatus = async () => {
     try {
       const response = await axios.put(`http://localhost:8080/areas/${item._id}/switch_activation`, { id: item._id }, { headers: { Authorization: `Bearer ${token}` } });
-      if (response.status == 200) {
+      if (response.status === 200) {
         setStatus(!status)
       }
     } catch (error) {
@@ -44,7 +40,7 @@ const Applet: React.FC<AppletProps<any>> = ({ services, item, setReload }) => {
 
   const deleteApplet = async () => {
     const response = await axios.delete(`http://localhost:8080/areas/${item._id}`, { headers: { Authorization: `Bearer ${token}` } });
-    if (response.status == 200) {
+    if (response.status === 200) {
       setReload(Math.random())
     } else {
       console.log("cannot get areas, resonse: ", response.status)
@@ -86,7 +82,7 @@ const Applet: React.FC<AppletProps<any>> = ({ services, item, setReload }) => {
     <div className="applet-content-holder" style={{ backgroundColor: status === true ? currentService.color : "#565656" }}>
       <div className='applet-content-container' style={{ backgroundColor: adjustHexColor(currentService.color, 20), width: `${logos.length * 12.5 + 3}%` }}>
         {logos.map((item, index) => (
-          <img style={index == 0 ? { marginLeft: 0 } : {}} alt={item} className="applet-logo" src={`${process.env.PUBLIC_URL}/servicesLogo/${item}.png`} key={index}></img>
+          <img style={index === 0 ? { marginLeft: 0 } : {}} alt={item} className="applet-logo" src={`${process.env.PUBLIC_URL}/servicesLogo/${item}.png`} key={index}></img>
         ))}
       </div>
       <div className="applet-description">
@@ -94,7 +90,7 @@ const Applet: React.FC<AppletProps<any>> = ({ services, item, setReload }) => {
       </div>
       <div className='bottom-btn-container'>
         <button className="delete-applet" onClick={deleteApplet}>
-          <img className="delete-applet-img" src={`${process.env.PUBLIC_URL}/bin.png`}></img>
+          <img className="delete-applet-img" src={`${process.env.PUBLIC_URL}/bin.png`} alt="Delete"></img>
         </button>
         <button
           className={status === true ? "applet-status-on" : "applet-status-off"}
@@ -149,7 +145,7 @@ export default function Applets() {
   useEffect(() => {
     const getApplets = async () => {
       const response = await axios.get('http://localhost:8080/areas', { headers: { Authorization: `Bearer ${token}` } });
-      if (response.status == 200) {
+      if (response.status === 200) {
         setAreas(response.data)
       } else {
         console.log("cannot get areas, resonse: ", response.status)

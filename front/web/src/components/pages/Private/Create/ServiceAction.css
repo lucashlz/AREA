@@ -24,7 +24,7 @@
     font-weight: bolder;
     font-size: 1.1rem;
     color: white;
-    justify-self: start;
+    justify-self: flex-start;
     margin-top: 6%;
     margin-left: 2%;
 }

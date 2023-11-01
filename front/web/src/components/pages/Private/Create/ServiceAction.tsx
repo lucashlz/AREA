@@ -3,12 +3,10 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { aboutService } from '../../../../interfaces/aboutDotJson';
 import { postService } from "../../../../interfaces/postArea";
-import { Navigate } from 'react-router-dom';
 import { TriggerActions } from '../../../../interfaces/aboutDotJson';
 import { getLocalSelectedArea } from '../../../../interfaces/postArea';
 import { Ingredient } from '../../../../interfaces/aboutDotJson';
 import Input from '../../../Input';
-import { TriggerReactionParameters } from '../../../../interfaces/postArea';
 
 interface ServiceActionsProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>
@@ -34,7 +32,7 @@ export function getBetterNames(name: string) {
     let betterName = ''
 
     for (let i = 0; i < name_length; i++)
-        betterName += (name[i] == '_' ? " " : name[i]);
+        betterName += (name[i] === '_' ? " " : name[i]);
     betterName = betterName[0]?.toUpperCase() + betterName.slice(1)
 
     return (betterName)
@@ -55,11 +53,11 @@ const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedA
             whatami = 'trigger'
         }
 
-        if (actionInfos.parameters.length == 0)
+        if (actionInfos.parameters.length === 0)
             localStorage.setItem('selectedArea', JSON.stringify(selectedArea))
 
         if (selectedArea) {
-            if (actionInfos.parameters.length != 0) {
+            if (actionInfos.parameters.length !== 0) {
                 if (actionInfos.ingredients) {
                     localStorage.setItem('selectedIngredients', JSON.stringify(actionInfos.ingredients))
                 }
@@ -92,13 +90,10 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
     const [selectedArea, setSelectedArea] = useState<postService>()
     const [mode, setMode] = useState<actionReactionInfos | undefined>()
     const [ingredients, setIngredients] = useState<Ingredient[]>([])
-    const [parametersInput, setParametersInput] = useState<string[]>(['']);
-    const [parametersNames, setParametersNames] = useState<string[]>(['']);
-
-    let token = localStorage.getItem('userToken');
 
     useEffect(() => {
         const fetchData = async () => {
+            let token = localStorage.getItem('userToken');
             let area = getLocalSelectedArea()
             setSelectedArea(area)
 
@@ -126,6 +121,9 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
         getIngredients();
     }, [mode]);
 
+    const [parametersInput, setParametersInput] = useState<string[]>([""]);
+    const [parametersNames, setParametersNames] = useState<string[]>([""]);
+
     const submitParams = () => {
         if (mode && selectedArea) {
             for (let i = 0; i < mode.infos.parameters.length; i++) {
@@ -150,7 +148,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
     const handleIngredientChange = (ingredientName: string, index: number) => {
         setParametersInput(prev => {
             const updatedInputs = [...prev];
-            if (updatedInputs[index] == undefined) {
+            if (updatedInputs[index] === undefined) {
                 updatedInputs[index] = `<${ingredientName}>`;
             } else
                 updatedInputs[index] += `<${ingredientName}>`;
@@ -187,11 +185,11 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                                 parametersInput[i] = ''
                                 parametersNames[i] = ''
                             }
-                            if (mode.type == "trigger" && selectedArea) {
+                            if (mode.type === "trigger" && selectedArea) {
                                 selectedArea.trigger = { name: '', service: '', parameters: [{ name: '', input: '' }] };
                                 localStorage.removeItem('selectedIngredients');
                             }
-                            if (mode.type == "actions" && selectedArea)
+                            if (mode.type === "actions" && selectedArea)
                                 selectedArea.actions[selectedArea.actions.length - 1] = { name: '', service: '', parameters: [{ name: '', input: '' }] };
                             setMode(undefined);
                         } else {
@@ -201,7 +199,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                         Back
                     </button>
                     <div className='service-txt' style={{ color: 'white' }}>
-                        {selectedArea?.trigger?.name?.length == 0 ? "Choose a trigger" : mode ? "Choose parameters" : "Choose an action"}
+                        {selectedArea?.trigger?.name?.length === 0 ? "Choose a trigger" : mode ? "Choose parameters" : "Choose an action"}
                     </div>
                 </div>
                 <div className='thin-line' style={{ backgroundColor: 'white', opacity: 0.5 }}></div>
@@ -224,28 +222,23 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                 <div className='action-parameters'>
                     <form onSubmit={(e) => { e.preventDefault(); submitParams(); }}>
                         <div className='action-parameters-name'>{getBetterNames(mode.infos.name)}</div>
-                        {mode.infos.parameters.map((item, index) => (
+                        {selectedArea && mode.infos.parameters.map((item, index) => (
                             <div key={index}>
-                                {selectedArea ?
-                                    <Input
-                                        onChange={(e) => { handleInputChange(index, e.target.value, item.name) }}
-                                        placeholder={item.input}
-                                        type='searchInput'
-                                        value={parametersInput[index]}
-                                        required={!item.optional}
-                                    />
-                                    : ''}
-                                {selectedArea && mode.type === "actions" && ingredients.length > 0 ?
-                                    <div>
-                                        <select className='ingredient-pick' defaultValue={"Ingredients"} onChange={(e) => handleIngredientChange(e.target.value, index)}>
-                                            <option value={"Ingredients"}>{"Ingredients"}</option>
-                                            {ingredients.map((ingredient, i) => (
-                                                <option key={i} value={ingredient.name}>{ingredient.description}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    : ''}
+                                <Input
+                                    onChange={(e) => { handleInputChange(index, e.target.value, item.name) }}
+                                    placeholder={item.input}
+                                    type='searchInput'
+                                    value={parametersInput[index]}
+                                    required={!item.optional}
+                                />
+                                {mode.type === "actions" && ingredients.length > 0 ?
+                                    <select className='ingredient-pick' defaultValue={"Ingredients"} onChange={(e) => handleIngredientChange(e.target.value, index)}>
+                                        <option value={"Ingredients"}>{"Ingredients"}</option>
+                                        {ingredients.map((ingredient, i) => (
+                                            <option key={i} value={ingredient.name}>{ingredient.description}</option>
+                                        ))}
+                                    </select>
+                                : ''}
                             </div>
                         ))}
 

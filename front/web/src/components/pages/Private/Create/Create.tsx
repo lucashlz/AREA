@@ -1,15 +1,12 @@
 import { Outlet } from "react-router-dom";
 import './Create.css';
-import { Button } from '../../../Button';
 import React, { useEffect, useState } from 'react';
 import { postService } from "../../../../interfaces/postArea";
 import { aboutService } from "../../../../interfaces/aboutDotJson";
 import axios from "axios";
 import { getBetterNames } from "./ServiceAction";
 import { Navigate } from 'react-router-dom';
-import { FaFileSignature } from "react-icons/fa";
 import { getLocalSelectedArea } from "../../../../interfaces/postArea";
-import { selectClasses } from "@mui/material";
 
 interface IftttProps {
   ifttt_name: string;
@@ -26,12 +23,12 @@ const IftttSquare: React.FC<IftttProps> = ({ ifttt_name, is_current, setCurrentP
   var action = ''
   var services
 
-  if (ifttt_name == "If This" && selectedArea.trigger && selectedArea.trigger.name.length > 0) {
+  if (ifttt_name === "If This" && selectedArea.trigger && selectedArea.trigger.name.length > 0) {
     serviceName = selectedArea.trigger.service
     action = selectedArea.trigger.name
     ifttt_name = "If"
   }
-  if (ifttt_name == "Then That" && selectedArea.actions && selectedArea.actions[index].name.length > 0) {
+  if (ifttt_name === "Then That" && selectedArea.actions && selectedArea.actions[index].name.length > 0) {
     serviceName = selectedArea.actions[index].service
     action = selectedArea.actions[index].name
     ifttt_name = "Then"
@@ -48,13 +45,16 @@ const IftttSquare: React.FC<IftttProps> = ({ ifttt_name, is_current, setCurrentP
   var color = services ? services.color : (!is_current ? '#BCBCBC' : '#000000')
 
   const deleteStep = () => {
-    if (index == -1) {
+    if (index === -1) {
       selectedArea.trigger = {
         service: '',
         name: '',
         parameters: []
       }
+      localStorage.removeItem('selectedArea')
       localStorage.removeItem('selectedIngredients');
+      refreshPageContent()
+      return;
     }
     if (index >= 0) {
       if (index === 0 && selectedArea.actions.length === 1) {
@@ -84,7 +84,7 @@ const IftttSquare: React.FC<IftttProps> = ({ ifttt_name, is_current, setCurrentP
         : ''}
       {services ?
         <>
-         <img
+          <img
             alt="logo"
             style={{ width: '30px', margin: '20px' }}
             src={services ? require(`../../../../../public/servicesLogo/${services.name}.png`) : ''}
@@ -94,17 +94,12 @@ const IftttSquare: React.FC<IftttProps> = ({ ifttt_name, is_current, setCurrentP
               {actionName}
             </div>
           </div>
-            <button className="delete-applet" style={{ height: '35%' }} onClick={deleteStep}>
-              <img className="delete-applet-img" src={`${process.env.PUBLIC_URL}/bin.png`}></img>
-            </button>
         </>
         : ''}
-      {!services && (index > 0 || selectedArea.actions.length > 1) && !(index === -1 && selectedArea.trigger.name === '') ?
-        <>
-          <button className="delete-applet" style={{ height: '35%' }} onClick={deleteStep}>
-            <img className="delete-applet-img" src={`${process.env.PUBLIC_URL}/bin.png`}></img>
+      {((!services && (index > 0 || selectedArea.actions.length > 1) && !(index === -1 && selectedArea.trigger.name === '')) || (services)) ?
+          <button className="ifttt-delete-applet" onClick={deleteStep}>
+            <img className="delete-applet-img" src={`${process.env.PUBLIC_URL}/bin.png`} alt="Delete"></img>
           </button>
-        </>
         : ''}
     </div>
   );
@@ -176,7 +171,7 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
     let token = localStorage.getItem('userToken')
     try {
       const response = await axios.post('http://localhost:8080/areas', area, { headers: { Authorization: `Bearer ${token}` } })
-      if (response.status == 200) {
+      if (response.status === 200) {
         setRequestIsGood(true)
         localStorage.removeItem('selectedArea')
         localStorage.removeItem('selectedIngredients');
@@ -184,8 +179,9 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
         setError(response.data.message)
       }
     } catch (error: any) {
-        setError(error.response.data.message)
+      setError(error.response.data.message)
     }
+    console.log(selectedArea)
   }
 
   if (requestIsGood) {
@@ -199,14 +195,24 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
     <div className="ifttt-container" key={refresh}>
       <Outlet />
       <div className='ifttt'>
-        <IftttSquare JSONservices={services} ifttt_name='If This' selectedArea={selectedArea} is_current={current == 'this' ? true : false} setCurrentPage={setCurrentPage} index={-1} refreshPageContent={refreshPageContent}></IftttSquare>
+        <IftttSquare JSONservices={services} ifttt_name='If This' selectedArea={selectedArea} is_current={current === 'this' ? true : false} setCurrentPage={setCurrentPage} index={-1} refreshPageContent={refreshPageContent}></IftttSquare>
         {selectedArea.actions.map((item, index) => (
-          <>
+          <React.Fragment key={index}>
             <div className='ifttt-link-line'></div>
-            <IftttSquare JSONservices={services} ifttt_name='Then That' selectedArea={selectedArea} is_current={current == 'that' ? true : false} setCurrentPage={setCurrentPage} index={index} refreshPageContent={refreshPageContent}></IftttSquare>
-          </>
+            <IftttSquare
+              JSONservices={services}
+              ifttt_name='Then That'
+              selectedArea={selectedArea}
+              is_current={current === 'that' ? true : false}
+              setCurrentPage={setCurrentPage}
+              index={index}
+              refreshPageContent={refreshPageContent}
+              key={index}
+            />
+          </React.Fragment>
         ))}
-        <div className='ifttt-error-message'>{error != '' ? error : ''}</div>
+
+        <div className='ifttt-error-message'>{error !== '' ? error : ''}</div>
         {selectedArea.actions && selectedArea.actions[selectedArea.actions.length - 1].name.length > 0 && selectedArea.trigger.name.length > 0 ?
           <>
             <button className='add-then-button' style={{ marginLeft: 0, border: '1px solid' }} onClick={() => { addBlankAction() }}>
