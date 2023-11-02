@@ -29,16 +29,16 @@ export default function Confirm() {
 
   return (
     <div className="confirm-container">
-      { isSuccess && <Confetti numberOfPieces={100} /> }
+      {isSuccess && <Confetti numberOfPieces={100} />}
       <div
         className="confirm-main-text"
         style={{ color: isSuccess ? 'green' : 'white' }}
       >
         {confirmationMessage}
       </div>
-      { isSuccess && <Button linkTo="/login" type="button" buttonStyle="btn--primary" buttonSize="btn--large">
+      {isSuccess && <Button linkTo="/login" type="button" buttonStyle="btn--primary" buttonSize="btn--large">
         Login
-      </Button> }
+      </Button>}
     </div>
   );
 }

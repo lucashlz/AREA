@@ -153,3 +153,27 @@ exports.handleGoogleCallback = async (req, res) => {
         return res.status(500).json({ message: "Server error during authentication." });
     }
 };
+
+exports.handleMobileGoogleAuth = async (req, res) => {
+    const accessToken = req.body.access_token;
+
+    try {
+        const profileResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: {
+                'Authorization': 'Bearer ' + accessToken,
+            }
+        });
+        const email = profileResponse.data.email;
+        let existingUser = await findUserByExternalId("google", email);
+        if (existingUser) {
+            const token = jwt.sign({ id: existingUser._id }, process.env.SECRET_JWT, { expiresIn: '24h' });
+            return res.status(200).json({ token });
+        }
+        const newUser = await createNewExternalUser("google", email);
+        const token = jwt.sign({ id: newUser._id }, process.env.SECRET_JWT, { expiresIn: '24h' });
+        res.status(200).json({ token });
+    } catch (error) {
+        console.error("Error during Google authentication:", error);
+        return res.status(500).json({ message: "Server error during authentication." });
+    }
+};

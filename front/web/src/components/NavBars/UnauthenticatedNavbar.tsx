@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '../Button';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { useContext } from 'react';
-import { UserContext } from '../../context/userContext';
 import './UnauthenticatedNavbar.css';
 
 function Navbar() {
-  const [click, setClick] = useState(false);
   const [button, setButton] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleClick = () => setClick(!click);
   const closeMobileMenu = () => setMobileMenuOpen(false);
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
@@ -52,7 +48,7 @@ function Navbar() {
           <Link to="/" className="navbar-logo">
             <img src={logoSrc} alt="Logo" className="logo" />
           </Link>
-          {button ? <button className="get-apk-button" onClick={() => window.location.href=`${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
+          {button ? <button className="get-apk-button" onClick={() => window.location.href = `${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
         </div>
 
         <div className="menu-icon" onClick={toggleMobileMenu}>
@@ -72,7 +68,7 @@ function Navbar() {
               </Button>
             </li>
             <li>
-              {!button ? <button className="get-apk-button" onClick={() => window.location.href=`${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
+              {!button ? <button className="get-apk-button" onClick={() => window.location.href = `${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
             </li>
           </ul>
         )}
