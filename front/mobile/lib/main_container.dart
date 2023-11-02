@@ -43,7 +43,7 @@ class MainContainerState extends State<MainContainer> {
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              label: '',
+              label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: CircleAvatar(
@@ -51,11 +51,11 @@ class MainContainerState extends State<MainContainer> {
                 backgroundColor: Colors.white,
                 child: Icon(Icons.add, color: Color(0xFF1D1D1D)),
               ),
-              label: '',
+              label: 'Create',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.account_circle),
-              label: '',
+              label: 'Account',
             ),
           ],
         ),
