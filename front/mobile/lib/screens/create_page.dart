@@ -147,13 +147,15 @@ class _CreatePageState extends State<CreatePage> {
       textWidget = Expanded(child: textWidget);
     }
 
+    double screenWidth = MediaQuery.of(context).size.width;
+    double containerWidth = screenWidth - 60;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: containerWidth,
         constraints: BoxConstraints(
-          minWidth: 300,
           minHeight: 80,
-          maxWidth: 380,
         ),
         decoration: BoxDecoration(
           color: buttonColor,
@@ -207,6 +209,9 @@ class _CreatePageState extends State<CreatePage> {
 
   Widget _buildActionContainer(
       Map<String, dynamic> action, String serviceName, int index) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double containerWidth = screenWidth - 60;
+
     return FutureBuilder<String>(
       future: getServiceColor(serviceName),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -226,10 +231,9 @@ class _CreatePageState extends State<CreatePage> {
             child: GestureDetector(
               onTap: () => _navigateToSelectAction(context),
               child: Container(
+                width: containerWidth,
                 constraints: BoxConstraints(
-                  minWidth: 300,
                   minHeight: 80,
-                  maxWidth: 380,
                 ),
                 decoration: BoxDecoration(
                   color: buttonColor,
@@ -312,6 +316,10 @@ class _CreatePageState extends State<CreatePage> {
     double itemFontSize,
     FontWeight itemFontWeight,
   ) {
+
+    double screenWidth = MediaQuery.of(context).size.width;
+    double containerWidth = screenWidth - 60;
+
     return FutureBuilder<String>(
       future: getServiceColor(serviceName),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
@@ -329,10 +337,9 @@ class _CreatePageState extends State<CreatePage> {
               _areaState.clearArea();
             },
             child: Container(
+              width: containerWidth,
               constraints: BoxConstraints(
-                minWidth: 300,
                 minHeight: 80,
-                maxWidth: 380,
               ),
               decoration: BoxDecoration(
                 color: buttonColor,

@@ -113,7 +113,7 @@ class LoginScreenState extends State<LoginScreen> {
           children: [
             const SizedBox(height: 40),
             Center(
-              child: Image.asset('assets/logo_ifttt.png'),
+              child: Image.asset('assets/logo_areas.png'),
             ),
             const SizedBox(height: 60),
             Center(

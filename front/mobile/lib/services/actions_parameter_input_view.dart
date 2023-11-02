@@ -234,11 +234,11 @@ class _ActionParameterInputPageState extends State<ActionParameterInputPage> {
                                                       padding: const EdgeInsets
                                                           .symmetric(
                                                           vertical:
-                                                              5.0), // Increased vertical space
+                                                              5.0),
                                                       child: ListTile(
                                                         title: Container(
                                                           padding: EdgeInsets.all(
-                                                              12.0), // Some padding for the text
+                                                              12.0),
                                                           decoration:
                                                               BoxDecoration(
                                                             color: Color(int.parse(

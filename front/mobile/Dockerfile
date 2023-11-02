@@ -14,6 +14,6 @@ RUN flutter --version
 
 RUN flutter pub get
 
-RUN flutter build apk
+RUN flutter build apk --release
 
 RUN mv build/app/outputs/apk/release/app-release.apk /apk/
