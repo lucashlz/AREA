@@ -232,6 +232,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Connect'),
+        backgroundColor: const Color(0xFF1D1D1D),
+      ),
       body: WebViewWidget(controller: _controller),
     );
   }

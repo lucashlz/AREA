@@ -97,10 +97,13 @@ class _CreatePageState extends State<CreatePage> {
   Color _serverMessageColor = Colors.green;
 
   @override
-  void initState() {
-    super.initState();
-    _areaState = Provider.of<AreaCreationState>(context, listen: false);
-  }
+void initState() {
+  super.initState();
+  _areaState = Provider.of<AreaCreationState>(context, listen: false);
+  // Initialize numberOfThenThatButtons based on the number of actions in _areaState
+  numberOfThenThatButtons = _areaState.actions.length + 1;
+}
+
 
   void _navigateToSelectTrigger(BuildContext context) async {
     final result = await Navigator.push(
