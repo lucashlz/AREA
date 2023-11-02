@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { UserContext, IUserContext } from '../../context/userContext';
 import './Login.css';
 import Input from '../Input';
+import Title from '../Title';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -14,7 +15,6 @@ const Login: React.FC = () => {
   const { signIn, token } = useContext(UserContext) as IUserContext;
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("SUBMIT");
     e.preventDefault();
     try {
       const response = await signIn(email, password);
@@ -36,16 +36,20 @@ const Login: React.FC = () => {
 
   return (
     <div className="login-container">
-      <form>
-        <div className='login'>Log in</div>
-        <Input onChange={(e) => setEmail(e.target.value)} placeholder='Email' type='email' value={email} />
-        <Input onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='password' value={password} />
+      <div className='login-main-container'>
+      <form className='login-form'>
+        <div className='login-title'>
+        <Title title='Log in' />
+        </div>
+        <Input onChange={(e) => setEmail(e.target.value)} placeholder='Email' type='email' value={email}/>
+        <Input onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='password' value={password}/>
         {message && <div className="login-response-message">{message}</div>}
         {error && <p>{error}</p>}
-        <div className='underline-text' style={{ fontSize: 20 }} onClick={() => setPasswordPage(true)} >Forgot your password ?</div>
+        <div className='forgot-password underline-text' onClick={() => setPasswordPage(true)} >Forgot your password ?</div>
         <button type="button" className="btn btn--primary-inverted btn--large" onClick={handleSubmit}>Log in</button>
-        <div style={{ fontWeight: 500, fontSize: 25, marginTop: '10%' }} >Continue with <a href="http://localhost:8080/auth/google" className='underline-text'>Google</a></div>
+        <div className='login-auth' >Continue with <a href="http://localhost:8080/auth/google" className='underline-text'>Google</a></div>
       </form>
+      </div>
     </div>
   );
 };

@@ -5,6 +5,11 @@
   margin-right: 20%;
 }
 
+.applets-searchbar {
+  display: flex;
+  justify-content: center;
+}
+
 @media screen and (max-width: 960px) {
   .applets-container {
     margin-left: 10%;
@@ -75,11 +80,9 @@
 .applets-holder {
   padding: 5%;
   width: 100%;
-  height: 100%;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-content: center;
 }
 
 .applet-content-holder {
@@ -185,4 +188,21 @@
 
 .translated {
   transform: translateX(120%);
+}
+
+@media screen and (max-height: 960px) and (orientation: landscape) {
+  .applets-holder {
+    height: 100%;
+    padding: 1%;
+  }
+  .applet-content-holder {
+    border-radius: 10px;
+    width: 30%;
+  }
+  .applet-content-container {
+    border-radius: 5px;
+  }
+  .applet-description {
+    font-size: 10px;
+  }
 }

@@ -59,12 +59,12 @@ function Navbar() {
         {mobileMenuOpen && (
           <ul className="nav-menu active">
             <li>
-              <Link to='/applets' className='nav-links' style={{ marginBottom: "-50px" }} onClick={closeMobileMenu}>
+              <Link to='/applets' className='nav-links' onClick={closeMobileMenu}>
                 My Applets
               </Link>
             </li>
             <li>
-              <Link to='/create' className='nav-links' onClick={closeMobileMenu}>
+              <Link to='/create' className='nav-links' style={{ paddingBottom: "30%"}} onClick={closeMobileMenu}>
                 Create
               </Link>
             </li>

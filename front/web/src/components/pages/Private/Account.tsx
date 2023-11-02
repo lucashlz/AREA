@@ -6,6 +6,8 @@ import { Button } from '../../Button';
 import './Account.css';
 import { SERVICE_COLORS } from '../../../servicesColors'
 import ConfirmationModal from '../../ConfirmationModal';
+import Title from '../../Title';
+import Input from '../../Input';
 
 
 const AccountPage: React.FC = () => {
@@ -103,8 +105,9 @@ const AccountPage: React.FC = () => {
 
   return (
     <div className="account-container">
-      <form>
-        <div className="account-main-text">Account settings</div>
+      <form className='account-form'>
+        <Title title='Account settings' className='account-title'/>
+        {/* <div className="account-main-text">Account settings</div> */}
         <Button buttonSize='btn--medium' buttonStyle='btn--primary-inverted' type='button' onClick={signOut} >Logout</Button>
         <Button color="red" type="button" buttonStyle='btn--outline' buttonSize="btn--medium" onClick={handleDeleteAccount}>
           <FaTrash className="bin-icon" />&nbsp;&nbsp;&nbsp;Delete Account
@@ -112,54 +115,29 @@ const AccountPage: React.FC = () => {
 
         <div className="account-input-titles">
           <label htmlFor="username" className="input-title">Username</label>
-          <input
-            type="text"
-            name="username"
-            className='account-input'
-            value={formData.username}
-            required
-            onChange={handleInputChange}
-          />
+          <Input type='text' value={formData.username} onChange={handleInputChange} required name='username' />
         </div>
         <div className="account-input-titles">
           <label htmlFor="username" className="input-title">Email</label>
-          <input
-            type="email"
-            name="email"
-            className='account-input'
-            value={formData.email}
-            required
-            onChange={handleInputChange}
-          />
+          <Input type='email' name='email' value={formData.email} required onChange={handleInputChange} />
         </div>
         <div className="account-input-titles">
           <label htmlFor="username" className="input-title">Old Password</label>
-          <input
-            type="password"
-            name="oldPassword"
-            className='account-input'
-            required
-            onChange={handleInputChange}
-          />
+          <Input type='password' name='oldPassword' required onChange={handleInputChange} />
         </div>
         <div className="account-input-titles">
           <label htmlFor="username" className="input-title">New Password</label>
-          <input
-            type="password"
-            name="newPassword"
-            className='account-input'
-            required
-            onChange={handleInputChange}
-          />
+          <Input type='password' name='newPassword' required onChange={handleInputChange} />
         </div>
         <div className={`api-response-message ${statusCode === 200 ? 'success-message' : 'error-message'}`}>
           {message}
         </div>
 
-        <Button buttonSize='btn--large' buttonStyle='btn--primary-inverted' type='button' onClick={handleSubmit} >Update Infos</Button><span></span>
+        <Button buttonSize='btn--large' buttonStyle='btn--primary-inverted' type='button' onClick={handleSubmit} >Update Infos</Button>
       </form>
       <div className="connected-services-container">
-        <div className="connected-services-title">Connected services</div>
+       {/*  <div className="connected-services-title">Connected services</div> */}
+       <Title className='account-title' title='Connected services'/>
         <div className="services-list">
           {connectedServices.length === 0 ? (
             <div className="service-item no-service" style={{ backgroundColor: 'lightgray' }}>

@@ -25,6 +25,8 @@
     font-size: 25px;
     margin-bottom: 30px; 
     word-wrap: break-word; 
+    margin: 10%;
+    padding: 5%;
 }
 
 .confirmation-modal p:first-child {

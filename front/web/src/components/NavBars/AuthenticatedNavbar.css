@@ -1,160 +1,186 @@
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar {
+  background: #1D1D1D;
+  height: 7%;
+  margin-top: 0.1%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  top: 0;
+  z-index: 999;
+  padding: 0 30px;
+}
+
+.navbar-logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.get-apk-button {
+  margin-top: -2%;
+  height: 3.3rem;
+  width: 9.5rem;
+  background-color: lightgreen;
+  justify-content: center;
+  align-items: center;
+  border-radius: 60px;
+  border: none;
+  outline: none;
+  font-size: 75%;
+  margin-left: 2vw;
+  font-weight: 600;
+}
+
+.get-apk-button:hover {
+  cursor: pointer;
+}
+
+.logo {
+  height: 40%;
+  width: 90%;
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  height: 80px;
+}
+
+.nav-links {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  height: 100%;
+  font-weight: 700;
+  margin-right: 1rem;
+}
+
+@media screen and (max-width: 960px) {
+  .logo {
+    height: 100%;
+    width: 100%;
   }
-  
-  .navbar {
-    background: #1D1D1D;
-    height: 10%;
-    margin-top: 0.1%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.2rem;
-    top: 0;
-    z-index: 999;
-    padding: 0 30px;
-  }
-  
   .navbar-logo-container {
     display: flex;
     align-items: center;
+    height: auto;
+    width: 40%;
+  }
+  .nav-links {
+    margin-bottom: 0%;
+    margin-right: 0%;
+    justify-content: center;
+    height: auto;
   }
 
   .get-apk-button {
-    margin-top: -2%;
-    height: 3.3rem;
-    width: 9.5rem;
-    background-color: lightgreen;
+    margin-top: 2rem;
+    align-self: center;
+    margin-left: 0;
+  }
+
+  .menu-icon {
+    display: block;
+  }
+
+  .navbar-container {
+    display: none;
+  }
+
+  .navbar-logo {
+    height: 100%;
+    width: 100%;
     justify-content: center;
     align-items: center;
-    border-radius: 60px;
-    border: none;
-    outline: none;
-    font-size: 75%;
-    margin-left: 2vw;
-    font-weight: 600;
-  }
-
-  @media screen and (max-width: 960px) {
-    .get-apk-button {
-      margin-top: 2rem;
-      align-self: center;
-      margin-left: 0;
-    }
-  }
-
-  .get-apk-button:hover {
-    cursor: pointer;
-  }
-
-  .logo {
-    height: 40%;
-    width: 90%;
-  }
-  
-  .navbar-container {
     display: flex;
-    align-items: center;
-    height: 80px;
   }
-  
-  .nav-links {
-    color: #fff;
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
+}
+
+.menu-icon {
+  display: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #ffffff;
+}
+
+.nav-menu {
+  list-style: none;
+  text-align: center;
+  width: 100%;
+  height: 93%;
+  flex-direction: column;
+  position: absolute;
+  left: 0;
+  background-color: #1D1D1D;
+  z-index: 10;
+  padding-top: 20px;
+  display: flex;
+  top: 7%;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 10%;
+  padding-top: 0;
+}
+
+.navbar-inverted {
+  margin-top: 0.1%;
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  top: 0;
+  z-index: 999;
+  padding: 0 30px;
+  height: 7%;
+}
+
+.navbar-inverted .menu-icon {
+  color: #1D1D1D;
+}
+
+.navbar-inverted .nav-links {
+  color: #1D1D1D;
+}
+
+.navbar-inverted .nav-menu {
+  background-color: white;
+}
+
+@media screen and (max-height: 960px) and (orientation: landscape) {
+  .navbar-logo-container {
+    height: 90%;
+    width: auto;
+  }
+  .navbar-logo {
     height: 100%;
-    font-weight: 700;
-    margin-right: 1rem;
-  }
-
-  @media screen and (max-width: 960px) {
-    .nav-links {
-      margin-bottom: 3rem;
-      margin-right: 0%;
-      justify-content: center;
-    }
-  }
-  
-  .menu-icon {
-    display: none;
-    font-size: 1.8rem;
-    cursor: pointer;
-    color: #ffffff; 
-  }
-  
-  .nav-menu {
-    display: none;
-    list-style: none;
-    text-align: center;
     width: 100%;
-    height: 90vh;
-    flex-direction: column;
-    position: absolute;
-    top: 110px;
-    left: 0;
-    background-color: #1D1D1D;
-    z-index: 10;
-    padding-top: 20px;
-  }
-  
-  .nav-menu.active {
-    display: flex;
-  }
-  
-  @media screen and (max-width: 960px) {
-    .menu-icon {
-      display: block;
-    }
-  
-    .navbar-container {
-      display: none;
-    }
-  }
-  
-  .nav-menu {
-    display: none;
-    list-style: none;
-    text-align: center;
-    width: 100%;
-    flex-direction: column;
-    position: absolute;
-    top: 10%;
-    left: 0;
-    background-color: #1D1D1D;
-    z-index: 10;
-    padding-top: 20px;
-  }
-  
-  .nav-menu.active {
-    display: flex;
-  }
-  
-  .navbar-inverted {
-    margin-top: 0.1%;
-    background: white;
-    display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    font-size: 1.2rem;
-    top: 0;
-    z-index: 999;
-    padding: 0 30px;
+    display: flex;
   }
-  
-  .navbar-inverted .menu-icon {
-    color: #1D1D1D;
+  .logo {
+    height: 100%;
+    width: 100%;
   }
-  
-  .navbar-inverted .nav-links {
-    color: #1D1D1D;
+  .navbar-inverted {
+    height: 10%;
+    padding-top: 2%;
   }
-  
-  .navbar-inverted .nav-menu {
-    background-color: white;
+  .nav-menu {
+    height: 90%;
+    top: 10%;
   }
-  
-  
+  .navbar {
+    height: 10%;
+    padding-top: 2%;
+  }
+}

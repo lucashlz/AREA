@@ -1,10 +1,15 @@
 .input {
-    font-size: 2rem;
-    padding: 0.75rem;
-    border: 6px solid;
-    border-radius: 13px;
-    color: black;
-    border-color: lightgray;
+  font-size: 2rem;
+  padding: 0.75rem;
+  border: 6px solid;
+  border-radius: 13px;
+  color: black;
+  border-color: lightgray;
+  width: 100%;
+}
+
+.input-padding {
+  padding-left: 60px;
 }
 
 .input-icon {
@@ -15,19 +20,59 @@
   height: 40%;
 }
 
-@media screen and (max-width: 550px) {
-    .input {
-      width: 60%;
-
-    }
-    .input-icon {
-      margin-left: 25%;
-    }
-}
-
 .input-icon-container {
   display: flex;
   align-items: center;
   position: relative;
+  height: 100%;
+  width: 100%;
   justify-content: center;
+}
+
+@media screen and (max-width: 960px) {
+  .input {
+    height: 50%;
+    border: 3px solid;
+    border-radius: 10px;
+    color: black;
+    border-color: lightgray;
+  }
+  .input-padding {
+    padding-left: 25%;
+  }
+
+  .input-icon {
+    margin-left: 10%;
+  }
+
+  ::placeholder {
+    font-size: 3vh;
+  }
+  .input-icon-container {
+    height: 50%;
+    width: 100%;
+  }
+}
+
+
+@media screen and (max-height: 960px) and (orientation: landscape) {
+  ::placeholder {
+    font-size: 5vh;
+  }
+  .input {
+    width: 60%;
+    height: 7vh;
+    border: 4px solid;
+    border-radius: 13px;
+    color: black;
+    border-color: lightgray;
+    padding-bottom: 20px;
+  }
+
+  .input-icon {
+    margin-left: 25%;
+  }
+  .input-padding {
+    padding-left: 10%;
+  }
 }

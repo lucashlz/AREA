@@ -1,14 +1,12 @@
 .account-container {
-    margin-bottom: 4rem;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    height: 90%;
+    height: 93%;
     color: #1D1D1D;
     flex-direction: column;
-    margin-top: 10%;
     width: 100%;
-    padding: 0 2rem; 
+    padding: 5%;
 }
 
 .account-main-text {
@@ -19,13 +17,22 @@
     margin-top: 10vh;
 }
 
+.account-title {
+    font-size: 50px;
+}
+
+.input-title {
+    font-weight: 900;
+    font-size: 20px;
+    color: #1D1D1D;
+    margin-bottom: 6px;
+}
 
 .account-input-titles {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
-    width: 70vw;
+    width: 100%;
 }
 
 form {
@@ -51,15 +58,8 @@ form {
     border-color: #1D1D1D;
 }
 
-.input-title {
-    font-weight: 900;
-    font-size: 20px;
-    color: #1D1D1D;
-    margin-bottom: 6px;
-}
-
 .button {
-  background-color: black;
+    background-color: black;
 }
 
 .api-response-message {
@@ -78,21 +78,12 @@ form {
     color: rgb(255, 0, 0);
 }
 
-
-
-
-
-
-
-
-
-
 .connected-services-container {
     gap: 10px;
     display: flex;
     flex-direction: column;
     margin-top: 30px;
-    align-items: center; 
+    align-items: center;
 }
 
 .connected-services-title {
@@ -104,38 +95,63 @@ form {
     margin-bottom: 5vh;
 }
 
+.account-form {
+    height: 50%;
+    margin-top: 0;
+}
+
 .services-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  align-items: center;
-  justify-content: space-between;
-  justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+    justify-content: center;
+    padding-top: 5%;
 }
 
 .service-item {
-    position: relative; 
+    position: relative;
     color: white;
-    padding: 20px 40px;
+    padding: 10px 20px;
     border-radius: 20px;
     background-color: #1D1D1D;
-    font-size: 45px;
+    font-size: 20px;
     font-weight: 900;
     transition: background-color 0.3s;
     box-sizing: border-box;
-    width: 400px;
-    height: 100px;
+    width: auto;
+    height: auto;
     background-color: #f2f2f2;
     text-align: center;
 
 
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 960px) {
     .account-input-titles {
         width: 90vw;
     }
 
+    .account-title {
+        font-size: 30px;
+    }
+
+    .account-container {
+        padding-left: 10%;
+        padding-right: 10%;
+        justify-content: space-evenly;
+    }
+    .account-input-titles {
+        width: 70%;
+        height: 15%;
+    }
+    .input-title {
+        font-size: 12px;
+    }
+    .account-form {
+        gap: 10px;
+    }
 }
 
 .service-item::before {
@@ -165,34 +181,44 @@ form {
 }
 
 .service-content {
-  display: flex;
-  align-items: center;
-  gap: 40px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
 }
 
 
 .service-item img {
     width: 60px;
     height: 60px;
-  }
-
-@media screen and (max-width: 768px) {
-.account-input {
-    width: 90%;
-    align-self: center;
-}
-.account-main-text {
-    font-size: 30px;
 }
 
-.connected-services-title {
-    font-size: 30px;
-}
+@media screen and (max-width: 960px) {
+    .account-input {
+        width: 90%;
+        align-self: center;
+    }
 
-.service-item {
-    font-size: 30px;
-    width: 300px;
-}
+    .account-main-text {
+        font-size: 30px;
+    }
 
+    .connected-services-title {
+        font-size: 30px;
+    }
 
+    .service-item {
+        font-size: 15px;
+        width: 40%;
+        padding: 5%;
+    }
+    .service-item img {
+        width: 30%;
+        height: auto;
+    }
+    .service-content {
+        gap: 10px;
+    }
+    .services-list {
+        gap: 10px;
+    }
 }

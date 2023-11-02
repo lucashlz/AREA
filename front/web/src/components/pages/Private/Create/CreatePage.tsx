@@ -20,7 +20,7 @@ export default function CreatePage() {
   }
 
   return (
-    <div>
+    <div className="create-container">
       {
         currentPage === "create" ? <Create setCurrentPage={setCurrentPage}></Create> :
         currentPage === "services" ? <Services setCurrentPage={setCurrentPage}></Services> :
