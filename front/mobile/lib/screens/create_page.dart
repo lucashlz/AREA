@@ -438,7 +438,7 @@ class _CreatePageState extends State<CreatePage> {
                           builder: (BuildContext context) {
                             if (numberOfThenThatButtons != 1) {
                               WidgetsBinding.instance
-                                  ?.addPostFrameCallback((_) {
+                                  .addPostFrameCallback((_) {
                                 setState(() {
                                   numberOfThenThatButtons = 1;
                                 });
