@@ -32,7 +32,7 @@ Future<String?> fetchServiceColor(String serviceName) async {
 
     for (var service in services) {
       if (service['name'] == serviceName) {
-        return service['color']; // Return the color if service is found
+        return service['color'];
       }
     }
 
@@ -61,11 +61,11 @@ class ActionParameterInputPage extends StatefulWidget {
   });
 
   @override
-  _ActionParameterInputPageState createState() =>
-      _ActionParameterInputPageState();
+  ActionParameterInputPageState createState() =>
+      ActionParameterInputPageState();
 }
 
-class _ActionParameterInputPageState extends State<ActionParameterInputPage> {
+class ActionParameterInputPageState extends State<ActionParameterInputPage> {
   late final List<TextEditingController> _controllers;
 
   @override
@@ -94,8 +94,8 @@ class _ActionParameterInputPageState extends State<ActionParameterInputPage> {
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 children: [
-                  SizedBox(height: 55),
-                  Text(
+                  const SizedBox(height: 55),
+                  const Text(
                     'Input Parameters',
                     style: TextStyle(
                       color: Colors.white,
@@ -105,9 +105,9 @@ class _ActionParameterInputPageState extends State<ActionParameterInputPage> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 50),
+                  const SizedBox(height: 50),
                   Image.asset(logoAssetName, height: 64, width: 64),
-                  SizedBox(height: 70),
+                  const SizedBox(height: 70),
                 ],
               ),
             ),
@@ -126,25 +126,25 @@ class _ActionParameterInputPageState extends State<ActionParameterInputPage> {
                       children: [
                         Text(
                           formatActionParameter(parameter['name']!),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
                             fontFamily: 'Archivo',
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         TextFormField(
                           controller: _controllers[index],
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Colors.white, fontWeight: FontWeight.w500),
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: Color(0xFF1D1D1D),
+                            fillColor: const Color(0xFF1D1D1D),
                             hintText: parameter['input'],
-                            labelStyle: TextStyle(
+                            labelStyle: const TextStyle(
                                 color: Colors.white, fontFamily: 'Archivo'),
-                            hintStyle: TextStyle(
+                            hintStyle: const TextStyle(
                                 color: Colors.white54, fontFamily: 'Archivo'),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
@@ -152,15 +152,15 @@ class _ActionParameterInputPageState extends State<ActionParameterInputPage> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(color: Colors.white54),
+                              borderSide: const BorderSide(color: Colors.white54),
                             ),
                           ),
                         ),
                         const SizedBox(height: 10),
                         ElevatedButton(
-                          child: Text(
+                          child: const Text(
                             "Add ingredient",
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w800,
                                 fontSize: 18,
@@ -325,16 +325,16 @@ class _ActionParameterInputPageState extends State<ActionParameterInputPage> {
               },
               style: ElevatedButton.styleFrom(
                 primary: Colors.white,
-                onPrimary: Color(0xFF1D1D1D),
+                onPrimary: const Color(0xFF1D1D1D),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16.0),
               ),
-              child: Text("Add", style: TextStyle(fontSize: 18)),
+              child: const Text("Add", style: TextStyle(fontSize: 18)),
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
         ],
       ),
     );
