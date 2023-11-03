@@ -122,14 +122,13 @@ class HomeViewState extends State<HomeView> {
                         }
                         List<Area> areas = _filterServices(areaSnapshot.data!);
                         if (areas.isEmpty) {
-                          // Display the message when no areas are found
                           return Center(
                             child: Text(
                               'Go create your first AREA !',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontFamily: 'Archivo',
-                                fontSize: 24, // Adjust the font size as needed
+                                fontSize: 24,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),

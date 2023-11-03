@@ -516,15 +516,13 @@ class _CreatePageState extends State<CreatePage> {
                               _serverMessage = message;
                               _serverMessageColor = Colors.green;
                             });
-                            // Display toast notification
                             Fluttertoast.showToast(
                               msg: message,
                               backgroundColor: Colors
-                                  .green, // Set the toast background color to green
+                                  .green,
                               textColor: Colors
-                                  .white, // Set the toast text color to white
+                                  .white,
                             );
-                            // Clear the area state
                             areaState.clearArea();
                           } catch (e) {
                             setState(() {

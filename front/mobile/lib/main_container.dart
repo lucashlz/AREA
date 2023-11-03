@@ -43,14 +43,14 @@ class MainContainerState extends State<MainContainer> {
           items: const [
             BottomNavigationBarItem(
               icon: Padding(
-                padding: EdgeInsets.only(bottom: 0), // Adjust padding as needed to center the icon
+                padding: EdgeInsets.only(bottom: 0),
                 child: Icon(Icons.home),
               ),
               label: '',
             ),
             BottomNavigationBarItem(
               icon: Padding(
-                padding: EdgeInsets.only(bottom: 0), // Adjust padding as needed to center the icon
+                padding: EdgeInsets.only(bottom: 0),
                 child: CircleAvatar(
                   radius: 15,
                   backgroundColor: Colors.white,
@@ -61,7 +61,7 @@ class MainContainerState extends State<MainContainer> {
             ),
             BottomNavigationBarItem(
               icon: Padding(
-                padding: EdgeInsets.only(bottom: 0), // Adjust padding as needed to center the icon
+                padding: EdgeInsets.only(bottom: 0),
                 child: Icon(Icons.account_circle),
               ),
               label: '',
