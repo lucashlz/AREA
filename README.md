@@ -7,25 +7,30 @@ The user is free to activate or deactivate the "Applets" he or she wishes, from 
 application or mobile application.
 
 * **The server** has been entirely developed in node JS with a MongoDB database.
-* **The web application** was developed in Flutter. 
-* **The mobile application** was developed in React Native with the "React Native Paper" library.
+* **The web application** was developed in React and Typescript. 
+* **The mobile application** was developed in Flutter and Dart language.
 
 
 ## Usage
 
 ### Init the Project
 
-To initialize the project, you can run the following command in your terminal:
+First, be sure you have installed Docker:
+
+* https://docs.docker.com/get-docker/
+
+# Don't forget to ask the .env file to one of the developers before !
+
+To initialize the project, you can run the following command in your terminal at the root of the project:
 ```
-npm install
+docker-compose up --build
 ```
 
 ## Links
 
 * React: https://react.dev/
 * React Native: https://reactnative.dev/
-* React Native Paper: https://callstack.github.io/react-native-paper/
-* Material UI: https://mui.com/material-ui/
+* Flutter: https://docs.flutter.dev/
 * Node JS: https://nodejs.org/
 * MongoDB: https://www.mongodb.com/
 
