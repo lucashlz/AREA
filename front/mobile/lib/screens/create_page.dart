@@ -97,12 +97,11 @@ class _CreatePageState extends State<CreatePage> {
   Color _serverMessageColor = Colors.green;
 
   @override
-void initState() {
-  super.initState();
-  _areaState = Provider.of<AreaCreationState>(context, listen: false);
-  // Initialize numberOfThenThatButtons based on the number of actions in _areaState
-  numberOfThenThatButtons = _areaState.actions.length + 1;
-}
+  void initState() {
+    super.initState();
+    _areaState = Provider.of<AreaCreationState>(context, listen: false);
+    numberOfThenThatButtons = _areaState.actions.length + 1;
+  }
 
 
   void _navigateToSelectTrigger(BuildContext context) async {
@@ -151,7 +150,7 @@ void initState() {
     }
 
     double screenWidth = MediaQuery.of(context).size.width;
-    double containerWidth = screenWidth - 60;
+    double containerWidth = screenWidth - 40;
 
     return GestureDetector(
       onTap: onTap,
@@ -213,7 +212,7 @@ void initState() {
   Widget _buildActionContainer(
       Map<String, dynamic> action, String serviceName, int index) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double containerWidth = screenWidth - 60;
+    double containerWidth = screenWidth - 40;
 
     return FutureBuilder<String>(
       future: getServiceColor(serviceName),
@@ -321,7 +320,7 @@ void initState() {
   ) {
 
     double screenWidth = MediaQuery.of(context).size.width;
-    double containerWidth = screenWidth - 60;
+    double containerWidth = screenWidth - 40;
 
     return FutureBuilder<String>(
       future: getServiceColor(serviceName),

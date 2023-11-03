@@ -42,22 +42,33 @@ class MainContainerState extends State<MainContainer> {
           },
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: CircleAvatar(
-                radius: 15,
-                backgroundColor: Colors.white,
-                child: Icon(Icons.add, color: Color(0xFF1D1D1D)),
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 0), // Adjust padding as needed to center the icon
+                child: Icon(Icons.home),
               ),
-              label: 'Create',
+              label: '',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              label: 'Account',
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 0), // Adjust padding as needed to center the icon
+                child: CircleAvatar(
+                  radius: 15,
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.add, color: Color(0xFF1D1D1D)),
+                ),
+              ),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 0), // Adjust padding as needed to center the icon
+                child: Icon(Icons.account_circle),
+              ),
+              label: '',
             ),
           ],
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
         ),
       ),
     );
