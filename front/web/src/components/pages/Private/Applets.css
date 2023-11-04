@@ -190,7 +190,7 @@
   transform: translateX(120%);
 }
 
-@media screen and (max-height: 960px) and (orientation: landscape) {
+@media screen and (max-height: 767px) and (orientation: landscape) {
   .applets-holder {
     height: 100%;
     padding: 1%;
