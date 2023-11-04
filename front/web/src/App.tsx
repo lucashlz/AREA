@@ -17,6 +17,7 @@ import 'react-notifications-component/dist/theme.css';
 import jwtDecode from 'jwt-decode';
 import { ReactNotifications } from 'react-notifications-component';
 import ResetPassword from './components/pages/ResetPassword';
+import EmailChange from './components/pages/EmailChange';
 
 function App() {  
   const userContext = useContext(UserContext);
@@ -55,6 +56,7 @@ function App() {
         <Route path="/applets" element={<Applets />} />
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path="/auth/confirm/:token" element={<Confirm />} />
+        <Route path="/auth/confirm-email-change/:token" element={<EmailChange/>}/>
       </Routes>
     </>
   );

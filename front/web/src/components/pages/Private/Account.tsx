@@ -87,7 +87,6 @@ const AccountPage: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("SUBMIT")
     e.preventDefault();
 
     const response = await updateInfo(formData.email, formData.username, formData.oldPassword, formData.newPassword);
