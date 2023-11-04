@@ -42,8 +42,6 @@ const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedA
     let clearname = getBetterNames(actionInfos.name)
     let whatami = ''
 
-    console.log(actionInfos)
-
     const handleSelectionClick = () => {
         if (selectedArea.trigger && selectedArea.trigger.name.length > 0) {
             selectedArea.actions[selectedArea.actions.length - 1].service = currentPage
@@ -147,14 +145,20 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
         setCurrentPage("create")
     }
 
-    const handleIngredientChange = (ingredientName: string, index: number) => {
+    const handleIngredientChange = (ingredientName: string, index: number, name: string) => {
         setParametersInput(prev => {
             const updatedInputs = [...prev];
-            if (updatedInputs[index] === undefined) {
+            if (updatedInputs[index] === undefined || updatedInputs[index] === "") {
                 updatedInputs[index] = `<${ingredientName}>`;
-            } else
+            } else {
                 updatedInputs[index] += `<${ingredientName}>`;
+            }
             return updatedInputs;
+        })
+        setParametersNames(prev => {
+            const updatedNames = [...prev];
+            updatedNames[index] = name;
+            return updatedNames;
         });
     }
 
@@ -234,7 +238,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                                     required={!item.optional}
                                 />
                                 {mode.type === "actions" && ingredients.length > 0 ?
-                                    <select className='ingredient-pick' defaultValue={"Ingredients"} onChange={(e) => handleIngredientChange(e.target.value, index)}>
+                                    <select className='ingredient-pick' defaultValue={"Ingredients"} onChange={(e) => handleIngredientChange(e.target.value, index, item.name)}>
                                         <option value={"Ingredients"}>{"Ingredients"}</option>
                                         {ingredients.map((ingredient, i) => (
                                             <option key={i} value={ingredient.name}>{ingredient.description}</option>

@@ -65,7 +65,7 @@
     }
 }
 
-@media screen and (max-height: 960px) and (orientation: landscape) {
+@media screen and (max-height: 767px) and (orientation: landscape) {
     .register-title {
         margin-bottom: 2%;
     }
