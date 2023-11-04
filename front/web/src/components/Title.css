@@ -11,7 +11,7 @@
   }
 }
 
-@media screen and (max-height: 960px) and (orientation: landscape) {
+@media screen and (max-height: 767px) and (orientation: landscape) {
   .title {
     font-size: 30px;
   }
