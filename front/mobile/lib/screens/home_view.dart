@@ -79,14 +79,14 @@ class HomeViewState extends State<HomeView> {
       body: Column(
         children: <Widget>[
           const Padding(
-            padding: EdgeInsets.only(top: 60.0, bottom: 20.0),
+            padding: EdgeInsets.only(top: 50.0, bottom: 20.0),
             child: Center(
               child: Text(
-                'HOME',
+                'Home',
                 style: TextStyle(
                   color: Color(0xFFFFFFFF),
                   fontFamily: 'Archivo',
-                  fontSize: 26,
+                  fontSize: 30,
                   fontWeight: FontWeight.w900,
                 ),
               ),
