@@ -80,9 +80,10 @@ const Applet: React.FC<AppletProps> = ({ services, item, setReload }) => {
 
   return (
     <div className="applet-content-holder" style={{ backgroundColor: status === true ? currentService.color : "#565656" }}>
-      <div className='applet-content-container' style={{ backgroundColor: status === true ? adjustHexColor(currentService.color, 20) : "#565656", width: `${logos.length * 12.5 + 3}%` }}>        {logos.map((item, index) => (
-        <img style={index === 0 ? { marginLeft: 0 } : {}} alt={item} className="applet-logo" src={`${process.env.PUBLIC_URL}/servicesLogo/${item}.png`} key={index}></img>
-      ))}
+      <div className='applet-content-container' style={{ width: `${logos.length * 15}%` }}>
+        {logos.map((item, index) => (
+          <img style={index === 0 ? { marginLeft: 0 } : {}} alt={item} className="applet-logo" src={`${process.env.PUBLIC_URL}/servicesLogo/${item}.png`} key={index}></img>
+        ))}
       </div>
       <div className="applet-description">
         <div>{item.area_description ? item.area_description : ''}</div>
