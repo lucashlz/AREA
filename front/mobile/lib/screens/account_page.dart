@@ -150,12 +150,23 @@ class AccountPageState extends State<AccountPage> {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Welcome, $_username!',
-                style: const TextStyle(color: Colors.white, fontSize: 30),
+            Text(
+              'Welcome,',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 46, // Larger font size for "Welcome,"
+                fontWeight: FontWeight.bold, // Bold font weight for "Welcome,"
               ),
+            ),
+            Text(
+              '$_username !',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 30, // Font size for the username
+              ),
+            ),
               const SizedBox(height: 80),
               MyButton(
                 onPressed: navigateToChangeMail,

@@ -18,6 +18,7 @@ import jwtDecode from 'jwt-decode';
 import { ReactNotifications } from 'react-notifications-component';
 import ResetPassword from './components/pages/ResetPassword';
 import EmailChange from './components/pages/EmailChange';
+import PrivacyPolicy from './components/pages/PrivacyPolicy';
 
 function App() {  
   const userContext = useContext(UserContext);
@@ -57,6 +58,7 @@ function App() {
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path="/auth/confirm/:token" element={<Confirm />} />
         <Route path="/auth/confirm-email-change/:token" element={<EmailChange/>}/>
+        <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
       </Routes>
     </>
   );

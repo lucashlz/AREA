@@ -57,19 +57,13 @@ function Navbar() {
 
         {mobileMenuOpen && (
           <ul className="nav-menu active">
-            <li>
               <Link to='/login' className='nav-links' onClick={closeMobileMenu}>
                 Log in
               </Link>
-            </li>
-            <li>
-              <Button linkTo="/register" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
+              <Button linkTo="/register" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize={!button ? "btn--large" : "btn--medium"}>
                 Get started
               </Button>
-            </li>
-            <li>
               {!button ? <button className="get-apk-button" onClick={() => window.location.href = `${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
-            </li>
           </ul>
         )}
 

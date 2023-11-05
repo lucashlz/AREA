@@ -320,14 +320,13 @@ class ActionParameterInputPageState extends State<ActionParameterInputPage> {
               },
               style: ElevatedButton.styleFrom(
                 primary: Colors.white,
-                onPrimary: const Color(0xFF1D1D1D),
+                onPrimary: Color(0xFF1D1D1D),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 16.0),
+                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 16.0),
               ),
-              child: const Text("Add", style: TextStyle(fontSize: 18)),
+              child: Text("Add", style: TextStyle(fontSize: 18, fontFamily: 'Archivo', fontWeight: FontWeight.bold)),
             ),
           ),
           const SizedBox(height: 10),

@@ -2,17 +2,17 @@
     font-weight: 750;
     font-size: xx-large;
     text-align: center;
-    width: 50%;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
     left: 50%;
-    transform: translateX(-50%);
+    margin-top: 1%;
+    margin-bottom: 1%;
 }
 
 .services-container {
     margin-right: 20%;
     margin-left: 20%;
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
 }
 
 .services-holder {
@@ -28,10 +28,9 @@
     border-radius: 10px;
     flex-grow: 1;
     flex-basis: auto;
-    margin: 0;
-    margin-bottom: 3%;
+    margin: 3%;
     height: 20vh;
-    width: 100%;
+    width: 95%;
     max-width: 30vh;
     display: flex;
     justify-content: center;
@@ -64,15 +63,12 @@
 }
 
 .selection-button {
-    width: 30%;
     background: none;
     border: none;
     padding: 0;
     margin: 0;
     font: inherit;
     cursor:pointer;
-    justify-content: center;
-    display: flex;
 }
 
 .service-searchbar {
@@ -88,6 +84,8 @@
     }
     .service-txt {
         font-size:x-large;
+        margin-top: 6%;
+        margin-bottom: 6%;
     }
     .services-container {
         margin-right: 7%;

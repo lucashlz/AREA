@@ -202,7 +202,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
     _controller.setNavigationDelegate(
       NavigationDelegate(
         onPageFinished: (String url) {
-          if (url.startsWith("https://api.techparisarea.com/connect/")) {
+          if (url.startsWith("https://techparisarea.com")) {
             Navigator.of(context).pop();
             if (widget.sourceType == "triggers") {
               Navigator.push(
