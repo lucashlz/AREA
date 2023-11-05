@@ -4,7 +4,6 @@ import axios from 'axios';
 import { ServiceOAuthConstants } from '../../../../interfaces/serviceConnect';
 import { getServiceAuthorizeByName } from '../../../../interfaces/serviceConnect';
 import { postService } from '../../../../interfaces/postArea';
-import { TriggerReaction } from '../../../../interfaces/postArea';
 import { getLocalSelectedArea } from '../../../../interfaces/postArea';
 import SearchBar from '../../../SearchBar';
 import { aboutService } from '../../../../interfaces/aboutDotJson';
