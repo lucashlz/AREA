@@ -49,6 +49,9 @@ const DataSchema = new Schema({
         type: Schema.Types.Mixed,
         required: true,
     },
+    total: {
+        type: Schema.Types.Mixed,
+    },
 });
 
 /**

@@ -4,7 +4,7 @@ const aboutController = require("../controllers/aboutController");
 
 /**
  * @swagger
- * /about/about.json:
+ * /about.json:
  *   get:
  *     summary: Retrieve information about the server and supported services.
  *     description: Provides details on the server, such as the client's IP address, current server time, and a list of all available triggers and actions for each service.
@@ -71,6 +71,6 @@ const aboutController = require("../controllers/aboutController");
  *       500:
  *         description: Unexpected error occurred on the server side.
  */
-router.get("/about.json", aboutController.getInfo);
+router.get("/", aboutController.getInfo);
 
 module.exports = router;

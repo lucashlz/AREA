@@ -1,68 +1,38 @@
 const User = require("../models/userModels");
-const axios = require("axios");
-const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
-const jwt = require("jsonwebtoken");
-const emailService = require("../utils/emailUtils");
-const { findUserByExternalId, createNewExternalUser } = require("../utils/authUtils");
+const hashPassword = require("../utils/auth/password");
+const { generateUserToken } = require("../utils/token/userTokenUtils");
+const { verifyUserPassword } = require("../utils/auth/userAuth");
+const { isValidEmail, sendConfirmationMail } = require("../utils/email/emailHelpers");
+const { generateConfirmationToken } = require("../utils/token/userTokenUtils");
+const { getGoogleUserProfile, getGoogleAccessToken } = require("../utils/auth/googleAuth");
+const { findUserByExternalId, createNewExternalUser } = require("../utils/auth/externalUserService");
 
-exports.sign_up = async (req, res) => {
+exports.sign_up = async (req, res, next) => {
+    if (!isValidEmail(req.body.email)) return res.status(400).json({ message: "Invalid email format" });
+    if (!req.body.username) return res.status(400).json({ message: "Username is required" });
+    if (!req.body.authProvider && !req.body.password) return res.status(400).json({ message: "Password is required" });
     try {
-        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-        if (!req.body.email || !emailRegex.test(req.body.email)) {
-            return res.status(400).json({ message: "Invalid email format" });
-        }
-
-        if (!req.body.username) {
-            return res.status(400).json({ message: "Username is required" });
-        }
-
-        if (!req.body.authProvider && !req.body.password) {
-            return res.status(400).json({ message: "Password is required" });
-        }
-
-        let user = await User.findOne({
-            email: req.body.email,
-        });
-        if (user) {
-            return res.status(409).json({ message: "User already exists" });
-        }
-
-        user = new User(req.body);
-
+        const existingUser = await User.findOne({ email: req.body.email });
+        if (existingUser) return res.status(409).json({ message: "User already exists" });
+        const user = new User(req.body);
         user.username = req.body.username;
-        if (req.body.password) {
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(req.body.password, salt);
-        }
-
-        const confirmationToken = crypto.randomBytes(20).toString("hex");
-        user.confirmationToken = confirmationToken;
-
+        if (req.body.password) user.password = await hashPassword(req.body.password);
+        user.confirmationToken = generateConfirmationToken();
         await user.save();
-
-        emailService.sendConfirmationMail(user.email, confirmationToken);
-
+        sendConfirmationMail(user.email, user.confirmationToken);
         res.status(200).json({ message: "User registered. Please confirm your email." });
     } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ message: "Server error" });
+        next(err);
     }
 };
 
-exports.confirm = async (req, res) => {
+exports.confirm = async (req, res, next) => {
     try {
-        const user = await User.findOne({ confirmationToken: req.params.token });
-        if (!user) {
-            return res.status(400).json({ message: "Invalid token" });
-        }
-        user.confirmed = true;
-        user.confirmationToken = undefined;
-        await user.save();
+        const user = await User.findOneAndUpdate({ confirmationToken: req.params.token }, { confirmed: true, confirmationToken: undefined });
+        if (!user) return res.status(400).json({ message: "Invalid token" });
         res.status(200).json({ message: "Account confirmed successfully" });
     } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ message: "Server error" });
+        next(err);
     }
 };
 
@@ -72,12 +42,10 @@ exports.confirmEmailChange = async (req, res) => {
         if (!user) {
             return res.status(400).json({ message: "Invalid token" });
         }
-
         if (user.pendingEmail) {
             user.email = user.pendingEmail;
             user.pendingEmail = undefined;
         }
-
         user.emailChangeToken = undefined;
         await user.save();
         res.status(200).json({ message: "Email changed successfully" });
@@ -87,31 +55,15 @@ exports.confirmEmailChange = async (req, res) => {
     }
 };
 
-exports.sign_in = async (req, res) => {
+exports.sign_in = async (req, res, next) => {
     try {
-        const user = await User.findOne({
-            email: req.body.email,
-        });
-        if (!user) {
-            return res.status(401).json({ message: "User does not exist" });
-        }
-
-        const isMatch = await bcrypt.compare(req.body.password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: "Invalid credentials" });
-        }
-
-        if (!user.confirmed) {
-            return res.status(400).json({ message: "Please confirm your account first" });
-        }
-
-        const token = jwt.sign({ id: user._id }, process.env.SECRET_JWT, {
-            expiresIn: "24h",
-        });
+        const user = await verifyUserPassword(req.body.email, req.body.password);
+        if (!user) return res.status(401).json({ message: "User does not exist or invalid credentials" });
+        if (!user.confirmed) return res.status(400).json({ message: "Please confirm your account first" });
+        const token = await generateUserToken(user._id);
         res.status(200).json({ token });
     } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ message: "Server error" });
+        next(err);
     }
 };
 
@@ -126,31 +78,17 @@ exports.handleGoogleCallback = async (req, res) => {
     const redirectUri = "http://localhost:8080/auth/google/callback";
 
     try {
-        const response = await axios.post('https://oauth2.googleapis.com/token', {
-            code: code,
-            client_id: process.env.GOOGLE_CLIENT_ID,
-            client_secret: process.env.GOOGLE_CLIENT_SECRET,
-            redirect_uri: redirectUri,
-            grant_type: 'authorization_code'
-        });
-        const { access_token } = response.data;
-        const profileResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
-            headers: {
-                'Authorization': 'Bearer ' + access_token,
-            }
-        });
+        const { data } = await getGoogleAccessToken(code, redirectUri);
+        const { access_token } = data;
+        const profileResponse = await getGoogleUserProfile(access_token);
         const email = profileResponse.data.email;
-        let existingUser = await findUserByExternalId("google", email);
-        if (existingUser) {
-            const token = jwt.sign({ id: existingUser._id }, process.env.SECRET_JWT, { expiresIn: '24h' });
-            return res.status(200).redirect(`http://localhost:8081/applets?token=${token}`);
-        }
-        const newUser = await createNewExternalUser("google", email);
-        const token = jwt.sign({ id: newUser._id }, process.env.SECRET_JWT, { expiresIn: '24h' });
+        let user = await findUserByExternalId("google", email);
+        if (!user) user = await createNewExternalUser("google", email);
+        const token = await generateUserToken(user._id);
         res.status(200).redirect(`http://localhost:8081/applets?token=${token}`);
     } catch (error) {
         console.error("Error during Google authentication:", error);
-        return res.status(500).json({ message: "Server error during authentication." });
+        res.status(500).json({ message: "Server error during authentication." });
     }
 };
 
@@ -158,22 +96,14 @@ exports.handleMobileGoogleAuth = async (req, res) => {
     const accessToken = req.body.access_token;
 
     try {
-        const profileResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
-            headers: {
-                'Authorization': 'Bearer ' + accessToken,
-            }
-        });
+        const profileResponse = await getGoogleUserProfile(accessToken);
         const email = profileResponse.data.email;
-        let existingUser = await findUserByExternalId("google", email);
-        if (existingUser) {
-            const token = jwt.sign({ id: existingUser._id }, process.env.SECRET_JWT, { expiresIn: '24h' });
-            return res.status(200).json({ token });
-        }
-        const newUser = await createNewExternalUser("google", email);
-        const token = jwt.sign({ id: newUser._id }, process.env.SECRET_JWT, { expiresIn: '24h' });
+        let user = await findUserByExternalId("google", email);
+        if (!user) user = await createNewExternalUser("google", email);
+        const token = await generateUserToken(user._id);
         res.status(200).json({ token });
     } catch (error) {
         console.error("Error during Google authentication:", error);
-        return res.status(500).json({ message: "Server error during authentication." });
+        res.status(500).json({ message: "Server error during authentication." });
     }
 };

@@ -32,7 +32,7 @@ Future<List<Area>> fetchAreas() async {
 }
 
 Future<List<Service>> fetchServices() async {
-  const String url = 'https://api.techparisarea.com/about/about.json';
+  const String url = 'https://api.techparisarea.com/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
   final response = await http.get(
@@ -66,7 +66,10 @@ class HomeViewState extends State<HomeView> {
     if (_searchQuery.isEmpty) {
       return areas;
     }
-    return areas.where((area) => area.description.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+    return areas
+        .where((area) =>
+            area.description.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .toList();
   }
 
   @override
@@ -110,15 +113,18 @@ class HomeViewState extends State<HomeView> {
               builder: (context, serviceSnapshot) {
                 if (serviceSnapshot.connectionState == ConnectionState.done) {
                   if (serviceSnapshot.hasError) {
-                    return Center(child: Text('Error: ${serviceSnapshot.error}'));
+                    return Center(
+                        child: Text('Error: ${serviceSnapshot.error}'));
                   }
                   List<Service> services = serviceSnapshot.data!;
                   return FutureBuilder<List<Area>>(
                     future: futureAreas,
                     builder: (context, areaSnapshot) {
-                      if (areaSnapshot.connectionState == ConnectionState.done) {
+                      if (areaSnapshot.connectionState ==
+                          ConnectionState.done) {
                         if (areaSnapshot.hasError) {
-                          return Center(child: Text('Error: ${areaSnapshot.error}'));
+                          return Center(
+                              child: Text('Error: ${areaSnapshot.error}'));
                         }
                         List<Area> areas = _filterServices(areaSnapshot.data!);
                         if (areas.isEmpty) {

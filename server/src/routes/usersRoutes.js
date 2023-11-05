@@ -44,6 +44,6 @@ router.delete("/delete", usersController.deleteLoggedInUser);
  *       500:
  *         description: Server error.
  */
-router.delete('/disconnect/:service_name', usersController.disconnectService);
+router.delete("/disconnect/:service_name", usersController.disconnectService);
 
 module.exports = router;

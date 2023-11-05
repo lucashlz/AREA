@@ -14,6 +14,7 @@ export interface IUserContext {
   deleteUser: () => Promise<any>;
   confirmAccount: (token: string) => Promise<any>;
   disconnectService: (serviceName: string) => Promise<any>;
+  confirmEmailChange: (token: string) => Promise<any>;
 }
 
 export const UserContext = createContext<IUserContext | undefined>(undefined);
@@ -55,6 +56,23 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     }
   }
   
+  const confirmEmailChange = async (token: string) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/auth/confirm-email-change/${token}`);
+
+      console.log('Received response from API:', response.data);
+      return { status: response.status, message: response.data.message };
+    } catch (error) {
+      console.error("Error updating infos:", error);
+
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Server responded with:", error.response.data);
+        return { status: error.response.status, message: error.response.data.message };
+      } else {
+        throw error;
+      }
+    }
+  }
 
 
   const signIn = async (email: string, password: string): Promise<any> => {
@@ -218,7 +236,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   }, [token]);
 
   return (
-    <UserContext.Provider value={{signUp, signIn, createUser, deleteUser, signOut, getGoogleToken, token, getUserInfo, updateInfo, setToken, confirmAccount, disconnectService}}>
+    <UserContext.Provider value={{signUp, signIn, createUser, deleteUser, signOut, getGoogleToken, token, getUserInfo, updateInfo, setToken, confirmAccount, disconnectService, confirmEmailChange}}>
       {children}
     </UserContext.Provider>
   )
