@@ -182,7 +182,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
     let uppername = services.name[0]?.toUpperCase() + services.name.slice(1)
 
     return (
-        <div className="container">
+        <div className="services-actions-container">
             <div>
                 <div className='cancel-bar' style={{ backgroundColor: services.color }}>
                     <button className='back-button' style={{ color: 'white' }} onClick={() => {

@@ -104,76 +104,78 @@ const AccountPage: React.FC = () => {
   };
 
   return (
-    <div className="account-container">
-      <form className='account-form'>
-        <Title title='Account settings' className='account-title'/>
-        {/* <div className="account-main-text">Account settings</div> */}
-        <Button buttonSize='btn--medium' buttonStyle='btn--primary-inverted' type='button' onClick={signOut} >Logout</Button>
-        <Button color="red" type="button" buttonStyle='btn--outline' buttonSize="btn--medium" onClick={handleDeleteAccount}>
+      <div className="account-container">
+        <form className='account-form'>
+          <Title title='Account settings' className='account-title' />
+
+          <div className="account-input-titles">
+            <label htmlFor="username" className="input-title">Username</label>
+            <Input type='text' value={formData.username} onChange={handleInputChange} required name='username' />
+          </div>
+          <div className="account-input-titles">
+            <label htmlFor="username" className="input-title">Email</label>
+            <Input type='email' name='email' value={formData.email} required onChange={handleInputChange} />
+          </div>
+          <div className="account-input-titles">
+            <label htmlFor="username" className="input-title">Old Password</label>
+            <Input type='password' name='oldPassword' required onChange={handleInputChange} />
+          </div>
+          <div className="account-input-titles">
+            <label htmlFor="username" className="input-title">New Password</label>
+            <Input type='password' name='newPassword' required onChange={handleInputChange} />
+          </div>
+          <div className={`api-response-message ${statusCode === 200 ? 'success-message' : 'error-message'}`}>
+            {message}
+          </div>
+
+          <Button buttonSize='btn--large' buttonStyle='btn--primary-inverted' type='button' onClick={handleSubmit} >Update Infos</Button>
+        </form>
+        <div style={{height: "2vh"}}></div>
+        <Button buttonSize={'btn--medium'} buttonStyle='btn--primary-inverted' type='button' onClick={signOut} >Logout</Button>
+        <div style={{height: "0.5vw"}}></div>
+        <Button buttonSize={'btn--medium'} buttonStyle='btn--outline' type="button" color="red" onClick={handleDeleteAccount}>
           <FaTrash className="bin-icon" />&nbsp;&nbsp;&nbsp;Delete Account
         </Button>
-
-        <div className="account-input-titles">
-          <label htmlFor="username" className="input-title">Username</label>
-          <Input type='text' value={formData.username} onChange={handleInputChange} required name='username' />
-        </div>
-        <div className="account-input-titles">
-          <label htmlFor="username" className="input-title">Email</label>
-          <Input type='email' name='email' value={formData.email} required onChange={handleInputChange} />
-        </div>
-        <div className="account-input-titles">
-          <label htmlFor="username" className="input-title">Old Password</label>
-          <Input type='password' name='oldPassword' required onChange={handleInputChange} />
-        </div>
-        <div className="account-input-titles">
-          <label htmlFor="username" className="input-title">New Password</label>
-          <Input type='password' name='newPassword' required onChange={handleInputChange} />
-        </div>
-        <div className={`api-response-message ${statusCode === 200 ? 'success-message' : 'error-message'}`}>
-          {message}
-        </div>
-
-        <Button buttonSize='btn--large' buttonStyle='btn--primary-inverted' type='button' onClick={handleSubmit} >Update Infos</Button>
-      </form>
-      <div className="connected-services-container">
-       {/*  <div className="connected-services-title">Connected services</div> */}
-       <Title className='account-title' title='Connected services'/>
-        <div className="services-list">
-          {connectedServices.length === 0 ? (
-            <div className="service-item no-service" style={{ backgroundColor: 'lightgray' }}>
-              <div className="no-service-content">
-                No services
-              </div>
-            </div>
-          ) : (
-            connectedServices.map(service => (
-              <div
-                key={service}
-                className="service-item"
-                style={{ backgroundColor: SERVICE_COLORS[service] || 'defaultColor' }}
-                onMouseEnter={() => setDisconnectingService(service)}
-                onMouseLeave={() => setDisconnectingService(null)}
-                onClick={() => handleShowModal(service)}
-              >
-                <div className="service-content">
-                  <img src={`/servicesLogo/${service}.png`} alt={`${service} logo`} />
-                  {disconnectingService === service ? "Delete" : service.charAt(0).toUpperCase() + service.slice(1)}
+        <div style={{height: "2vh"}}></div>
+        <div className="connected-services-container">
+          {/*  <div className="connected-services-title">Connected services</div> */}
+          <Title className='account-title' title='Connected services' />
+          <div className="services-list">
+            {connectedServices.length === 0 ? (
+              <div className="service-item no-service" style={{ backgroundColor: 'lightgray' }}>
+                <div className="no-service-content">
+                  No services
                 </div>
               </div>
-            ))
-          )}
-          {showModal && serviceToDisconnect && (
-            <ConfirmationModal
-              service={serviceToDisconnect}
-              onConfirm={handleDisconnectConfirm}
-              onCancel={handleCloseModal}
-            />
-          )}
+            ) : (
+              connectedServices.map(service => (
+                <div
+                  key={service}
+                  className="service-item"
+                  style={{ backgroundColor: SERVICE_COLORS[service] || 'defaultColor' }}
+                  onMouseEnter={() => setDisconnectingService(service)}
+                  onMouseLeave={() => setDisconnectingService(null)}
+                  onClick={() => handleShowModal(service)}
+                >
+                  <div className="service-content">
+                    <img src={`/servicesLogo/${service}.png`} alt={`${service} logo`} />
+                    {disconnectingService === service ? "Delete" : service.charAt(0).toUpperCase() + service.slice(1)}
+                  </div>
+                </div>
+              ))
+            )}
+            {showModal && serviceToDisconnect && (
+              <ConfirmationModal
+                service={serviceToDisconnect}
+                onConfirm={handleDisconnectConfirm}
+                onCancel={handleCloseModal}
+              />
+            )}
+          </div>
+
         </div>
 
       </div>
-
-    </div>
   );
 };
 
