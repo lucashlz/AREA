@@ -85,7 +85,7 @@ class ActionParameterInputPageState extends State<ActionParameterInputPage> {
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: Column(
+      body: ListView(
         children: [
           Container(
             color: backgroundColor,
@@ -112,12 +112,7 @@ class ActionParameterInputPageState extends State<ActionParameterInputPage> {
               ),
             ),
           ),
-          Expanded(
-            child: Container(
-              color: backgroundColor,
-              child: ListView.builder(
-                itemCount: widget.action.parameters.length,
-                itemBuilder: (context, index) {
+          ...List.generate(widget.action.parameters.length, (index) {
                   final parameter = widget.action.parameters[index];
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 15.0),
@@ -297,8 +292,7 @@ class ActionParameterInputPageState extends State<ActionParameterInputPage> {
                   );
                 },
               ),
-            ),
-          ),
+
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
