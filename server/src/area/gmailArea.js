@@ -77,7 +77,7 @@ exports.sendEmail = async function (userId, to, cc, bcc, subject, body, attachme
 exports.sendEmailToSelf = async function (userId, subject, body, attachmentUrl, ingredients) {
     const user = await User.findById(userId);
     if (user && user.email) {
-        return exports.sendEmail(userId, user.email, "", "", subject, body, attachmentUrl, ingredients);
+        return exports.sendEmail(userId, user.connectServices.get("gmail").data.email, "", "", subject, body, attachmentUrl, ingredients);
     }
     throw new Error("User email not found.");
 };
