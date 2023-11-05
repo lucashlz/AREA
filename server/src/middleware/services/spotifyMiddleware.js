@@ -2,7 +2,7 @@ const axios = require('axios');
 
 async function spotifyOAuthMiddleware(req, res, next) {
     const code = req.query.code;
-    const redirectUri = "http://localhost:8080/connect/spotify/callback";
+    const redirectUri = "https://api.techparisarea.com/connect/spotify/callback";
     const clientId = process.env.SPOTIFY_CLIENT_ID;
     const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
     try {
@@ -33,7 +33,7 @@ async function spotifyOAuthMiddleware(req, res, next) {
         next();
     } catch (error) {
         console.error("Error during token exchange:", error);
-        return res.status(500).redirect("http://localhost:8081/create?connect=error");
+        return res.status(500).redirect("https://techparisarea.com/create?connect=error");
     }
 }
 

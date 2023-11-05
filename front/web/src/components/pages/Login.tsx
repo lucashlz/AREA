@@ -47,7 +47,7 @@ const Login: React.FC = () => {
         {error && <p>{error}</p>}
         <div className='forgot-password underline-text' onClick={() => setPasswordPage(true)} >Forgot your password ?</div>
         <button type="button" className="btn btn--primary-inverted btn--large" onClick={handleSubmit}>Log in</button>
-        <div className='login-auth' >Continue with <a href="http://localhost:8080/auth/google" className='underline-text'>Google</a></div>
+        <div className='login-auth' >Continue with <a href="https://api.techparisarea.com/auth/google" className='underline-text'>Google</a></div>
       </form>
       </div>
     </div>

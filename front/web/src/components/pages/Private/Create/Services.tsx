@@ -28,7 +28,7 @@ const Service: React.FC<ServiceProps> = ({ serviceInfos, setCurrentPage }) => {
     const popup = useRef<any>();
 
     const checkConnect = async () => {
-        const response = await axios.get('http://localhost:8080/profile', { headers: { Authorization: `Bearer ${token}` } });
+        const response = await axios.get('https://api.techparisarea.com/profile', { headers: { Authorization: `Bearer ${token}` } });
         if (response.status === 200) {
             if (response.data.connectServices.includes(initialName)) {
                 setIsConnected(true)
@@ -72,7 +72,7 @@ const Service: React.FC<ServiceProps> = ({ serviceInfos, setCurrentPage }) => {
         };
 
         try {
-            const response = await axios.get(`http://localhost:8080/connect/get${upperName}OAuthConstants`, { headers: headers });
+            const response = await axios.get(`https://api.techparisarea.com/connect/get${upperName}OAuthConstants`, { headers: headers });
             if (response.status === 200) {
                 setServiceOAuthConstants(response.data);
             }
@@ -118,7 +118,7 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
         const fetchData = async () => {
             let token = localStorage.getItem('userToken');
             try {
-                const response = await axios.get('http://localhost:8080/about.json', { headers: { Authorization: `Bearer ${token}` } });
+                const response = await axios.get('https://api.techparisarea.com/about.json', { headers: { Authorization: `Bearer ${token}` } });
                 if (response.data) {
                     setServices(response.data.server.services)
                 }
@@ -149,7 +149,7 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
     return (
         <div className='services-main-container'>
             <div className='cancel-bar'>
-                <button className='back-button' onClick={() => { window.location.href = "http://localhost:8081/create"; setCurrentPage("create") }}>
+                <button className='back-button' onClick={() => { window.location.href = "https://techparisarea.com/create"; setCurrentPage("create") }}>
                     Cancel
                 </button>
             </div>

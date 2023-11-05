@@ -60,7 +60,7 @@ export default function ResetPassword() {
 
   const changePassword = async () => {
     try {
-        const res = await axios.post('http://localhost:8080/reset/password', { token, newPassword: password }, {
+        const res = await axios.post('https://api.techparisarea.com/reset/password', { token, newPassword: password }, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -103,7 +103,7 @@ export default function ResetPassword() {
   const sendEmail = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:8080/reset/request-password-reset",
+        "https://api.techparisarea.com/reset/request-password-reset",
         { email }
       );
       if (res && res.status === 200) {

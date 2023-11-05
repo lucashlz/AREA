@@ -2,7 +2,7 @@ const axios = require('axios');
 
 async function twitchOAuthMiddleware(req, res, next) {
     const code = req.query.code;
-    const redirectUri = "http://localhost:8080/connect/twitch/callback";
+    const redirectUri = "https://api.techparisarea.com/connect/twitch/callback";
     const clientId = process.env.TWITCH_CLIENT_ID;
     const clientSecret = process.env.TWITCH_CLIENT_SECRET;
     try {
@@ -32,7 +32,7 @@ async function twitchOAuthMiddleware(req, res, next) {
         next();
     } catch (error) {
         console.error("Error during token exchange:", error);
-        return res.status(500).redirect("http://localhost:8081/create?connect=error");
+        return res.status(500).redirect("https://techparisarea.com/create?connect=error");
     }
 }
 

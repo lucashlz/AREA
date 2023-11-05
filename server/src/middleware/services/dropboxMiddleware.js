@@ -2,7 +2,7 @@ const axios = require("axios");
 
 async function dropboxOAuthMiddleware(req, res, next) {
     const code = req.query.code;
-    const redirectUri = "http://localhost:8080/connect/dropbox/callback";
+    const redirectUri = "https://api.techparisarea.com/connect/dropbox/callback";
     const clientId = process.env.DROPBOX_CLIENT_ID;
     const clientSecret = process.env.DROPBOX_CLIENT_SECRET;
 
@@ -35,7 +35,7 @@ async function dropboxOAuthMiddleware(req, res, next) {
         next();
     } catch (error) {
         console.error("Error during token exchange or profile fetching:", error.response.data);
-        return res.status(500).redirect("http://localhost:8081/create?connect=error");
+        return res.status(500).redirect("https://techparisarea.com/create?connect=error");
     }
 }
 

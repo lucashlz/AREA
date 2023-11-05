@@ -68,14 +68,14 @@ exports.sign_in = async (req, res, next) => {
 };
 
 exports.redirectToGoogle = (req, res) => {
-    const redirectUri = "http://localhost:8080/auth/google/callback";
+    const redirectUri = "https://api.techparisarea.com/auth/google/callback";
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&scope=profile%20email`;
     res.redirect(authUrl);
 };
 
 exports.handleGoogleCallback = async (req, res) => {
     const code = req.query.code;
-    const redirectUri = "http://localhost:8080/auth/google/callback";
+    const redirectUri = "https://api.techparisarea.com/auth/google/callback";
 
     try {
         const { data } = await getGoogleAccessToken(code, redirectUri);
@@ -85,9 +85,9 @@ exports.handleGoogleCallback = async (req, res) => {
         let user = await findUserByExternalId("google", email);
         if (!user) user = await createNewExternalUser("google", email);
         const token = await generateUserToken(user._id);
-        res.status(200).redirect(`http://localhost:8081/applets?token=${token}`);
+        res.status(200).redirect(`https://techparisarea.com/applets?token=${token}`);
     } catch (error) {
         console.error("Error during Google authentication:", error);
-        res.status(500).redirect("http://localhost:8081/login");
+        res.status(500).redirect("https://techparisarea.com/login");
     }
 };

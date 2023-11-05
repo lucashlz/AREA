@@ -16,9 +16,9 @@ exports.callback = async (serviceName, req, res) => {
         const { state: oAuthSessionIdFromState } = req.query;
         const serviceData = req[SERVICES[serviceName].dataKey];
         await handleOAuthCallback(serviceName, oAuthSessionIdFromState, serviceData);
-        res.status(200).redirect("http://localhost:8081/create?service=" + serviceName);
+        res.status(200).redirect("https://techparisarea.com/create?service=" + serviceName);
     } catch (error) {
         console.error(`Error during ${serviceName} connection:`, error);
-        return res.status(500).redirect("http://localhost:8081/create?connect=error");
+        return res.status(500).redirect("https://techparisarea.com/create?connect=error");
     }
 };

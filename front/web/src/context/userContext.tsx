@@ -28,7 +28,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
 
   const signUp = async (email: string, password: string) => {
     try {
-      const response = await axios.post('http://localhost:8080/auth/register', { email, password });
+      const response = await axios.post('https://api.techparisarea.com/auth/register', { email, password });
       if (response.data.token) {
         localStorage.setItem('userToken', response.data.token);
         setToken(response.data.token);
@@ -40,7 +40,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
 
   const confirmAccount = async (token: string) => {
     try {
-      const response = await axios.get(`http://localhost:8080/auth/confirm/${token}`);
+      const response = await axios.get(`https://api.techparisarea.com/auth/confirm/${token}`);
 
       console.log('Received response from API:', response.data);
       return { status: response.status, message: response.data.message };
@@ -55,10 +55,10 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
       }
     }
   }
-  
+
   const confirmEmailChange = async (token: string) => {
     try {
-      const response = await axios.get(`http://localhost:8080/auth/confirm-email-change/${token}`);
+      const response = await axios.get(`https://api.techparisarea.com/auth/confirm-email-change/${token}`);
 
       console.log('Received response from API:', response.data);
       return { status: response.status, message: response.data.message };
@@ -79,7 +79,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     console.log(`Attempting to sign in user with email: ${email}`);
 
     try {
-      const response = await axios.post('http://localhost:8080/auth/sign-in', { email, password }, {
+      const response = await axios.post('https://api.techparisarea.com/auth/sign-in', { email, password }, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -111,7 +111,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
 
   const createUser = async (username: string, email: string, password: string, setError: (e: any) => void) => {
     try {
-        const res = await axios.post(`http://localhost:8080/auth/sign-up`, {username, email, password});
+        const res = await axios.post(`https://api.techparisarea.com/auth/sign-up`, {username, email, password});
         if (res.data.token) {
           localStorage.setItem('userToken', res.data.token);
           setToken(res.data.token);
@@ -133,7 +133,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
 
   const deleteUser = async () => {
     try {
-      const response = await axios.delete('http://localhost:8080/users/delete', {
+      const response = await axios.delete('https://api.techparisarea.com/users/delete', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -153,7 +153,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
 
   const getGoogleToken = async () => {
     try {
-          const res = await axios.get("http://localhost:8080/auth/google/callback");
+          const res = await axios.get("https://api.techparisarea.com/auth/google/callback");
           if (res.data.token) {
             localStorage.setItem('userToken', res.data.token);
             setToken(res.data.token);
@@ -169,7 +169,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
 
   const getUserInfo = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/profile', {
+      const response = await axios.get('https://api.techparisarea.com/profile', {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -183,7 +183,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
 
   const disconnectService = async (serviceName: string): Promise<any> => {
     try {
-      const response = await axios.delete(`http://localhost:8080/users/disconnect/${serviceName}`, {
+      const response = await axios.delete(`https://api.techparisarea.com/users/disconnect/${serviceName}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -204,7 +204,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
     console.log(`UPDATING INFOS...`);
 
     try {
-      const response = await axios.put('http://localhost:8080/profile/update', { email, username, oldPassword, newPassword }, {
+      const response = await axios.put('https://api.techparisarea.com/profile/update', { email, username, oldPassword, newPassword }, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`

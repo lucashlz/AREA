@@ -64,9 +64,9 @@ const generateMailTemplate = (bodyContent) => {
               <div style="font-weight: bold; color: #000000;">${bodyContent}</div>
           </div>
           <div style="padding-top: 30px;">
-              <h2 style="font-weight: bold; font-size: 24px; margin-bottom: 10px;"><a href="http://localhost:8081/" style="color: #000000; text-decoration: none;">Visit AREAS Website</a></h2>
+              <h2 style="font-weight: bold; font-size: 24px; margin-bottom: 10px;"><a href="https://techparisarea.com/" style="color: #000000; text-decoration: none;">Visit AREAS Website</a></h2>
               <p style="font-weight: bold; color: #000000;">14-16 Rue Voltaire, 94270 Le Kremlin-Bicêtre</p>
-              <p style="font-weight: bold; color: #000000;">&copy; ${new Date().getFullYear()} AREAS. All rights reserved. <a href="http://localhost:8081/privacy-policy" style="color: #000000; text-decoration: none;">Privacy Policy</a></p>
+              <p style="font-weight: bold; color: #000000;">&copy; ${new Date().getFullYear()} AREAS. All rights reserved. <a href="https://techparisarea.com/privacy-policy" style="color: #000000; text-decoration: none;">Privacy Policy</a></p>
           </div>
       </div>
     `;
@@ -75,7 +75,7 @@ const generateMailTemplate = (bodyContent) => {
 exports.sendConfirmationMail = async (email, confirmationToken) => {
     const bodyContent = `
     <p>To confirm your email, please click the button below</p>
-    ${generateButton("http://localhost:8081/auth/confirm/" + confirmationToken, "Confirm Your Email")}
+    ${generateButton("https://techparisarea.com/auth/confirm/" + confirmationToken, "Confirm Your Email")}
     `;
 
     const mailOptions = {
@@ -90,7 +90,7 @@ exports.sendConfirmationMail = async (email, confirmationToken) => {
 const sendEmailChangeConfirmationMail = async (email, emailChangeToken) => {
     const bodyContent = `
       <p>To confirm, please click the link below</p>
-      ${generateButton("http://localhost:8081/auth/confirm-email-change/" + emailChangeToken, "Confirm New Email")}
+      ${generateButton("https://techparisarea.com/auth/confirm-email-change/" + emailChangeToken, "Confirm New Email")}
     `;
 
     const mailOptions = {
@@ -106,7 +106,7 @@ exports.sendPasswordResetMail = async (email, resetToken) => {
     const bodyContent = `
       <p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p>
       <p>Please click on the button below to complete the process within one hour:</p>
-      ${generateButton("http://localhost:8080/reset/password/" + resetToken, "Reset Your Password")}
+      ${generateButton("https://api.techparisarea.com/reset/password/" + resetToken, "Reset Your Password")}
       <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
     `;
 

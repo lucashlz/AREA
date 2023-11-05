@@ -68,7 +68,7 @@ const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedA
                 if (actionInfos.ingredients) {
                     localStorage.setItem('selectedIngredients', JSON.stringify(actionInfos.ingredients))
                 }
-                window.location.href = "http://localhost:8081/create";
+                window.location.href = "https://techparisarea.com/create";
                 setCurrentPage("create")
             }
         }
@@ -101,7 +101,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
             setSelectedArea(area)
 
             try {
-                const response = await axios.get('http://localhost:8080/about.json', { headers: { Authorization: `Bearer ${token}` } });
+                const response = await axios.get('https://api.techparisarea.com/about.json', { headers: { Authorization: `Bearer ${token}` } });
                 if (response.data) {
                     let service = response.data.server.services;
                     const currentService = service.find((service: aboutService) => service.name === currentPage);
@@ -145,7 +145,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
             }
         }
         localStorage.setItem('selectedArea', JSON.stringify(selectedArea));
-        window.location.href = "http://localhost:8081/create";
+        window.location.href = "https://techparisarea.com/create";
         setCurrentPage("create")
     }
 

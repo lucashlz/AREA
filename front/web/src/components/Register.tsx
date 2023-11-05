@@ -86,7 +86,7 @@ export default function Register() {
       >
         Get started
       </Button>
-      <a href="http://localhost:8080/auth/google" className="register-auth">
+      <a href="https://api.techparisarea.com/auth/google" className="register-auth">
         <img
           src={`${process.env.PUBLIC_URL}/logo_google.png`}
           className="register-google"

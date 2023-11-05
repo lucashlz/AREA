@@ -38,7 +38,7 @@ exports.displayResetForm = async (req, res) => {
             resetPasswordExpires: { $gt: Date.now() },
         });
         if (!user) return res.status(400).send(INVALID_TOKEN_MSG);
-        res.redirect(`http://localhost:8081/reset-password?token=${token}`);
+        res.redirect(`https://techparisarea.com/reset-password?token=${token}`);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: SERVER_ERROR_MSG });

@@ -29,7 +29,7 @@ const Applet: React.FC<AppletProps> = ({ services, item, setReload }) => {
 
   const toogleStatus = async () => {
     try {
-      const response = await axios.put(`http://localhost:8080/areas/${item._id}/switch_activation`, { id: item._id }, { headers: { Authorization: `Bearer ${token}` } });
+      const response = await axios.put(`https://api.techparisarea.com/areas/${item._id}/switch_activation`, { id: item._id }, { headers: { Authorization: `Bearer ${token}` } });
       if (response.status === 200) {
         setStatus(!status)
       }
@@ -39,7 +39,7 @@ const Applet: React.FC<AppletProps> = ({ services, item, setReload }) => {
   }
 
   const deleteApplet = async () => {
-    const response = await axios.delete(`http://localhost:8080/areas/${item._id}`, { headers: { Authorization: `Bearer ${token}` } });
+    const response = await axios.delete(`https://api.techparisarea.com/areas/${item._id}`, { headers: { Authorization: `Bearer ${token}` } });
     if (response.status === 200) {
       setReload(Math.random())
     } else {
@@ -129,7 +129,7 @@ export default function Applets() {
     const fetchData = async () => {
       let token = localStorage.getItem('userToken');
       try {
-        const response = await axios.get('http://localhost:8080/about.json', { headers: { Authorization: `Bearer ${token}` } });
+        const response = await axios.get('https://api.techparisarea.com/about.json', { headers: { Authorization: `Bearer ${token}` } });
         if (response.data.server.services) {
           setServices(response.data.server.services)
         }
@@ -143,7 +143,7 @@ export default function Applets() {
 
   useEffect(() => {
     const getApplets = async () => {
-      const response = await axios.get('http://localhost:8080/areas', { headers: { Authorization: `Bearer ${token}` } });
+      const response = await axios.get('https://api.techparisarea.com/areas', { headers: { Authorization: `Bearer ${token}` } });
       if (response.status === 200) {
         setAreas(response.data)
       } else {
