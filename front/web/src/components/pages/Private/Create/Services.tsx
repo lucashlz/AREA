@@ -7,17 +7,18 @@ import { postService } from '../../../../interfaces/postArea';
 import { TriggerReaction } from '../../../../interfaces/postArea';
 import { getLocalSelectedArea } from '../../../../interfaces/postArea';
 import SearchBar from '../../../SearchBar';
+import { aboutService } from '../../../../interfaces/aboutDotJson';
 
 interface ServicesProps {
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
 }
 
-interface ServiceProps<T> {
-    serviceInfos: T;
+interface ServiceProps {
+    serviceInfos: aboutService;
     setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) => {
+const Service: React.FC<ServiceProps> = ({ serviceInfos, setCurrentPage }) => {
     const [serviceOAuthConstants, setServiceOAuthConstants] = useState<ServiceOAuthConstants | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const [selectedArea, setSelectedArea] = useState<postService>()
@@ -73,16 +74,6 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
         }
     }, [serviceOAuthConstants])
 
-    if (selectedArea) {
-        if (selectedArea.trigger.name.length === 0) {
-            if (serviceInfos.triggers.length === 0)
-                return <></>
-        } else {
-            if (serviceInfos.actions.length === 0)
-                return <></>
-        }
-    }
-
     const getOAuthConstants = async () => {
         const headers = {
             Authorization: `Bearer ${token}`
@@ -127,7 +118,9 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
 
 const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
     const [searchInput, setSearchInput] = useState('');
-    const [services, setServices] = useState<TriggerReaction[]>([]);
+    const [services, setServices] = useState<aboutService[]>([]);
+    let realServices: aboutService[] = [];
+    const [selectedArea, setSelectedArea] = useState<postService>()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -141,10 +134,24 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
                 console.error("Error while fetching areas");
             }
         }
+        setSelectedArea(getLocalSelectedArea())
         fetchData();
     }, []);
 
-    if (!services)
+    if (selectedArea) {
+        for (let i = 0; i < services.length; i++) {
+            if (selectedArea.trigger.name.length > 0) {
+                if (services[i].actions.length > 0) {
+                    realServices.push(services[i])
+                }
+            } else {
+                if (services[i].triggers.length > 0) {
+                    realServices.push(services[i])
+                }
+            }
+        }
+    }
+    if (realServices.length === 0)
         return <></>
 
     return (
@@ -157,11 +164,11 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
             </div>
             <div className='thin-line'></div>
             <div className="services-container">
-                <div className='service-searchbar' style={{marginTop: "2rem", marginBottom: "1rem"}}>
-                <SearchBar searchInput={searchInput} setSearchInput={setSearchInput} items={services} setItems={setServices} name={['name']} />
+                <div className='service-searchbar' style={{ marginTop: "2rem", marginBottom: "1rem" }}>
+                    <SearchBar searchInput={searchInput} setSearchInput={setSearchInput} items={services} setItems={setServices} name={['name']} />
                 </div>
                 <div className="services-holder">
-                    {services.map((service, index) => (
+                    {realServices.map((service, index) => (
                         <Service
                             key={index}
                             serviceInfos={service}
