@@ -30,13 +30,10 @@ exports.youtubeCallback = async (req, res) => {
         };
         user.connectServices.set("youtube", youtubeService);
         await user.save();
-        res.json({
-            status: "success",
-            message: "Successfully connected with Youtube.",
-        });
+        res.status(200).redirect("http://localhost:8081/create?service=youtube");
     } catch (error) {
         console.error("Error during YouTube connection:", error);
-        return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
+        return res.status(500).redirect("http://localhost:8081/create?connect=error");
     }
 };
 
@@ -70,13 +67,10 @@ exports.gmailCallback = async (req, res) => {
         };
         user.connectServices.set("gmail", gmailService);
         await user.save();
-        res.json({
-            status: "success",
-            message: "Successfully connected with Gmail.",
-        });
+        res.status(200).redirect("http://localhost:8081/create?service=gmail");
     } catch (error) {
         console.error("Error during Gmail connection:", error);
-        return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
+        return res.status(500).redirect("http://localhost:8081/create?connect=error");
     }
 };
 
@@ -111,13 +105,10 @@ exports.githubCallback = async (req, res, next) => {
         };
         user.connectServices.set("github", githubService);
         await user.save();
-        res.json({
-            status: "success",
-            message: "Successfully connected with Github.",
-        });
+        res.status(200).redirect("http://localhost:8081/create?service=github");
     } catch (error) {
         console.error("Error during GitHub connection:", error);
-        return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
+        return res.status(500).redirect("http://localhost:8081/create?connect=error");
     }
 };
 
@@ -163,13 +154,10 @@ exports.spotifyCallback = async (req, res, next) => {
         user.connectServices.set("spotify", spotifyService);
         await user.save();
 
-        res.json({
-            status: "success",
-            message: "Successfully connected with Spotify.",
-        });
+        res.status(200).redirect("http://localhost:8081/create?service=spotify");
     } catch (error) {
         console.error("Error during Spotify connection:", error);
-        return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
+        return res.status(500).redirect("http://localhost:8081/create?connect=error");
     }
 };
 
@@ -203,13 +191,10 @@ exports.twitchCallback = async (req, res) => {
         };
         user.connectServices.set("twitch", twitchService);
         await user.save();
-        res.json({
-            status: "success",
-            message: "Successfully connected with Twitch.",
-        });
+        res.status(200).redirect("http://localhost:8081/create?service=twitch");
     } catch (error) {
         console.error("Error during Twitch connection:", error);
-        return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
+        return res.status(500).redirect("http://localhost:8081/create?connect=error");
     }
 };
 
@@ -243,12 +228,9 @@ exports.dropboxCallback = async (req, res) => {
         };
         user.connectServices.set("dropbox", dropboxService);
         await user.save();
-        res.json({
-            status: "success",
-            message: "Successfully connected with Dropbox.",
-        });
+        res.status(200).redirect("http://localhost:8081/create?service=dropbox");
     } catch (error) {
         console.error("Error during Dropbox connection:", error);
-        return res.status(500).json({ status: "error", message: "Unexpected error occurred." });
+        return res.status(500).redirect("http://localhost:8081/create?connect=error");
     }
 };

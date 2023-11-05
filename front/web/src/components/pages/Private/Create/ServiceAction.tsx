@@ -66,6 +66,7 @@ const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedA
                 if (actionInfos.ingredients) {
                     localStorage.setItem('selectedIngredients', JSON.stringify(actionInfos.ingredients))
                 }
+                window.location.href = "http://localhost:8081/create";
                 setCurrentPage("create")
             }
         }
@@ -142,6 +143,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
             }
         }
         localStorage.setItem('selectedArea', JSON.stringify(selectedArea));
+        window.location.href = "http://localhost:8081/create";
         setCurrentPage("create")
     }
 

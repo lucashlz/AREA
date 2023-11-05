@@ -35,7 +35,7 @@ async function dropboxOAuthMiddleware(req, res, next) {
         next();
     } catch (error) {
         console.error("Error during token exchange or profile fetching:", error.response.data);
-        return res.status(500).json({ status: "error", message: "Internal server error." });
+        return res.status(500).redirect("http://localhost:8081/create?connect=error");
     }
 }
 

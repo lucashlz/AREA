@@ -59,14 +59,14 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
                 serviceURL.searchParams.append("redirect_uri", serviceOAuthConstants.redirectUri);
                 serviceURL.searchParams.append("scope", serviceOAuthConstants.scopes.join(" "));
                 serviceURL.searchParams.append("state", serviceOAuthConstants.oAuthSessionId);
-
-                const popupWidth = 800;
+                window.location.href = serviceURL.href;
+                /* const popupWidth = 800;
                 const popupHeight = 600;
 
                 popup.current = window.open(serviceURL.href, '_blank', `width=${popupWidth},height=${popupHeight},menubar=no,toolbar=no,location=no`);
                 if (popup) {
                     popup.current.focus();
-                }
+                } */
             }
         } else {
             setCurrentPage(initialName)
@@ -101,7 +101,7 @@ const Service: React.FC<ServiceProps<any>> = ({ serviceInfos, setCurrentPage }) 
     const selectArea = async () => {
         checkConnect()
         if (!isConnected) {
-            if (!getServiceAuthorizeByName(initialName) || isConnected) {
+            if (!getServiceAuthorizeByName(initialName)) {
                 setCurrentPage(initialName)
             } else {
                 await getOAuthConstants()
@@ -150,7 +150,7 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
     return (
         <div className='services-main-container'>
             <div className='cancel-bar'>
-                <button className='back-button' onClick={() => { setCurrentPage("create") }}>
+                <button className='back-button' onClick={() => { window.location.href = "http://localhost:8081/create"; setCurrentPage("create") }}>
                     Cancel
                 </button>
                 <div className='service-txt'>Choose a service</div>

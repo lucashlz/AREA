@@ -7,6 +7,7 @@ import axios from "axios";
 import { getBetterNames } from "./ServiceAction";
 import { Navigate } from 'react-router-dom';
 import { getLocalSelectedArea } from "../../../../interfaces/postArea";
+import { Store } from "react-notifications-component";
 
 interface IftttProps {
   ifttt_name: string;
@@ -77,7 +78,7 @@ const IftttSquare: React.FC<IftttProps> = ({ ifttt_name, is_current, setCurrentP
       <div className='ifttt-rectangle-text'>{ifttt_name}</div>
       {is_current && !services ?
         <div className="ifttt-add-btn-link">
-          <button className='add-action-btn' onClick={() => { setCurrentPage("services") }}>
+          <button className='add-action-btn' onClick={() => { setCurrentPage("services"); }}>
             Add
           </button>
         </div>
@@ -129,6 +130,29 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
   }
 
   useEffect(() => {
+    const getURL = () => {
+      const queryParams = new URLSearchParams(window.location.search);
+      const tempConnect = queryParams.get("connect");
+      const tempService = queryParams.get("service");
+      if (tempService) {
+        setCurrentPage(tempService);
+      }
+      if (tempConnect === "error") {
+        Store.addNotification({
+          title: "Error",
+          message: "Unexpected error occurred.",
+          type: "danger",
+          insert: "top",
+          container: "top-right",
+          animationIn: ["animate__animated", "animate__fadeIn"],
+          animationOut: ["animate__animated", "animate__fadeOut"],
+          dismiss: {
+            duration: 5000,
+            onScreen: true,
+          },
+        });
+      }
+    };
     let area = getLocalSelectedArea()
     setSelectedArea(getLocalSelectedArea())
     if (area.trigger && area.trigger.name.length > 0)
@@ -146,6 +170,7 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
         console.error("Error while fetching areas");
       }
     }
+    getURL();
     fetchAboutJSON();
   }, [])
 
