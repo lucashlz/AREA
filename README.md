@@ -35,6 +35,13 @@ docker-compose up --build
 * MongoDB: https://www.mongodb.com/
 
 
+
+## Documentation
+
+* Technical documentation: https://www.canva.com/design/DAFwICz4VGY/VmUUTWtZ4N9dbpc8okFW3w
+* User guide: https://www.canva.com/design/DAFwIbsQJVE/1CG-esl8EwN7hWhHDWXmHQ
+
+
 ## Authors
 
 * Adèle de Premonville
