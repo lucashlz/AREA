@@ -81,7 +81,7 @@ exports.processTriggerData = async (areaEntry, key, value) => {
 exports.processTriggerDataTotal = async (areaEntry, key, value, total) => {
     let isNewAssignment = false;
 
-    if (!areaEntry.trigger.data || areaEntry.trigger.data.total === 0) {
+    if (!areaEntry.trigger.data || total === 0) {
         areaEntry.trigger.data = { key, value, total };
         await areaEntry.save();
         return isNewAssignment;

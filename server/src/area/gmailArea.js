@@ -59,7 +59,6 @@ function constructEmailBody(to, cc, bcc, subject, body, attachmentUrl) {
 
     const emailBody = emailLines.join("\r\n").trim();
     const encodedEmail = Buffer.from(emailBody).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-
     return encodedEmail;
 }
 

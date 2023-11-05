@@ -1,3 +1,4 @@
+const axios = require("axios");
 const { makeApiCall } = require("./apiUtils");
 
 exports.fetchLikedVideosPlaylistId = async function (accessToken) {
@@ -96,13 +97,18 @@ exports.fetchSubscription = async function (accessToken) {
 };
 
 exports.fetchLikeVideo = async function (accessToken, videoId) {
-    const url = `https://www.googleapis.com/youtube/v3/videos/rate?id=${videoId}&rating=like`;
+    const url = `https://www.googleapis.com/youtube/v3/videos/rate`;
     const headers = {
         Authorization: `Bearer ${accessToken}`,
         Accept: "application/json",
     };
+    const params = {
+        id: videoId,
+        rating: "like",
+    };
+
     try {
-        await makeApiCall(url, 'POST', headers);
+        await axios.post(url, null, { headers: headers, params: params });
         return true;
     } catch (error) {
         console.error("Failed to like video:", error);

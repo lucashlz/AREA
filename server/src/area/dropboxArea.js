@@ -8,9 +8,9 @@ exports.newFileInFolder = async function (areaEntry) {
         const folderPath = areaEntry.trigger.parameters[0].input === "/" ? "" : areaEntry.trigger.parameters[0].input;
         const accessToken = await getDropboxToken(areaEntry.userId);
         const folderList = await fetchFilesInFolder(accessToken, folderPath);
+        if (folderList.length === 0) return await processTriggerDataTotal(areaEntry, "newFileInFolder", "", 0);
         const filesInFolderList = folderList.filter((link) => link[".tag"] === "file");
-        if (!folderList) return await processTriggerDataTotal(areaEntry, "newFileInFolder", "", 0);
-        const recentFile = filesInFolderList[totalFiles - 1];
+        const recentFile = filesInFolderList[filesInFolderList.length - 1];
 
         if (await processTriggerDataTotal(areaEntry, "newFileInFolder", recentFile.id, filesInFolderList.length)) {
             updateIngredients(areaEntry, [
@@ -31,7 +31,6 @@ exports.newSharedFileLink = async function (areaEntry) {
         const accessToken = await getDropboxToken(areaEntry.userId);
         const allLinks = await fetchAllSharedLinks(accessToken);
         const fileLinks = allLinks.filter((link) => link[".tag"] === "file");
-        console.log(JSON.stringify(fileLinks, null, 2));
         if (fileLinks.length === 0) return await processTriggerDataTotal(areaEntry, "newSharedFileLink", "", 0);
         const recentFileLink = fileLinks[0];
 

@@ -25,7 +25,7 @@ connectDB();
 const PORT = 8080;
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
-    const EVALUATION_INTERVAL = 3000;
+    const EVALUATION_INTERVAL = 4000;
     setInterval(checkAndReact, EVALUATION_INTERVAL);
     startTokenRefreshCycle();
 });
