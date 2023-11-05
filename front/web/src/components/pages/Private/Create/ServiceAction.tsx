@@ -42,6 +42,8 @@ const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedA
     let clearname = getBetterNames(actionInfos.name)
     let whatami = ''
 
+    console.log(actionInfos)
+
     const handleSelectionClick = () => {
         if (selectedArea.trigger && selectedArea.trigger.name.length > 0) {
             selectedArea.actions[selectedArea.actions.length - 1].service = currentPage
@@ -147,20 +149,14 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
         setCurrentPage("create")
     }
 
-    const handleIngredientChange = (ingredientName: string, index: number, name: string) => {
+    const handleIngredientChange = (ingredientName: string, index: number) => {
         setParametersInput(prev => {
             const updatedInputs = [...prev];
-            if (updatedInputs[index] === undefined || updatedInputs[index] === "") {
+            if (updatedInputs[index] === undefined) {
                 updatedInputs[index] = `<${ingredientName}>`;
-            } else {
+            } else
                 updatedInputs[index] += `<${ingredientName}>`;
-            }
             return updatedInputs;
-        })
-        setParametersNames(prev => {
-            const updatedNames = [...prev];
-            updatedNames[index] = name;
-            return updatedNames;
         });
     }
 
@@ -184,45 +180,43 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
     let uppername = services.name[0]?.toUpperCase() + services.name.slice(1)
 
     return (
-        <div className="container">
-            <div>
-                <div className='cancel-bar' style={{ backgroundColor: services.color }}>
-                    <button className='back-button' style={{ color: 'white' }} onClick={() => {
-                        if (mode && mode.infos.parameters.length > 0) {
-                            for (let i = 0; i < parametersInput.length; i++) {
-                                parametersInput[i] = ''
-                                parametersNames[i] = ''
-                            }
-                            if (mode.type === "trigger" && selectedArea) {
-                                selectedArea.trigger = { name: '', service: '', parameters: [{ name: '', input: '' }] };
-                                localStorage.removeItem('selectedIngredients');
-                            }
-                            if (mode.type === "actions" && selectedArea)
-                                selectedArea.actions[selectedArea.actions.length - 1] = { name: '', service: '', parameters: [{ name: '', input: '' }] };
-                            setMode(undefined);
-                        } else {
-                            setCurrentPage("services")
+        <div>
+            <div className='cancel-bar' style={{ backgroundColor: services.color }}>
+                <button className='back-button' style={{ color: 'white' }} onClick={() => {
+                    if (mode && mode.infos.parameters.length > 0) {
+                        for (let i = 0; i < parametersInput.length; i++) {
+                            parametersInput[i] = ''
+                            parametersNames[i] = ''
                         }
-                    }}>
-                        Back
-                    </button>
-                    <div className='service-txt' style={{ color: 'white' }}>
-                        {selectedArea?.trigger?.name?.length === 0 ? "Choose a trigger" : mode ? "Choose parameters" : "Choose an action"}
-                    </div>
+                        if (mode.type === "trigger" && selectedArea) {
+                            selectedArea.trigger = { name: '', service: '', parameters: [{ name: '', input: '' }] };
+                            localStorage.removeItem('selectedIngredients');
+                        }
+                        if (mode.type === "actions" && selectedArea)
+                            selectedArea.actions[selectedArea.actions.length - 1] = { name: '', service: '', parameters: [{ name: '', input: '' }] };
+                        setMode(undefined);
+                    } else {
+                        setCurrentPage("services")
+                    }
+                }}>
+                    Back
+                </button>
+                <div className='service-txt' style={{ color: 'white' }}>
+                    {selectedArea?.trigger?.name?.length === 0 ? "Choose a trigger" : mode ? "Choose parameters" : "Choose an action"}
                 </div>
-                <div className='thin-line' style={{ backgroundColor: 'white', opacity: 0.5 }}></div>
-                <div className='service-infos' style={{ backgroundColor: services.color }}>
-                    <div className="service-actions-presentation-holder">
-                        <div className="service-logo-holder">
-                            <img
-                                alt="logo"
-                                className="service-logo"
-                                src={services.name !== 'none' ? require(`../../../../../public/servicesLogo/${services.name}.png`) : ''}
-                            />
-                        </div>
-                        <div className="service-description">
-                            <div>{uppername}</div>
-                        </div>
+            </div>
+            <div className='thin-line' style={{ backgroundColor: 'white', opacity: 0.5 }}></div>
+            <div className='service-infos' style={{ backgroundColor: services.color }}>
+                <div className="service-actions-presentation-holder">
+                    <div className="service-logo-holder">
+                        <img
+                            alt="logo"
+                            className="service-logo"
+                            src={services.name !== 'none' ? require(`../../../../../public/servicesLogo/${services.name}.png`) : ''}
+                        />
+                    </div>
+                    <div className="service-description">
+                        <div>{uppername}</div>
                     </div>
                 </div>
             </div>
@@ -240,13 +234,13 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                                     required={!item.optional}
                                 />
                                 {mode.type === "actions" && ingredients.length > 0 ?
-                                    <select className='ingredient-pick' defaultValue={"Ingredients"} onChange={(e) => handleIngredientChange(e.target.value, index, item.name)}>
+                                    <select className='ingredient-pick' defaultValue={"Ingredients"} onChange={(e) => handleIngredientChange(e.target.value, index)}>
                                         <option value={"Ingredients"}>{"Ingredients"}</option>
                                         {ingredients.map((ingredient, i) => (
                                             <option key={i} value={ingredient.name}>{ingredient.description}</option>
                                         ))}
                                     </select>
-                                : ''}
+                                    : ''}
                             </div>
                         ))}
 
