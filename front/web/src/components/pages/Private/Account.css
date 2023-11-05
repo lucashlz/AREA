@@ -1,19 +1,15 @@
-#root {
-    overflow: scroll;
-}
-
 .account-container {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: fit-content;
+    height: 95%;
     color: #1D1D1D;
     flex-direction: column;
     width: 100%;
-    overflow-y: auto;
+    overflow: scroll;
+    padding-top: 8%;
     padding-left: 5%;
     padding-right: 5%;
-    padding-bottom: 5%;
 }
 
 .account-main-text {
@@ -84,6 +80,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: 5%;
 }
 
 .connected-services-title {
@@ -97,7 +94,16 @@
 
 .account-form {
     margin-top: 5%;
+    margin-bottom: 2%;
     height: fit-content;
+}
+
+.vertical-spacer {
+    margin-top: 0.5rem;
+}
+
+.big-vertical-spacer {
+    margin-top: 1.5rem;
 }
 
 .services-list {
@@ -223,9 +229,10 @@
 
 @media screen and (max-height: 767px) and (orientation: landscape) {
     .account-container {
-        height: auto;
+        height: 100%;
     }
     .account-form {
+        top: 0;
         width: 100%;
     }
     .service-item {
