@@ -147,24 +147,26 @@ class AccountPageState extends State<AccountPage> {
         padding: const EdgeInsets.symmetric(
           horizontal: 20.0,
         ),
+        
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 80),
             Text(
               'Welcome,',
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 46, // Larger font size for "Welcome,"
-                fontWeight: FontWeight.bold, // Bold font weight for "Welcome,"
+                fontSize: 46,
+                fontWeight: FontWeight.bold,
               ),
             ),
             Text(
               '$_username !',
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 30, // Font size for the username
+                fontSize: 30,
               ),
             ),
               const SizedBox(height: 80),

@@ -417,10 +417,10 @@ class _CreatePageState extends State<CreatePage> {
               children: [
                 const Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 60.0),
+                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 50.0),
                   child: Center(
                     child: Text(
-                      'CREATE',
+                      'Create',
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: 'Archivo',
