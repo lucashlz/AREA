@@ -1,26 +1,12 @@
 import "./PrivacyPolicy.css";
-import { Button } from "../Button";
 import Title from "../Title";
-import { IUserContext, UserContext } from "../../context/userContext";
-import { useContext, useEffect, useState } from "react";
 
 export default function PrivacyPolicy() {
-  const { token } = useContext(UserContext) as IUserContext;
-  const [color, setColor] = useState<"dark" | "light">("dark");
-
-  useEffect(() => {
-    if (token) {
-      document.body.style.backgroundColor = "#fff";
-      setColor("light");
-    } else {
-      document.body.style.backgroundColor = "#1D1D1D";
-    }
-  }, [token]);
 
   return (
     <div className="privacy-policy-container">
       <div className="privacy-policy-main-container">
-        <Title title="Privacy policy" />
+        <Title title="Privacy policy" style={{marginBottom: '5%'}} />
         <div className="privacy-policy-title">1. Introduction</div>
         <div className="privacy-policy-sub-text">
           Welcome to TechParisArea (the "Service"), a platform that enables
@@ -110,8 +96,7 @@ export default function PrivacyPolicy() {
         <div className="privacy-policy-title">8. Contact Us</div>
         <div className="privacy-policy-sub-text" style={{paddingBottom: '5%'}}>
           If you have any questions or concerns about this Privacy Policy or
-          your personal information, please contact us at [Your Contact
-          Information].
+          your personal information, please contact us at mail@techparisarea.com.
         </div>
       </div>
     </div>
