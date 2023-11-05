@@ -130,7 +130,7 @@ export default function Applets() {
     const fetchData = async () => {
       let token = localStorage.getItem('userToken');
       try {
-        const response = await axios.get('http://localhost:8080/about/about.json', { headers: { Authorization: `Bearer ${token}` } });
+        const response = await axios.get('http://localhost:8080/about.json', { headers: { Authorization: `Bearer ${token}` } });
         if (response.data.server.services) {
           setServices(response.data.server.services)
         }

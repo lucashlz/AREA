@@ -9,7 +9,7 @@ import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 
 Future<String> getServiceColor(String serviceName) async {
-  const String url = 'https://api.techparisarea.com/about/about.json';
+  const String url = 'https://api.techparisarea.com/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
