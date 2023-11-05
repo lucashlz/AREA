@@ -166,7 +166,6 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
                 <div className='service-searchbar' style={{ marginTop: "2rem", marginBottom: "1rem" }}>
                     <SearchBar searchInput={searchInput} setSearchInput={setSearchInput} items={services} setItems={setServices} name={['name']} />
                 </div>
-                <div className="services-holder">
                     {realServices.map((service, index) => (
                         <Service
                             key={index}
@@ -176,7 +175,6 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
                     ))}
                 </div>
             </div>
-        </div>
     );
 }
 

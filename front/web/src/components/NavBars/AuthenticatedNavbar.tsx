@@ -41,7 +41,6 @@ function Navbar() {
   const isInverted = location.pathname === '/';
   const logoSrc = isInverted ? `${process.env.PUBLIC_URL}/logo_white.png` : `${process.env.PUBLIC_URL}/logo_black.png`;
 
-
   return (
     <>
       <nav className={isInverted ? 'navbar' : 'navbar-inverted'}>
@@ -58,26 +57,18 @@ function Navbar() {
 
         {mobileMenuOpen && (
           <ul className="nav-menu active">
-            <li>
-              <Link to='/applets' className='nav-links' onClick={closeMobileMenu}>
-                My Applets
-              </Link>
-            </li>
-            <li>
-              <Link to='/create' className='nav-links' style={{ paddingBottom: "30%"}} onClick={closeMobileMenu}>
-                Create
-              </Link>
-            </li>
-            <li>
-              <div onClick={toggleMobileMenu}>
-                <Button linkTo="/account" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize="btn--medium">
-                  Account
-                </Button>
-              </div>
-            </li>
-            <li>
-              {!button ? <button className="get-apk-button" onClick={() => window.location.href = `${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
-            </li>
+            <Link to='/applets' className='nav-links' onClick={closeMobileMenu}>
+              My Applets
+            </Link>
+            <Link to='/create' className='nav-links' onClick={closeMobileMenu}>
+              Create
+            </Link>
+            <div onClick={toggleMobileMenu} style={{width: '100%', marginTop: '4%', marginBottom: '4%'}}>
+              <Button linkTo="/account" type="button" buttonStyle={isInverted ? 'btn--primary' : 'btn--primary-inverted'} buttonSize={!button ? "btn--large" : "btn--medium"}>
+                Account
+              </Button>
+            </div>
+            {!button ? <button className="get-apk-button" onClick={() => window.location.href = `${process.env.PUBLIC_URL}/apk/app-release.apk`}>Download App</button> : ""}
           </ul>
         )}
 

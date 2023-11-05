@@ -68,12 +68,7 @@ class _TriggerParameterInputPageState extends State<TriggerParameterInputPage> {
               ),
             ),
           ),
-          Expanded(
-            child: Container(
-              color: backgroundColor,
-              child: ListView.builder(
-                itemCount: widget.trigger.parameters.length,
-                itemBuilder: (context, index) {
+          ...List.generate(widget.trigger.parameters.length, (index) {
                   final parameter = widget.trigger.parameters[index];
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 15.0),
@@ -114,8 +109,6 @@ class _TriggerParameterInputPageState extends State<TriggerParameterInputPage> {
                   );
                 },
               ),
-            ),
-          ),
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),

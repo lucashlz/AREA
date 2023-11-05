@@ -42,8 +42,7 @@ exports.createArea = async (req, res) => {
             return res.status(400).json({ message: "An area with the same trigger and actions already exists." });
         }
         await checkParameters(req.user.id, req.body.trigger, req.body.actions);
-        // const areaDescription = await generateDescription(req.body);
-        const areaDescription = "";
+        const areaDescription = await generateDescription(req.body);
         const savedArea = await createNewArea(user, req.body.trigger, req.body.actions, areaDescription);
         res.status(200).json(savedArea);
     } catch (error) {

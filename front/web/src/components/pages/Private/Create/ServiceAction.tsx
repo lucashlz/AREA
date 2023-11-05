@@ -81,7 +81,7 @@ const ServiceAction: React.FC<ServiceActionProps> = ({ setMode, color, selectedA
                     <div>{clearname}</div>
                 </div>
                 <div className="service-action-description">
-                    <div>{actionInfos.description}</div>
+                    {actionInfos.description}
                 </div>
             </div>
         </button>
@@ -149,7 +149,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
         setCurrentPage("create")
     }
 
-    const handleIngredientChange = (ingredientName: string, index: number) => {
+    const handleIngredientChange = (ingredientName: string, index: number, name: string) => {
         setParametersInput(prev => {
             const updatedInputs = [...prev];
             if (updatedInputs[index] === undefined) {
@@ -157,6 +157,12 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
             } else
                 updatedInputs[index] += `<${ingredientName}>`;
             return updatedInputs;
+        });
+    
+        setParametersNames(prev => {
+            const updatedNames = [...prev];
+            updatedNames[index] = name;
+            return updatedNames;
         });
     }
 
@@ -180,7 +186,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
     let uppername = services.name[0]?.toUpperCase() + services.name.slice(1)
 
     return (
-        <div>
+        <>
             <div className='cancel-bar' style={{ backgroundColor: services.color }}>
                 <button className='back-button' style={{ color: 'white' }} onClick={() => {
                     if (mode && mode.infos.parameters.length > 0) {
@@ -234,7 +240,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                                     required={!item.optional}
                                 />
                                 {mode.type === "actions" && ingredients.length > 0 ?
-                                    <select className='ingredient-pick' defaultValue={"Ingredients"} onChange={(e) => handleIngredientChange(e.target.value, index)}>
+                                    <select className='ingredient-pick' defaultValue={"Ingredients"} onChange={(e) => handleIngredientChange(e.target.value, index, item.name)}>
                                         <option value={"Ingredients"}>{"Ingredients"}</option>
                                         {ingredients.map((ingredient, i) => (
                                             <option key={i} value={ingredient.name}>{ingredient.description}</option>
@@ -244,9 +250,11 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                             </div>
                         ))}
 
-                        <button type="submit" className='add-action-btn' style={{ marginLeft: 0, marginTop: '7%', height: '3.5rem', border: '1px solid' }}>
+                        <div style={{paddingBottom: "15%"}}>
+                        <button type="submit" className='add-action-btn' style={{ marginLeft: 0, height: '3.5rem', border: '1px solid' }}>
                             Add
                         </button>
+                        </div>
                     </form>
                 </div>
             ) :
@@ -262,7 +270,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                     ))}
                 </div>
             }
-        </div>
+        </>
     );
 }
 

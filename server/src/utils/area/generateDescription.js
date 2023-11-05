@@ -77,6 +77,8 @@ exports.generateDescription = async function (area) {
         ]
       }
     Send an email to patteinh@gmail.com and lola@gmail.com when a new spotify track was listen.
+    If u see words under <> just precise that this is link to the trigger.
+    140 letters max for teh description !.
     now you need to provide description for:
     ${areaString}`;
     try {

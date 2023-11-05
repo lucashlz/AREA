@@ -15,7 +15,7 @@ exports.callback = async (serviceName, req, res) => {
     try {
         const { state: oAuthSessionIdFromState } = req.query;
         const serviceData = req[SERVICES[serviceName].dataKey];
-        const response = await handleOAuthCallback(serviceName, oAuthSessionIdFromState, serviceData);
+        await handleOAuthCallback(serviceName, oAuthSessionIdFromState, serviceData);
         res.status(200).redirect("http://localhost:8081/create?service=" + serviceName);
     } catch (error) {
         console.error(`Error during ${serviceName} connection:`, error);
