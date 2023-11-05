@@ -141,7 +141,7 @@ class _TriggerParameterInputPageState extends State<TriggerParameterInputPage> {
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 16.0),
               ),
-              child: Text("Add", style: TextStyle(fontSize: 18, fontFamily: 'Archivo')),
+              child: Text("Add", style: TextStyle(fontSize: 18, fontFamily: 'Archivo', fontWeight: FontWeight.bold)),
             ),
           ),
           SizedBox(height: 10),

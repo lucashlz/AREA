@@ -130,11 +130,11 @@ class HomeViewState extends State<HomeView> {
                         if (areas.isEmpty) {
                           return Center(
                             child: Text(
-                              'Go create your first AREA !',
+                              'Create your first AREA !',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontFamily: 'Archivo',
-                                fontSize: 24,
+                                fontSize: 30,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
