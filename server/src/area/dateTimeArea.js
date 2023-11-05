@@ -1,142 +1,110 @@
 const moment = require("moment-timezone");
+const { updateIngredients } = require("../utils/ingredients/ingredientsHelper");
+const { processTrigger } = require("../utils/area/areaValidation");
 
-function getCurrentTimeInZone() {
-    const parisTime = moment().tz("Europe/Paris");
-    parisTime.add(1, "hours");
-    return parisTime;
-}
+const getCurrentTimeInZone = () => moment().tz("Europe/Paris").add(1, "hours");
 
-function findParameter(parameters, name) {
+const findParameter = (parameters, name) => {
     const parameter = parameters.find((p) => p.name === name);
     return parameter ? parseInt(parameter.input, 10) : null;
-}
+};
 
-async function processTriggerData(areaEntry, key, value) {
-    if (areaEntry.trigger.data && areaEntry.trigger.data.value === value) {
-        return false;
-    }
-    areaEntry.trigger.data = { key, value };
-    await areaEntry.save();
-    return true;
-}
-
-async function resetTriggerDataIfNecessary(areaEntry) {
-    if (areaEntry.trigger.data) {
-        areaEntry.trigger.data = null;
-        await areaEntry.save();
-    }
-}
-
-function updateOrPushIngredient(ingredients, ingredient) {
-    const index = ingredients.findIndex((item) => item.name === ingredient.name);
-    if (index !== -1) {
-        ingredients[index].value = ingredient.value;
-    } else {
-        ingredients.push(ingredient);
-    }
-}
-
-function fillDateTimeIngredients(now) {
+const fillDateTimeIngredients = (date) => {
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayOfWeek = days[date.getDay()];
+    const hour = date.getHours().toString().padStart(2, "0");
+    const minute = date.getMinutes().toString().padStart(2, "0");
     return [
-        { name: "date", value: now.format("YYYY-MM-DD") },
-        { name: "day", value: now.format("dddd") },
-        { name: "month", value: now.format("M") },
-        { name: "year", value: now.format("YYYY") },
-        { name: "hour", value: now.format("H") },
-        { name: "minute", value: now.format("m") },
+        { name: "date", value: `${year}-${month}-${day}` },
+        { name: "day", value: dayOfWeek },
+        { name: "month", value: month },
+        { name: "year", value: year },
+        { name: "hour", value: hour },
+        { name: "minute", value: minute },
     ];
-}
+};
 
-async function everyDayAt(areaEntry) {
+exports.everyDayAt = async (areaEntry) => {
     const now = getCurrentTimeInZone().toDate();
     const targetHour = findParameter(areaEntry.trigger.parameters, "target_hour");
     const targetMinute = findParameter(areaEntry.trigger.parameters, "target_minute");
     const uniqueIdentifier = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${targetHour}-${targetMinute}`;
+
     if (now.getHours() === targetHour && now.getMinutes() === targetMinute) {
-        if (!areaEntry.trigger.ingredients) {
-            areaEntry.trigger.ingredients = [];
+        if (!areaEntry.trigger.data || areaEntry.trigger.data.value !== uniqueIdentifier) {
+            await updateIngredients(areaEntry, fillDateTimeIngredients(now));
+            return await processTrigger(areaEntry, "lastTriggeredDay", uniqueIdentifier);
         }
-        const ingredients = fillDateTimeIngredients(getCurrentTimeInZone());
-        ingredients.forEach((ingredient) => updateOrPushIngredient(areaEntry.trigger.ingredients, ingredient));
-        return await processTriggerData(areaEntry, "lastTriggered", uniqueIdentifier);
     }
     return false;
-}
+};
 
-async function everyHourAt(areaEntry) {
+exports.everyHourAt = async function (areaEntry) {
     const validMinutes = [0, 15, 30, 45];
     const now = getCurrentTimeInZone().toDate();
     const targetMinute = findParameter(areaEntry.trigger.parameters, "target_minute");
-    const uniqueIdentifier = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}-${targetMinute}`;
+    const uniqueIdentifier = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}`;
+
     if (validMinutes.includes(targetMinute) && now.getMinutes() === targetMinute) {
-        if (!areaEntry.trigger.ingredients) {
-            areaEntry.trigger.ingredients = [];
+        if (!areaEntry.trigger.data || areaEntry.trigger.data.value !== uniqueIdentifier) {
+            updateIngredients(areaEntry, fillDateTimeIngredients(now));
+            return await processTrigger(areaEntry, "lastTriggeredHour", uniqueIdentifier);
         }
-        const ingredients = fillDateTimeIngredients(getCurrentTimeInZone());
-        ingredients.forEach((ingredient) => updateOrPushIngredient(areaEntry.trigger.ingredients, ingredient));
-        return await processTriggerData(areaEntry, "lastTriggered", uniqueIdentifier);
     }
     return false;
-}
+};
 
-async function everyDayOfTheWeekAt(areaEntry) {
+exports.everyDayOfTheWeekAt = async function (areaEntry) {
     const now = getCurrentTimeInZone().toDate();
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const currentDay = days[now.getDay()];
     const targetHour = findParameter(areaEntry.trigger.parameters, "target_hour");
     const targetMinute = findParameter(areaEntry.trigger.parameters, "target_minute");
-    const uniqueIdentifier = `${currentDay}-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${targetHour}-${targetMinute}`;
+    const uniqueIdentifier = `${currentDay}-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+
     const daysArray = areaEntry.trigger.parameters.filter((p) => p.name === "days_array").flatMap((p) => p.input.split(/\s+/));
+
     if (daysArray.includes(currentDay) && now.getHours() === targetHour && now.getMinutes() === targetMinute) {
-        if (!areaEntry.trigger.ingredients) {
-            areaEntry.trigger.ingredients = [];
+        if (!areaEntry.trigger.data || areaEntry.trigger.data.value !== uniqueIdentifier) {
+            updateIngredients(areaEntry, fillDateTimeIngredients(now));
+            return await processTrigger(areaEntry, "lastTriggeredDayOfWeek", uniqueIdentifier);
         }
-        const ingredients = fillDateTimeIngredients(getCurrentTimeInZone());
-        ingredients.forEach((ingredient) => updateOrPushIngredient(areaEntry.trigger.ingredients, ingredient));
-        return await processTriggerData(areaEntry, "lastTriggered", uniqueIdentifier);
     }
     return false;
-}
+};
 
-async function everyMonthOnThe(areaEntry) {
+exports.everyMonthOnThe = async function (areaEntry) {
     const now = getCurrentTimeInZone().toDate();
     const targetDay = findParameter(areaEntry.trigger.parameters, "target_day");
     const targetHour = findParameter(areaEntry.trigger.parameters, "target_hour");
     const targetMinute = findParameter(areaEntry.trigger.parameters, "target_minute");
-    const uniqueIdentifier = `${now.getFullYear()}-${now.getMonth() + 1}-${targetDay}-${targetHour}-${targetMinute}`;
+    const uniqueIdentifier = `${now.getFullYear()}-${now.getMonth() + 1}-${targetDay}`;
+
     if (now.getDate() === targetDay && now.getHours() === targetHour && now.getMinutes() === targetMinute) {
-        if (!areaEntry.trigger.ingredients) {
-            areaEntry.trigger.ingredients = [];
+        if (!areaEntry.trigger.data || areaEntry.trigger.data.value !== uniqueIdentifier) {
+            updateIngredients(areaEntry, fillDateTimeIngredients(now));
+            return await processTrigger(areaEntry, "lastTriggeredMonth", uniqueIdentifier);
         }
-        const ingredients = fillDateTimeIngredients(getCurrentTimeInZone());
-        ingredients.forEach((ingredient) => updateOrPushIngredient(areaEntry.trigger.ingredients, ingredient));
-        return await processTriggerData(areaEntry, "lastTriggered", uniqueIdentifier);
     }
     return false;
-}
+};
 
-async function everyYearOn(areaEntry) {
+exports.everyYearOn = async function (areaEntry) {
     const now = getCurrentTimeInZone().toDate();
     const targetMonth = findParameter(areaEntry.trigger.parameters, "target_month");
     const targetDay = findParameter(areaEntry.trigger.parameters, "target_day");
     const targetHour = findParameter(areaEntry.trigger.parameters, "target_hour");
     const targetMinute = findParameter(areaEntry.trigger.parameters, "target_minute");
-    const uniqueIdentifier = `${now.getFullYear()}-${targetMonth}-${targetDay}-${targetHour}-${targetMinute}`;
+    const uniqueIdentifier = `${now.getFullYear()}-${targetMonth}-${targetDay}`;
+
     if (now.getMonth() + 1 === targetMonth && now.getDate() === targetDay && now.getHours() === targetHour && now.getMinutes() === targetMinute) {
-        if (!areaEntry.trigger.ingredients) {
-            areaEntry.trigger.ingredients = [];
+        if (!areaEntry.trigger.data || areaEntry.trigger.data.value !== uniqueIdentifier) {
+            updateIngredients(areaEntry, fillDateTimeIngredients(now));
+            return await processTrigger(areaEntry, "lastTriggeredYear", uniqueIdentifier);
         }
-        const ingredients = fillDateTimeIngredients(getCurrentTimeInZone());
-        ingredients.forEach((ingredient) => updateOrPushIngredient(areaEntry.trigger.ingredients, ingredient));
-        return await processTriggerData(areaEntry, "lastTriggered", uniqueIdentifier);
     }
     return false;
-}
-
-module.exports = {
-    everyDayAt,
-    everyHourAt,
-    everyDayOfTheWeekAt,
-    everyMonthOnThe,
-    everyYearOn,
 };
