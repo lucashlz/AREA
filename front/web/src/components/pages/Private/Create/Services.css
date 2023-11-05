@@ -28,9 +28,10 @@
     border-radius: 10px;
     flex-grow: 1;
     flex-basis: auto;
-    margin: 3%;
+    margin: 0;
+    margin-bottom: 3%;
     height: 20vh;
-    width: 95%;
+    width: 100%;
     max-width: 30vh;
     display: flex;
     justify-content: center;
@@ -70,6 +71,8 @@
     margin: 0;
     font: inherit;
     cursor:pointer;
+    justify-content: center;
+    display: flex;
 }
 
 .service-searchbar {
@@ -89,7 +92,11 @@
     .services-container {
         margin-right: 7%;
         margin-left: 7%;
-        height: 100%;
+        height: fit-content;
+        margin-bottom: 15%;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
     }
     .services-main-container {
         align-self: flex-start;

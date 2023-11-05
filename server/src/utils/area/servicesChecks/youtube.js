@@ -1,14 +1,23 @@
 const { getYouTubeToken } = require("../../token/servicesTokenUtils");
 
-async function checkExists(youtube, type, id) {
+async function checkExists(youtube, resourceType, id) {
     try {
-        const response = await youtube[type].list({
-            id,
-            part: "id",
-            maxResults: 1,
-        });
+        let response;
+        if (resourceType === "videos") {
+            response = await youtube.videos.list({
+                id: id,
+                part: 'id'
+            });
+        } else if (resourceType === "channels") {
+            response = await youtube.channels.list({
+                id: id,
+                part: 'id'
+            });
+        }
+
         return response.data.items.length > 0;
-    } catch {
+    } catch (error) {
+        console.error("Error checking existence:", error);
         return false;
     }
 }

@@ -91,19 +91,3 @@ exports.handleGoogleCallback = async (req, res) => {
         res.status(500).redirect("http://localhost:8081/login");
     }
 };
-
-exports.handleMobileGoogleAuth = async (req, res) => {
-    const accessToken = req.body.access_token;
-
-    try {
-        const profileResponse = await getGoogleUserProfile(accessToken);
-        const email = profileResponse.data.email;
-        let user = await findUserByExternalId("google", email);
-        if (!user) user = await createNewExternalUser("google", email);
-        const token = await generateUserToken(user._id);
-        res.status(200).json({ token });
-    } catch (error) {
-        console.error("Error during Google authentication:", error);
-        res.status(500).json({ message: "Server error during authentication." });
-    }
-};

@@ -108,8 +108,7 @@ router.get("/confirm/:token", authController.confirm);
  *       500:
  *         description: Server error
  */
-router.get('/auth/confirm-email-change/:token', authController.confirmEmailChange);
-
+router.get('/confirm-email-change/:token', authController.confirmEmailChange);
 
 /**
  * @swagger
@@ -208,40 +207,5 @@ router.get("/google", authController.redirectToGoogle);
  *         description: Server error.
  */
 router.get("/google/callback", authController.handleGoogleCallback);
-
-/**
- * @swagger
- * /auth/mobile/google:
- *   post:
- *     summary: Authenticate mobile user using Google's access token
- *     tags: [auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               access_token:
- *                 type: string
- *                 description: The access token from Google's authentication on the mobile app.
- *     responses:
- *       200:
- *         description: Successfully authenticated and JWT token returned.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 token:
- *                   type: string
- *       400:
- *         description: Invalid Google access token.
- *       401:
- *         description: Authentication failed.
- *       500:
- *         description: Server error.
- */
-router.post("/mobile/google", authController.handleMobileGoogleAuth);
 
 module.exports = router;
