@@ -43,45 +43,6 @@ router.get("/", areaController.listAllAreas);
 
 /**
  * @swagger
- * components:
- *   schemas:
- *     AreaWithoutUserId:
- *       type: object
- *       properties:
- *         trigger:
- *           $ref: '#/components/schemas/Trigger'
- *         actions:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/Action'
- *         isActive:
- *           type: boolean
- *           description: Indicates if the area is active or not.
- *         area_description:
- *           type: string
- *           description: Description of the area.
- * /areas/discover:
- *   get:
- *     summary: Retrieve all areas associated with other user, excluding the userId field
- *     tags: [areas]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: List of all areas returned successfully for other users
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/AreaWithoutUserId'
- *       500:
- *         description: Server error
- */
-router.get("/discover", areaController.discoverAreas);
-
-/**
- * @swagger
  * /areas:
  *   post:
  *     summary: Create a new area by specifying the services, names, and parameters for action and reactions
