@@ -16,7 +16,7 @@ export default function Input(props: InputProps) {
       {props.icon && <img src={props.icon} alt="Icon" className="input-icon" />}
       <input
         type={props.type}
-        className={props.icon ? "input input-padding" : "input"}
+        className={props.icon ? "input input-padding" : "input no-icon-padding"}
         placeholder={props.placeholder}
         value={props.value}
         required={props.required === undefined ? false : props.required}

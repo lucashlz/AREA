@@ -157,8 +157,8 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
             </div>
             <div className='thin-line'></div>
             <div className="services-container">
-                <div className='service-searchbar'>
-                <SearchBar style={{marginTop: "3rem"}} searchInput={searchInput} setSearchInput={setSearchInput} items={services} setItems={setServices} name={['name']} />
+                <div className='service-searchbar' style={{marginTop: "3rem"}}>
+                <SearchBar searchInput={searchInput} setSearchInput={setSearchInput} items={services} setItems={setServices} name={['name']} />
                 </div>
                 <div className="services-holder">
                     {services.map((service, index) => (
