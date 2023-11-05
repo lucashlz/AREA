@@ -1,16 +1,49 @@
-const User = require("../models/userModels");
-const { getGithubToken } = require("../utils/token/servicesTokenUtils");
-const { updateIngredients } = require("../utils/ingredients/ingredientsHelper");
-const { processTriggerDataTotal } = require("../utils/area/areaValidation");
-const { fetchGithubCommits, fetchGithubIssues, fetchAssignedGithubIssues, fetchCreateGithubIssue, fetchGithubRepositories } = require("../utils/API/githubAPI");
+import User from "../models/userModels";
+import { getGithubToken } from "../utils/token/servicesTokenUtils";
+import { updateIngredients } from "../utils/ingredients/ingredientsHelper";
+import { processTriggerDataTotal } from "../utils/area/areaValidation";
+import { fetchGithubCommits, fetchGithubIssues, fetchAssignedGithubIssues, fetchCreateGithubIssue, fetchGithubRepositories } from "../utils/API/githubAPI";
 
-function getMostRecent(target) {
+interface GithubCommit {
+    sha: string;
+    commit: {
+        message: string;
+        committer: {
+            date: string;
+        };
+    };
+    author: {
+        login: string;
+    };
+    html_url: string;
+}
+
+interface GithubIssue {
+    id: string;
+    title: string;
+    html_url: string;
+    body: string;
+    user: {
+        login: string;
+    };
+    created_at: string;
+    repository_url: string;
+}
+
+interface AreaEntry {
+    userId: string;
+    trigger: {
+        parameters: Array<{ input: string }>;
+    };
+}
+
+function getMostRecent<T>(target: T[]): T | null {
     if (!target || !target.length) return null;
-    target.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    target.sort((a: any, b: any) => new Date(b.created_at) - new Date(a.created_at));
     return target[0];
 }
 
-exports.anyNewCommit = async function (areaEntry) {
+export const anyNewCommit = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const accessToken = await getGithubToken(areaEntry.userId);
         const user = await User.findById(areaEntry.userId);
@@ -38,7 +71,7 @@ exports.anyNewCommit = async function (areaEntry) {
     }
 };
 
-exports.anyNewIssue = async function (areaEntry) {
+export const anyNewIssue = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const accessToken = await getGithubToken(areaEntry.userId);
         const user = await User.findById(areaEntry.userId);
@@ -67,7 +100,7 @@ exports.anyNewIssue = async function (areaEntry) {
     }
 };
 
-exports.newIssueAssignedToYou = async function (areaEntry) {
+export const newIssueAssignedToYou = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const accessToken = await getGithubToken(areaEntry.userId);
         const user = await User.findById(areaEntry.userId);
@@ -96,7 +129,7 @@ exports.newIssueAssignedToYou = async function (areaEntry) {
     }
 };
 
-exports.newRepository = async function (areaEntry) {
+export const newRepository = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const accessToken = await getGithubToken(areaEntry.userId);
         const repos = await fetchGithubRepositories(accessToken);
@@ -121,7 +154,7 @@ exports.newRepository = async function (areaEntry) {
     }
 };
 
-exports.createIssue = async function (userId, repoName, title, body) {
+export const createIssue = async (userId: string, repoName: string, title: string, body: string): Promise<GithubIssue> => {
     try {
         const accessToken = await getGithubToken(userId);
         const user = await User.findById(userId);

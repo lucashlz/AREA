@@ -1,8 +1,22 @@
-const { fetchWeatherData } = require("../utils/API/openWeatherAPI");
-const { processTrigger } = require("../utils/area/areaValidation");
-const { updateIngredients } = require("../utils/ingredients/ingredientsHelper");
+import { fetchWeatherData } from "../utils/API/openWeatherAPI";
+import { processTrigger } from "../utils/area/areaValidation";
+import { updateIngredients } from "../utils/ingredients/ingredientsHelper";
 
-exports.sunny_weather = async function (areaEntry) {
+interface AreaEntry {
+    trigger: {
+        parameters: { input: string }[];
+        data?: { value: string };
+    };
+    userId: string;
+}
+
+interface WeatherData {
+    weather: { main: string; description: string }[];
+    main: { temp: number };
+    name: string;
+}
+
+export const sunny_weather = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const weatherData = await fetchWeatherData(areaEntry.trigger.parameters[0].input);
         const weatherConditions = weatherData.weather.map((condition) => condition.main);
@@ -27,7 +41,7 @@ exports.sunny_weather = async function (areaEntry) {
     }
 };
 
-exports.cloudy_weather = async function (areaEntry) {
+export const cloudy_weather = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const weatherData = await fetchWeatherData(areaEntry.trigger.parameters[0].input);
         const weatherConditions = weatherData.weather.map((condition) => condition.main);
@@ -52,7 +66,7 @@ exports.cloudy_weather = async function (areaEntry) {
     }
 };
 
-exports.rainy_weather = async function (areaEntry) {
+export const rainy_weather = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const weatherData = await fetchWeatherData(areaEntry.trigger.parameters[0].input);
         const weatherConditions = weatherData.weather.map((condition) => condition.main);
@@ -77,7 +91,7 @@ exports.rainy_weather = async function (areaEntry) {
     }
 };
 
-exports.thunderstorm_weather = async function (areaEntry) {
+export const thunderstorm_weather = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const weatherData = await fetchWeatherData(areaEntry.trigger.parameters[0].input);
         const weatherConditions = weatherData.weather.map((condition) => condition.main);
@@ -102,7 +116,7 @@ exports.thunderstorm_weather = async function (areaEntry) {
     }
 };
 
-exports.snow_weather = async function (areaEntry) {
+export const snow_weather = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const weatherData = await fetchWeatherData(areaEntry.trigger.parameters[0].input);
         const weatherConditions = weatherData.weather.map((condition) => condition.main);
@@ -127,7 +141,7 @@ exports.snow_weather = async function (areaEntry) {
     }
 };
 
-exports.temperature_change = async function (areaEntry) {
+export const temperature_change = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const weatherData = await fetchWeatherData(areaEntry.trigger.parameters[0].input);
         const currentTemperature = weatherData.main.temp;

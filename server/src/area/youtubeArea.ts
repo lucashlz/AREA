@@ -1,7 +1,8 @@
-const { updateIngredients } = require("../utils/ingredients/ingredientsHelper");
-const { processTriggerDataTotal } = require("../utils/area/areaValidation");
-const { getYouTubeToken } = require("../utils/token/servicesTokenUtils");
-const {
+import User from "../models/userModels";
+import { getYouTubeToken } from "../utils/token/servicesTokenUtils";
+import { processTriggerDataTotal } from "../utils/area/areaValidation";
+import { updateIngredients } from "../utils/ingredients/ingredientsHelper";
+import {
     fetchSubscription,
     fetchLikedVideosPlaylistId,
     fetchPlaylistItems,
@@ -10,9 +11,40 @@ const {
     fetchRecentVideoByChannel,
     fetchTotalPlaylistItems,
     fetchLikeVideo,
-} = require("../utils/API/youtubeAPI");
+} from "../utils/API/youtubeAPI";
 
-exports.newLikedVideo = async function (areaEntry) {
+interface AreaEntry {
+    userId: string;
+    trigger: {
+        parameters: Array<{ input: string }>;
+        data?: { value: string };
+    };
+}
+
+interface PlaylistItemSnippet {
+    resourceId: { videoId: string };
+    title: string;
+    channelTitle: string;
+    publishedAt: string;
+    description: string;
+}
+
+interface PlaylistItemsResponse {
+    items: Array<{ snippet: PlaylistItemSnippet }>;
+}
+
+interface SubscriptionSnippet {
+    resourceId: { channelId: string };
+    title: string;
+    publishedAt: string;
+}
+
+interface SubscriptionResponse {
+    pageInfo: { totalResults: number };
+    items: Array<SubscriptionSnippet>;
+}
+
+export const newLikedVideo = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const accessToken = await getYouTubeToken(areaEntry.userId);
         const likedVideosPlaylistId = await fetchLikedVideosPlaylistId(accessToken);
@@ -38,7 +70,7 @@ exports.newLikedVideo = async function (areaEntry) {
     }
 };
 
-exports.newVideoByChannel = async function (areaEntry) {
+export const newVideoByChannel = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const channelId = areaEntry.trigger.parameters[0].input;
         const accessToken = await getYouTubeToken(areaEntry.userId);
@@ -65,7 +97,7 @@ exports.newVideoByChannel = async function (areaEntry) {
     }
 };
 
-exports.newSubscription = async function (areaEntry) {
+export const newSubscription = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const accessToken = await getSpotifyToken(areaEntry.userId);
         const recentSubscription = await fetchSubscription(accessToken);
@@ -88,7 +120,7 @@ exports.newSubscription = async function (areaEntry) {
 };
 
 
-exports.likeVideo = async function (userId, videoId) {
+export const likeVideo = async (userId: string, videoId: string): Promise<boolean> => {
     try {
         const accessToken = await getYouTubeToken(userId);
         const success = await fetchLikeVideo(accessToken, videoId);

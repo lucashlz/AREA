@@ -1,10 +1,43 @@
-const User = require("../models/userModels");
-const { getTwitchToken } = require("../utils/token/servicesTokenUtils");
-const { processTriggerDataLiveTwitch } = require("../utils/area/areaValidation");
-const { updateIngredients } = require("../utils/ingredients/ingredientsHelper");
-const { fetchAllFollowers, fetchAllFollowedChannels, fetchLiveStreams } = require("../utils/API/twitchAPI");
+import User from "../models/userModels";
+import { getTwitchToken } from "../utils/token/servicesTokenUtils";
+import { processTriggerDataLiveTwitch, processTriggerDataTotal } from "../utils/area/areaValidation";
+import { updateIngredients } from "../utils/ingredients/ingredientsHelper";
+import {
+    fetchAllFollowers,
+    fetchAllFollowedChannels,
+    fetchLiveStreams
+} from "../utils/API/twitchAPI";
 
-exports.streamGoingLiveForChannel = async function (areaEntry) {
+interface AreaEntry {
+    userId: string;
+    trigger: {
+        parameters: Array<{ input: string }>;
+        data?: { value: any }; // Replace any with the actual type
+    };
+}
+
+interface LiveStream {
+    user_name: string;
+    title: string;
+    viewer_count: number;
+    started_at: string;
+    game_name: string;
+}
+
+interface FollowedChannel {
+    broadcaster_id: string;
+    broadcaster_name: string;
+    followed_at: string;
+}
+
+interface Follower {
+    user_id: string;
+    user_name: string;
+    followed_at: string;
+    from_name: string;
+}
+
+export const streamGoingLiveForChannel = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const userAccessToken = await getTwitchToken(areaEntry.userId);
         const user = await User.findById(areaEntry.userId);
@@ -36,7 +69,7 @@ exports.streamGoingLiveForChannel = async function (areaEntry) {
     }
 };
 
-exports.youFollowNewChannel = async function (areaEntry) {
+export const youFollowNewChannel = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const userAccessToken = await getTwitchToken(areaEntry.userId);
         const user = await User.findById(areaEntry.userId);
@@ -61,7 +94,7 @@ exports.youFollowNewChannel = async function (areaEntry) {
     }
 };
 
-exports.newFollowerOnYourChannel = async function (areaEntry) {
+export const newFollowerOnYourChannel = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const userAccessToken = await getTwitchToken(areaEntry.userId);
         const user = await User.findById(areaEntry.userId);

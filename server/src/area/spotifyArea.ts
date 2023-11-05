@@ -1,7 +1,7 @@
-const { updateIngredients } = require("../utils/ingredients/ingredientsHelper");
-const { processTriggerData, processTriggerDataTotal } = require("../utils/area/areaValidation");
-const { getSpotifyToken } = require("../utils/token/servicesTokenUtils");
-const {
+import { updateIngredients } from "../utils/ingredients/ingredientsHelper";
+import { processTriggerData, processTriggerDataTotal } from "../utils/area/areaValidation";
+import { getSpotifyToken } from "../utils/token/servicesTokenUtils";
+import {
     fetchTotalSavedTracks,
     fetchSavedTracks,
     fetchTotalSavedAlbums,
@@ -12,9 +12,33 @@ const {
     fetchFollowPlaylist,
     fetchAddToPlaylistById,
     fetchSaveTrack,
-} = require("../utils/API/spotifyAPI");
+} from "../utils/API/spotifyAPI";
 
-exports.newSavedTrack = async function (areaEntry) {
+interface AreaEntry {
+    userId: string;
+    trigger: {
+        parameters: Array<{ input: string }>;
+        data?: { value: string };
+    };
+}
+
+interface SpotifyTrack {
+    track: {
+        id: string;
+        name: string;
+        artists: Array<{ name: string }>;
+        external_urls: { spotify: string };
+        album: {
+            images: Array<{ url: string }>;
+        };
+    };
+}
+
+interface SpotifyAlbum {
+    album: SpotifyTrack['track'] & { id: string; name: string };
+}
+
+export const newSavedTrack = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const accessToken = await getSpotifyToken(areaEntry.userId);
         const totalTracks = await fetchTotalSavedTracks(accessToken);
@@ -39,7 +63,7 @@ exports.newSavedTrack = async function (areaEntry) {
     }
 };
 
-exports.newSavedAlbum = async function (areaEntry) {
+export const newSavedAlbum = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const accessToken = await getSpotifyToken(areaEntry.userId);
         const totalAlbums = await fetchTotalSavedAlbums(accessToken);
@@ -64,7 +88,7 @@ exports.newSavedAlbum = async function (areaEntry) {
     }
 };
 
-exports.newRecentlyPlayedTrack = async function (areaEntry) {
+export const newRecentlyPlayedTrack = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const accessToken = await getSpotifyToken(areaEntry.userId);
         const recentlyPlayedTracks = await fetchRecentlyPlayedTracks(accessToken);
@@ -88,7 +112,7 @@ exports.newRecentlyPlayedTrack = async function (areaEntry) {
     }
 };
 
-exports.newTrackAddedToPlaylist = async function (areaEntry) {
+export const newTrackAddedToPlaylist = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const playlistId = areaEntry.trigger.parameters[0].input;
         const accessToken = await getSpotifyToken(areaEntry.userId);
@@ -117,7 +141,7 @@ exports.newTrackAddedToPlaylist = async function (areaEntry) {
     }
 };
 
-exports.followPlaylist = async function (userId, playlistId) {
+export const followPlaylist = async (userId: string, playlistId: string): Promise<{ success: boolean }> => {
     try {
         const accessToken = await getSpotifyToken(userId);
         await fetchFollowPlaylist(accessToken, playlistId);
@@ -128,7 +152,7 @@ exports.followPlaylist = async function (userId, playlistId) {
     }
 };
 
-exports.addToPlaylistById = async function (userId, playlistId, trackId) {
+export const addToPlaylistById = async (userId: string, playlistId: string): Promise<{ success: boolean }> => {
     try {
         const accessToken = await getSpotifyToken(userId);
         await fetchAddToPlaylistById(accessToken, playlistId, trackId);
@@ -139,7 +163,7 @@ exports.addToPlaylistById = async function (userId, playlistId, trackId) {
     }
 };
 
-exports.saveTrack = async function (userId, trackId) {
+export const saveTrack = async (userId: string, playlistId: string): Promise<{ success: boolean }> => {
     try {
         const accessToken = await getSpotifyToken(userId);
         await fetchSaveTrack(accessToken, trackId);

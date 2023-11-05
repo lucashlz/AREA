@@ -1,16 +1,30 @@
-const { getDropboxToken } = require("../utils/token/servicesTokenUtils");
-const { updateIngredients } = require("../utils/ingredients/ingredientsHelper");
-const { processTriggerDataTotal } = require("../utils/area/areaValidation");
-const { fetchUploadFile, fetchFilesInFolder, fetchAllSharedLinks } = require("../utils/API/dropboxAPI");
+import { getDropboxToken } from "../utils/token/servicesTokenUtils";
+import { updateIngredients } from "../utils/ingredients/ingredientsHelper";
+import { processTriggerDataTotal } from "../utils/area/areaValidation";
+import { fetchUploadFile, fetchFilesInFolder, fetchAllSharedLinks } from "../utils/API/dropboxAPI";
 
-exports.newFileInFolder = async function (areaEntry) {
+interface AreaEntry {
+    userId: string;
+    trigger: {
+        parameters: Array<{ input: string }>;
+    };
+}
+
+interface DropboxFileLink {
+    ".tag": string;
+    name: string;
+    id: string;
+    url?: string;
+}
+
+export const newFileInFolder = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const folderPath = areaEntry.trigger.parameters[0].input === "/" ? "" : areaEntry.trigger.parameters[0].input;
         const accessToken = await getDropboxToken(areaEntry.userId);
-        const folderList = await fetchFilesInFolder(accessToken, folderPath);
+        const folderList: DropboxFileLink[] = await fetchFilesInFolder(accessToken, folderPath);
         const filesInFolderList = folderList.filter((link) => link[".tag"] === "file");
         if (!folderList) return await processTriggerDataTotal(areaEntry, "newFileInFolder", "", 0);
-        const recentFile = filesInFolderList[totalFiles - 1];
+        const recentFile = filesInFolderList[filesInFolderList.length - 1];
 
         if (await processTriggerDataTotal(areaEntry, "newFileInFolder", recentFile.id, filesInFolderList.length)) {
             updateIngredients(areaEntry, [
@@ -26,10 +40,10 @@ exports.newFileInFolder = async function (areaEntry) {
     }
 };
 
-exports.newSharedFileLink = async function (areaEntry) {
+export const newSharedFileLink = async (areaEntry: AreaEntry): Promise<boolean> => {
     try {
         const accessToken = await getDropboxToken(areaEntry.userId);
-        const allLinks = await fetchAllSharedLinks(accessToken);
+        const allLinks: DropboxFileLink[] = await fetchAllSharedLinks(accessToken);
         const fileLinks = allLinks.filter((link) => link[".tag"] === "file");
         console.log(JSON.stringify(fileLinks, null, 2));
         if (fileLinks.length === 0) return await processTriggerDataTotal(areaEntry, "newSharedFileLink", "", 0);
@@ -49,7 +63,7 @@ exports.newSharedFileLink = async function (areaEntry) {
     }
 };
 
-exports.uploadFileFromURL = async function (userId, fileUrl, fileName, filePath) {
+export const uploadFileFromURL = async (userId: string, fileUrl: string, fileName: string, filePath: string): Promise<any> => {
     try {
         const accessToken = await getDropboxToken(userId);
         const response = await fetch(fileUrl);

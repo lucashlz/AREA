@@ -1,15 +1,20 @@
-const moment = require("moment-timezone");
-const { updateIngredients } = require("../utils/ingredients/ingredientsHelper");
-const { processTrigger } = require("../utils/area/areaValidation");
+import moment from "moment-timezone";
+import { updateIngredients } from "../utils/ingredients/ingredientsHelper";
+import { processTrigger } from "../utils/area/areaValidation";
 
-const getCurrentTimeInZone = () => moment().tz("Europe/Paris").add(1, "hours");
+const getCurrentTimeInZone = (): Date => moment().tz("Europe/Paris").add(1, "hours");
 
-const findParameter = (parameters, name) => {
+const findParameter = (parameters: { name: string; input: string }[], name: string): number | null => {
     const parameter = parameters.find((p) => p.name === name);
     return parameter ? parseInt(parameter.input, 10) : null;
 };
 
-const fillDateTimeIngredients = (date) => {
+interface Ingredient {
+    name: string;
+    value: string;
+}
+
+const fillDateTimeIngredients = (date: Date): Ingredient[] => {
     const year = date.getFullYear().toString();
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const day = date.getDate().toString().padStart(2, "0");
@@ -27,11 +32,25 @@ const fillDateTimeIngredients = (date) => {
     ];
 };
 
-exports.everyDayAt = async (areaEntry) => {
-    const now = getCurrentTimeInZone().toDate();
+interface TriggerData {
+    value: string;
+}
+
+interface AreaEntry {
+    trigger: {
+        data?: TriggerData;
+        parameters: { name: string; input: string }[];
+    };
+}
+
+export const everyDayAt = async (areaEntry: AreaEntry): Promise<boolean> => {
+    const now = getCurrentTimeInZone();
     const targetHour = findParameter(areaEntry.trigger.parameters, "target_hour");
     const targetMinute = findParameter(areaEntry.trigger.parameters, "target_minute");
     const uniqueIdentifier = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${targetHour}-${targetMinute}`;
+
+    if (targetHour !== null && targetMinute !== null) {
+        const uniqueIdentifier = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${targetHour}-${targetMinute}`;
 
     if (now.getHours() === targetHour && now.getMinutes() === targetMinute) {
         if (!areaEntry.trigger.data || areaEntry.trigger.data.value !== uniqueIdentifier) {
@@ -42,9 +61,9 @@ exports.everyDayAt = async (areaEntry) => {
     return false;
 };
 
-exports.everyHourAt = async function (areaEntry) {
+export const everyHourAt = async (areaEntry: AreaEntry): Promise<boolean> => {
     const validMinutes = [0, 15, 30, 45];
-    const now = getCurrentTimeInZone().toDate();
+    const now = getCurrentTimeInZone();
     const targetMinute = findParameter(areaEntry.trigger.parameters, "target_minute");
     const uniqueIdentifier = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}`;
 
@@ -57,8 +76,8 @@ exports.everyHourAt = async function (areaEntry) {
     return false;
 };
 
-exports.everyDayOfTheWeekAt = async function (areaEntry) {
-    const now = getCurrentTimeInZone().toDate();
+export const everyDayOfTheWeekAt = async (areaEntry: AreaEntry): Promise<boolean> => {
+    const now = getCurrentTimeInZone();
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const currentDay = days[now.getDay()];
     const targetHour = findParameter(areaEntry.trigger.parameters, "target_hour");
@@ -76,8 +95,8 @@ exports.everyDayOfTheWeekAt = async function (areaEntry) {
     return false;
 };
 
-exports.everyMonthOnThe = async function (areaEntry) {
-    const now = getCurrentTimeInZone().toDate();
+export const everyMonthOnThe = async (areaEntry: AreaEntry): Promise<boolean> => {
+    const now = getCurrentTimeInZone();
     const targetDay = findParameter(areaEntry.trigger.parameters, "target_day");
     const targetHour = findParameter(areaEntry.trigger.parameters, "target_hour");
     const targetMinute = findParameter(areaEntry.trigger.parameters, "target_minute");
@@ -92,8 +111,8 @@ exports.everyMonthOnThe = async function (areaEntry) {
     return false;
 };
 
-exports.everyYearOn = async function (areaEntry) {
-    const now = getCurrentTimeInZone().toDate();
+export const everyYearOn = async (areaEntry: AreaEntry): Promise<boolean> => {
+    const now = getCurrentTimeInZone();
     const targetMonth = findParameter(areaEntry.trigger.parameters, "target_month");
     const targetDay = findParameter(areaEntry.trigger.parameters, "target_day");
     const targetHour = findParameter(areaEntry.trigger.parameters, "target_hour");
@@ -108,3 +127,5 @@ exports.everyYearOn = async function (areaEntry) {
     }
     return false;
 };
+
+const getCurrentTimeInZone = (): Date => moment().tz("Europe/Paris").add(1, "hours");

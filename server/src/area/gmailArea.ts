@@ -1,8 +1,8 @@
-const User = require("../models/userModels");
-const { makeApiCall } = require("../utils/API/apiUtils");
-const { getGmailToken } = require("../utils/token/servicesTokenUtils");
+import User from "../models/userModels";
+import { makeApiCall } from "../utils/API/apiUtils";
+import { getGmailToken } from "../utils/token/servicesTokenUtils";
 
-function constructEmailBody(to, cc, bcc, subject, body, attachmentUrl) {
+function constructEmailBody(to: string, cc: string, bcc: string, subject: string, body: string, attachmentUrl?: string): string {
     const boundary = "foo_bar_baz";
     const AREASlogoURL = "https://i.postimg.cc/qvS2KvVs/area-logo-120x120.png";
 
@@ -63,7 +63,7 @@ function constructEmailBody(to, cc, bcc, subject, body, attachmentUrl) {
     return encodedEmail;
 }
 
-exports.sendEmail = async function (userId, to, cc, bcc, subject, body, attachmentUrl) {
+export const sendEmail = async (userId: string, to: string, cc: string, bcc: string, subject: string, body: string, attachmentUrl?: string): Promise<any> => {
     const accessToken = await getGmailToken(userId);
     const raw = constructEmailBody(to, cc, bcc, subject, body, attachmentUrl);
     const url = "https://gmail.googleapis.com/gmail/v1/users/me/messages/send";
@@ -75,10 +75,10 @@ exports.sendEmail = async function (userId, to, cc, bcc, subject, body, attachme
     return makeApiCall(url, "POST", headers, data);
 };
 
-exports.sendEmailToSelf = async function (userId, subject, body, attachmentUrl, ingredients) {
+export const sendEmailToSelf = async (userId: string, subject: string, body: string, attachmentUrl?: string): Promise<any> => {
     const user = await User.findById(userId);
     if (user && user.email) {
-        return exports.sendEmail(userId, user.email, "", "", subject, body, attachmentUrl, ingredients);
+        return sendEmail(userId, user.email, "", "", subject, body, attachmentUrl);
     }
     throw new Error("User email not found.");
 };
