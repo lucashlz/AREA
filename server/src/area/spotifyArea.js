@@ -1,181 +1,151 @@
-const SpotifyWebApi = require("spotify-web-api-node");
-const User = require("../models/userModels");
+const { updateIngredients } = require("../utils/ingredients/ingredientsHelper");
+const { processTriggerData, processTriggerDataTotal } = require("../utils/area/areaValidation");
+const { getSpotifyToken } = require("../utils/token/servicesTokenUtils");
+const {
+    fetchTotalSavedTracks,
+    fetchSavedTracks,
+    fetchTotalSavedAlbums,
+    fetchSavedAlbums,
+    fetchRecentlyPlayedTracks,
+    fetchLatestTrackFromPlaylist,
+    fetchPlaylistDetails,
+    fetchFollowPlaylist,
+    fetchAddToPlaylistById,
+    fetchSaveTrack,
+} = require("../utils/API/spotifyAPI");
 
-const spotifyApi = new SpotifyWebApi({
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    redirectUri: "http://localhost:8080/connect/spotify/callback",
-});
+exports.newSavedTrack = async function (areaEntry) {
+    try {
+        const accessToken = await getSpotifyToken(areaEntry.userId);
+        const totalTracks = await fetchTotalSavedTracks(accessToken);
+        const savedTracks = await fetchSavedTracks(accessToken);
+        if (!savedTracks) return await processTriggerDataTotal(areaEntry, "trackId", "", 0);
+        const recentTrack = savedTracks[0].track;
 
-async function setSpotifyToken(userId) {
-    const user = await User.findById(userId);
-    if (user && user.connectServices && user.connectServices.get("spotify")) {
-        spotifyApi.setAccessToken(user.connectServices.get("spotify").access_token);
-    } else {
-        throw new Error("Failed to set Spotify token for user.");
-    }
-}
-
-function updateOrPushIngredient(ingredients, ingredient) {
-    const index = ingredients.findIndex((item) => item.name === ingredient.name);
-    if (index !== -1) {
-        ingredients[index].value = ingredient.value;
-    } else {
-        ingredients.push(ingredient);
-    }
-}
-
-async function processTriggerData(areaEntry, key, value) {
-    if (!areaEntry.trigger.data) {
-        areaEntry.trigger.data = { key, value };
-        await areaEntry.save();
+        if (await processTriggerDataTotal(areaEntry, "trackId", recentTrack.id, totalTracks)) {
+            updateIngredients(areaEntry, [
+                { name: "song_name", value: recentTrack.name },
+                { name: "song_id", value: recentTrack.id },
+                { name: "artist", value: recentTrack.artists.map((artist) => artist.name).join(", ") },
+                { name: "trackURL", value: recentTrack.external_urls.spotify },
+                { name: "coverURL", value: recentTrack.album.images[0].url },
+            ]);
+            return true;
+        }
         return false;
-    } else if (areaEntry.trigger.data.value !== value) {
-        areaEntry.trigger.data = { key, value };
-        await areaEntry.save();
-        return true;
-    }
-    return false;
-}
-
-async function newSavedTrack(areaEntry) {
-    await setSpotifyToken(areaEntry.userId);
-    const savedTrack = await spotifyApi.getMySavedTracks({ limit: 1 });
-    const recentTrack = savedTrack.body.items.length > 0 ? savedTrack.body.items[0].track : null;
-    if (!recentTrack) return false;
-    const songId = recentTrack.id;
-    const songName = recentTrack.name;
-    const artist = recentTrack.artists[0].name;
-    const trackURL = recentTrack.external_urls.spotify;
-    const coverURL = recentTrack.album.images[0].url;
-    if (!areaEntry.trigger.ingredients) {
-        areaEntry.trigger.ingredients = [];
-    }
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "song_name", value: songName });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "song_id", value: songId });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "artist", value: artist });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "trackURL", value: trackURL });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "coverURL", value: coverURL });
-    return await processTriggerData(areaEntry, "trackId", recentTrack.id);
-}
-
-async function newSavedAlbum(areaEntry) {
-    await setSpotifyToken(areaEntry.userId);
-    const savedAlbum = await spotifyApi.getMySavedAlbums({ limit: 1 });
-    const recentAlbum = savedAlbum.body.items.length > 0 ? savedAlbum.body.items[0].album : null;
-    if (!recentAlbum) return false;
-    const albumName = recentAlbum.name;
-    const albumId = recentAlbum.id;
-    const artist = recentAlbum.artists[0].name;
-    const albumURL = recentAlbum.external_urls.spotify;
-    const coverURL = recentAlbum.images[0].url;
-    if (!areaEntry.trigger.ingredients) {
-        areaEntry.trigger.ingredients = [];
-    }
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "album_name", value: albumName });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "album_id", value: albumId });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "artist", value: artist });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "albumURL", value: albumURL });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "coverURL", value: coverURL });
-    return await processTriggerData(areaEntry, "albumId", recentAlbum.id);
-}
-
-async function newRecentlyPlayedTrack(areaEntry) {
-    await setSpotifyToken(areaEntry.userId);
-    const recentlyPlayedTracks = await spotifyApi.getMyRecentlyPlayedTracks({ limit: 1 });
-    const recentTrack = recentlyPlayedTracks.body.items.length > 0 ? recentlyPlayedTracks.body.items[0].track : null;
-    if (!recentTrack) return false;
-    const songName = recentTrack.name;
-    const songId = recentTrack.id;
-    const artist = recentTrack.artists[0].name;
-    const trackURL = recentTrack.external_urls.spotify;
-    const coverURL = recentTrack.album.images[0].url;
-    if (!areaEntry.trigger.ingredients) {
-        areaEntry.trigger.ingredients = [];
-    }
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "song_name", value: songName });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "song_id", value: songId });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "artist", value: artist });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "trackURL", value: trackURL });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "coverURL", value: coverURL });
-    return await processTriggerData(areaEntry, "recentTrackId", recentTrack.id);
-}
-
-async function newTrackAddedToPlaylist(areaEntry) {
-    const playlistId = areaEntry.trigger.parameters[0].input;
-    await setSpotifyToken(areaEntry.userId);
-    const playlistDetails = await spotifyApi.getPlaylist(playlistId);
-    const playlistName = playlistDetails.body.name;
-    const initialFetch = await spotifyApi.getPlaylistTracks(playlistId, { limit: 1 });
-    const totalTracks = initialFetch.body.total;
-    const limit = 100;
-    const offset = totalTracks - (totalTracks % limit);
-    const tracksInPlaylist = await spotifyApi.getPlaylistTracks(playlistId, { limit: limit, offset: offset });
-    if (!tracksInPlaylist || tracksInPlaylist.body.items.length === 0) {
-        console.error("No tracks found in the specified playlist");
+    } catch (error) {
+        console.error("Error in newSavedTrack function:", error);
         return false;
     }
-    const recentAddedTrack = tracksInPlaylist.body.items[tracksInPlaylist.body.items.length - 1].track;
-    const songName = recentAddedTrack.name;
-    const songId = recentAddedTrack.id;
-    const artist = recentAddedTrack.artists[0].name;
-    const trackURL = recentAddedTrack.external_urls.spotify;
-    const coverURL = recentAddedTrack.album.images[0].url;
-    if (!areaEntry.trigger.ingredients) {
-        areaEntry.trigger.ingredients = [];
-    }
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "song_name", value: songName });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "song_id", value: songId });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "playlist_name", value: playlistName });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "playlist_id", value: playlistId });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "artist", value: artist });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "trackURL", value: trackURL });
-    updateOrPushIngredient(areaEntry.trigger.ingredients, { name: "coverURL", value: coverURL });
-    return await processTriggerData(areaEntry, "newPlaylistTrackId", recentAddedTrack.id);
-}
+};
 
-async function followPlaylist(userId, playlistId, ingredients) {
-    await setSpotifyToken(userId);
-    if (playlistId.startsWith("<") && playlistId.endsWith(">") && ingredients) {
-        const ingredientName = playlistId.slice(1, -1);
-        const ingredient = ingredients.find((ing) => ing.name === ingredientName);
-        if (ingredient) {
-            playlistId = ingredient.value;
+exports.newSavedAlbum = async function (areaEntry) {
+    try {
+        const accessToken = await getSpotifyToken(areaEntry.userId);
+        const totalAlbums = await fetchTotalSavedAlbums(accessToken);
+        const savedAlbums = await fetchSavedAlbums(accessToken);
+        if (!savedAlbums) return await processTriggerDataTotal(areaEntry, "albumId", "", 0);
+        const recentAlbum = savedAlbums[0].album;
+
+        if (await processTriggerDataTotal(areaEntry, "albumId", recentAlbum.id, totalAlbums)) {
+            updateIngredients(areaEntry, [
+                { name: "album_name", value: recentAlbum.name },
+                { name: "album_id", value: recentAlbum.id },
+                { name: "artist", value: recentAlbum.artists.map((artist) => artist.name).join(", ") },
+                { name: "albumURL", value: recentAlbum.external_urls.spotify },
+                { name: "coverURL", value: recentAlbum.images[0].url },
+            ]);
+            return true;
         }
+        return false;
+    } catch (error) {
+        console.error("Error in newSavedAlbum function:", error);
+        return false;
     }
-    return spotifyApi.followPlaylist(playlistId);
-}
+};
 
-async function saveTrack(userId, trackId, ingredients) {
-    await setSpotifyToken(userId);
-    if (trackId.startsWith("<") && trackId.endsWith(">") && ingredients) {
-        const ingredientName = trackId.slice(1, -1);
-        const ingredient = ingredients.find((ing) => ing.name === ingredientName);
-        if (ingredient) {
-            trackId = ingredient.value;
+exports.newRecentlyPlayedTrack = async function (areaEntry) {
+    try {
+        const accessToken = await getSpotifyToken(areaEntry.userId);
+        const recentlyPlayedTracks = await fetchRecentlyPlayedTracks(accessToken);
+        if (!recentlyPlayedTracks) return await processTriggerDataTotal(areaEntry, "recentTrackId", "", 0);
+        const recentTrack = recentlyPlayedTracks[0].track;
+
+        if (await processTriggerData(areaEntry, "recentTrackId", recentTrack.id)) {
+            updateIngredients(areaEntry, [
+                { name: "song_name", value: recentTrack.name },
+                { name: "song_id", value: recentTrack.id },
+                { name: "artist", value: recentTrack.artists.map((artist) => artist.name).join(", ") },
+                { name: "trackURL", value: recentTrack.external_urls.spotify },
+                { name: "coverURL", value: recentTrack.album.images[0].url },
+            ]);
+            return true;
         }
+        return false;
+    } catch (error) {
+        console.error("Error in newRecentlyPlayedTrack function:", error);
+        return false;
     }
-    return spotifyApi.addToMySavedTracks([trackId]);
-}
+};
 
-async function addToPlaylistById(userId, playlistId, trackId, ingredients) {
-    await setSpotifyToken(userId);
-    if (trackId.startsWith("<") && trackId.endsWith(">") && ingredients) {
-        const ingredientName = trackId.slice(1, -1);
-        const ingredient = ingredients.find((ing) => ing.name === ingredientName);
-        if (ingredient) {
-            trackId = ingredient.value;
+exports.newTrackAddedToPlaylist = async function (areaEntry) {
+    try {
+        const playlistId = areaEntry.trigger.parameters[0].input;
+        const accessToken = await getSpotifyToken(areaEntry.userId);
+        const playlistDetails = await fetchPlaylistDetails(accessToken, playlistId);
+        const totalTracks = playlistDetails.totalTracks;
+        const playlistName = playlistDetails.playlistName;
+        const recentAddedTrack = await fetchLatestTrackFromPlaylist(accessToken, playlistId, totalTracks);
+        if (!recentAddedTrack) return await processTriggerDataTotal(areaEntry, "newPlaylistTrackId", "", 0);;
+
+        if (await processTriggerDataTotal(areaEntry, "newPlaylistTrackId", recentAddedTrack.id, totalTracks)) {
+            updateIngredients(areaEntry, [
+                { name: "song_name", value: recentAddedTrack.name },
+                { name: "song_id", value: recentAddedTrack.id },
+                { name: "artist", value: recentAddedTrack.artists.map((artist) => artist.name).join(", ") },
+                { name: "trackURL", value: recentAddedTrack.external_urls.spotify },
+                { name: "coverURL", value: recentAddedTrack.album.images[0].url },
+                { name: "playlist_name", value: playlistName },
+                { name: "playlist_id", value: playlistId },
+            ]);
+            return true;
         }
+        return false;
+    } catch (error) {
+        console.error("Error in newTrackAddedToPlaylist function:", error);
+        return false;
     }
-    return spotifyApi.addTracksToPlaylist(playlistId, [`spotify:track:${trackId}`]);
-}
+};
 
-module.exports = {
-    newSavedTrack,
-    newSavedAlbum,
-    newRecentlyPlayedTrack,
-    newTrackAddedToPlaylist,
-    followPlaylist,
-    addToPlaylistById,
-    saveTrack,
+exports.followPlaylist = async function (userId, playlistId) {
+    try {
+        const accessToken = await getSpotifyToken(userId);
+        await fetchFollowPlaylist(accessToken, playlistId);
+        return { success: true };
+    } catch (error) {
+        console.error("Error in followPlaylist function:", error);
+        throw error;
+    }
+};
+
+exports.addToPlaylistById = async function (userId, playlistId, trackId) {
+    try {
+        const accessToken = await getSpotifyToken(userId);
+        await fetchAddToPlaylistById(accessToken, playlistId, trackId);
+        return { success: true };
+    } catch (error) {
+        console.error("Error in addToPlaylistById function:", error);
+        throw error;
+    }
+};
+
+exports.saveTrack = async function (userId, trackId) {
+    try {
+        const accessToken = await getSpotifyToken(userId);
+        await fetchSaveTrack(accessToken, trackId);
+        return { success: true };
+    } catch (error) {
+        console.error("Error in saveTrack function:", error);
+        throw error;
+    }
 };
