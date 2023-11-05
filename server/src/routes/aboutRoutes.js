@@ -9,8 +9,6 @@ const aboutController = require("../controllers/aboutController");
  *     summary: Retrieve information about the server and supported services.
  *     description: Provides details on the server, such as the client's IP address, current server time, and a list of all available triggers and actions for each service.
  *     tags: [About]
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Information about the server and its services.

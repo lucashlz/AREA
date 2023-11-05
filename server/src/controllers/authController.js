@@ -88,7 +88,7 @@ exports.handleGoogleCallback = async (req, res) => {
         res.status(200).redirect(`http://localhost:8081/applets?token=${token}`);
     } catch (error) {
         console.error("Error during Google authentication:", error);
-        res.status(500).json({ message: "Server error during authentication." });
+        res.status(500).redirect("http://localhost:8081/login");
     }
 };
 

@@ -19,14 +19,12 @@
 .ifttt-delete-applet {
     margin-left: 3%;
     padding: 1%;
-    width: 10%;
+    width: 8%;
     border: none;
     outline: none;
     background: none;
     overflow: hidden;
     cursor: pointer;
-    background-color: black;
-    border-radius: 50%;
 }  
 
 .back-button {
