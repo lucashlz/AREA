@@ -80,10 +80,9 @@ const Applet: React.FC<AppletProps> = ({ services, item, setReload }) => {
 
   return (
     <div className="applet-content-holder" style={{ backgroundColor: status === true ? currentService.color : "#565656" }}>
-      <div className='applet-content-container' style={{ backgroundColor: adjustHexColor(currentService.color, 20), width: `${logos.length * 12.5 + 3}%` }}>
-        {logos.map((item, index) => (
-          <img style={index === 0 ? { marginLeft: 0 } : {}} alt={item} className="applet-logo" src={`${process.env.PUBLIC_URL}/servicesLogo/${item}.png`} key={index}></img>
-        ))}
+      <div className='applet-content-container' style={{ backgroundColor: status === true ? adjustHexColor(currentService.color, 20) : "#565656", width: `${logos.length * 12.5 + 3}%` }}>        {logos.map((item, index) => (
+        <img style={index === 0 ? { marginLeft: 0 } : {}} alt={item} className="applet-logo" src={`${process.env.PUBLIC_URL}/servicesLogo/${item}.png`} key={index}></img>
+      ))}
       </div>
       <div className="applet-description">
         <div>{item.area_description ? item.area_description : ''}</div>
@@ -162,10 +161,10 @@ export default function Applets() {
   return (
     <div className="applets-container" key={reload}>
       <div className="applets-msg-holder">
-        <p className="applets-msg">My Applets</p>
+        <p className="applets-msg">My Areas</p>
       </div>
       <div className='applets-searchbar'>
-      <SearchBar searchInput={searchInput} setSearchInput={setSearchInput} items={areas} name={['trigger.service', 'actions[0].service']} setItems={setAreas} />
+        <SearchBar searchInput={searchInput} setSearchInput={setSearchInput} items={areas} name={['trigger.service', 'actions[0].service']} setItems={setAreas} />
       </div>
       <div className="applets-holder">
         <div style={{ opacity: 0.5 }}>{areas.length > 0 ? '' : 'No areas created for now'}</div>

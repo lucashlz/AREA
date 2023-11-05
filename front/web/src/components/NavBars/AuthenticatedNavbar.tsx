@@ -58,7 +58,7 @@ function Navbar() {
         {mobileMenuOpen && (
           <ul className="nav-menu active">
             <Link to='/applets' className='nav-links' onClick={closeMobileMenu}>
-              My Applets
+              My Areas
             </Link>
             <Link to='/create' className='nav-links' onClick={closeMobileMenu}>
               Create
@@ -74,7 +74,7 @@ function Navbar() {
 
         <div className="navbar-container">
           <Link to='/applets' className='nav-links'>
-            My Applets
+            My Areas
           </Link>
           <Link to='/create' className='nav-links'>
             Create

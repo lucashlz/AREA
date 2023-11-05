@@ -158,7 +158,7 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                 updatedInputs[index] += `<${ingredientName}>`;
             return updatedInputs;
         });
-    
+
         setParametersNames(prev => {
             const updatedNames = [...prev];
             updatedNames[index] = name;
@@ -207,12 +207,12 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                 }}>
                     Back
                 </button>
-                <div className='service-txt' style={{ color: 'white' }}>
-                    {selectedArea?.trigger?.name?.length === 0 ? "Choose a trigger" : mode ? "Choose parameters" : "Choose an action"}
-                </div>
             </div>
             <div className='thin-line' style={{ backgroundColor: 'white', opacity: 0.5 }}></div>
             <div className='service-infos' style={{ backgroundColor: services.color }}>
+                <div className='service-txt' style={{ color: 'white' }}>
+                    {selectedArea?.trigger?.name?.length === 0 ? "Choose a trigger" : mode ? "Choose parameters" : "Choose an action"}
+                </div>
                 <div className="service-actions-presentation-holder">
                     <div className="service-logo-holder">
                         <img
@@ -250,10 +250,10 @@ const ServiceActions: React.FC<ServiceActionsProps> = ({ setCurrentPage, current
                             </div>
                         ))}
 
-                        <div style={{paddingBottom: "15%"}}>
-                        <button type="submit" className='add-action-btn' style={{ marginLeft: 0, height: '3.5rem', border: '1px solid' }}>
-                            Add
-                        </button>
+                        <div style={{ paddingBottom: "15%" }}>
+                            <button type="submit" className='add-action-btn' style={{ marginLeft: 0, height: '3.5rem', border: '1px solid' }}>
+                                Add
+                            </button>
                         </div>
                     </form>
                 </div>
