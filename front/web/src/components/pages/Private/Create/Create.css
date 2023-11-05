@@ -141,6 +141,12 @@
     font-weight: bolder;
 }
 
+.create-container {
+    height: 100%;
+    overflow: scroll;
+    margin-bottom: 5%;
+}
+
 @media screen and (max-width: 960px) {
     .ifttt {
         padding-left: 0%;
