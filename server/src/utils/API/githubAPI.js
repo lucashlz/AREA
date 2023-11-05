@@ -1,4 +1,5 @@
 const { makeApiCall, makeContentApiCall } = require("./apiUtils");
+const axios = require("axios");
 
 exports.fetchGithubCommits = async function (accessToken, username, repoName) {
     const url = `https://api.github.com/repos/${username}/${repoName}/commits`;
@@ -65,7 +66,7 @@ exports.fetchCreateGithubIssue = async function (accessToken, username, repoName
     const url = `https://api.github.com/repos/${username}/${repoName}/issues`;
     const headers = {
         Authorization: `Bearer ${accessToken}`,
-        Accept: "application/vnd.github+json",
+        Accept: "application/vnd.github.v3+json",
         "Content-Type": "application/json",
     };
     const data = {
@@ -74,9 +75,10 @@ exports.fetchCreateGithubIssue = async function (accessToken, username, repoName
     };
 
     try {
-        return await makeContentApiCall(url, "POST", headers, data);
+        const response = await axios.post(url, data, { headers: headers });
+        return response.data;
     } catch (error) {
-        console.error("Failed to create GitHub issue:", error);
+        console.error("Failed to create GitHub issue:", error.response.data);
         throw error;
     }
 };

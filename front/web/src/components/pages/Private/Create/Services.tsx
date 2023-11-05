@@ -60,13 +60,6 @@ const Service: React.FC<ServiceProps> = ({ serviceInfos, setCurrentPage }) => {
                 serviceURL.searchParams.append("scope", serviceOAuthConstants.scopes.join(" "));
                 serviceURL.searchParams.append("state", serviceOAuthConstants.oAuthSessionId);
                 window.location.href = serviceURL.href;
-                /* const popupWidth = 800;
-                const popupHeight = 600;
-
-                popup.current = window.open(serviceURL.href, '_blank', `width=${popupWidth},height=${popupHeight},menubar=no,toolbar=no,location=no`);
-                if (popup) {
-                    popup.current.focus();
-                } */
             }
         } else {
             setCurrentPage(initialName)
@@ -159,11 +152,11 @@ const Services: React.FC<ServicesProps> = ({ setCurrentPage }) => {
                 <button className='back-button' onClick={() => { window.location.href = "http://localhost:8081/create"; setCurrentPage("create") }}>
                     Cancel
                 </button>
-                <div className='service-txt'>Choose a service</div>
             </div>
             <div className='thin-line'></div>
             <div className="services-container">
-                <div className='service-searchbar' style={{ marginTop: "2rem", marginBottom: "1rem" }}>
+                <div className='service-txt' style={{marginTop: '2%', marginBottom: '2%'}}>Choose a service</div>
+                <div className='service-searchbar' style={{ marginBottom: "2rem" }}>
                     <SearchBar searchInput={searchInput} setSearchInput={setSearchInput} items={services} setItems={setServices} name={['name']} />
                 </div>
                     {realServices.map((service, index) => (

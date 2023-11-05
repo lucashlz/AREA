@@ -1,15 +1,16 @@
 const User = require("../models/userModels");
 const { getTwitchToken } = require("../utils/token/servicesTokenUtils");
-const { processTriggerDataLiveTwitch } = require("../utils/area/areaValidation");
+const { processTriggerDataLiveTwitch, processTriggerDataTotal } = require("../utils/area/areaValidation");
 const { updateIngredients } = require("../utils/ingredients/ingredientsHelper");
-const { fetchAllFollowers, fetchAllFollowedChannels, fetchLiveStreams } = require("../utils/API/twitchAPI");
+const { fetchAllFollowedChannels, fetchLiveStreams, fetchAllChannelFollowers } = require("../utils/API/twitchAPI");
 
 exports.streamGoingLiveForChannel = async function (areaEntry) {
     try {
         const userAccessToken = await getTwitchToken(areaEntry.userId);
         const user = await User.findById(areaEntry.userId);
         const twitchUserId = user.connectServices.get("twitch").data.id;
-        const liveStreams = await fetchLiveStreams(userAccessToken, twitchUserId);
+        const response = await fetchLiveStreams(userAccessToken, twitchUserId);
+        const liveStreams = response.data;
         let isChannelLive = false;
         const targetedChannelName = areaEntry.trigger.parameters[0].input.toLowerCase();
         const liveStream = liveStreams.find((stream) => stream.user_name.toLowerCase() === targetedChannelName);
@@ -66,7 +67,7 @@ exports.newFollowerOnYourChannel = async function (areaEntry) {
         const userAccessToken = await getTwitchToken(areaEntry.userId);
         const user = await User.findById(areaEntry.userId);
         const twitchUserId = user.connectServices.get("twitch").data.id;
-        const allFollowers = await fetchAllFollowers(userAccessToken, twitchUserId);
+        const allFollowers = await fetchAllChannelFollowers(userAccessToken, twitchUserId);
         if (!allFollowers) return await processTriggerDataTotal(areaEntry, "followerId", "", 0);
         const sortedFollowers = allFollowers.sort((a, b) => new Date(b.followed_at) - new Date(a.followed_at));
         const newFollower = sortedFollowers[0];
