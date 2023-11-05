@@ -129,13 +129,12 @@ const AccountPage: React.FC = () => {
 
           <Button buttonSize='btn--large' buttonStyle='btn--primary-inverted' type='button' onClick={handleSubmit} >Update Infos</Button>
         </form>
-        <div style={{height: "2vh"}}></div>
         <Button buttonSize={'btn--medium'} buttonStyle='btn--primary-inverted' type='button' onClick={signOut} >Logout</Button>
-        <div style={{height: "0.5vw"}}></div>
+        <div className='vertical-spacer'></div>
         <Button buttonSize={'btn--medium'} buttonStyle='btn--outline' type="button" color="red" onClick={handleDeleteAccount}>
           <FaTrash className="bin-icon" />&nbsp;&nbsp;&nbsp;Delete Account
         </Button>
-        <div style={{height: "2vh"}}></div>
+        <div className='big-vertical-spacer'></div>
         <div className="connected-services-container">
           {/*  <div className="connected-services-title">Connected services</div> */}
           <Title className='account-title' title='Connected services' />
