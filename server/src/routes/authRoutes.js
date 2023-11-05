@@ -108,7 +108,7 @@ router.get("/confirm/:token", authController.confirm);
  *       500:
  *         description: Server error
  */
-router.get('/confirm-email-change/:token', authController.confirmEmailChange);
+router.get('/auth/confirm-email-change/:token', authController.confirmEmailChange);
 
 
 /**

@@ -7,7 +7,7 @@ import '../components/search_bar.dart';
 import '../components/servicecard_actions.dart';
 
 Future<List<Service>> fetchActions() async {
-  const String url = 'https://api.techparisarea.com/about/about.json';
+  const String url = 'https://api.techparisarea.com/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 

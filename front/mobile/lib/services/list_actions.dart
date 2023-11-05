@@ -8,7 +8,7 @@ import '../components/area_creation_state.dart';
 import 'package:provider/provider.dart';
 
 Future<Service> fetchActions(String serviceName) async {
-  const String url = 'https://api.techparisarea.com/about/about.json';
+  const String url = 'https://api.techparisarea.com/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 

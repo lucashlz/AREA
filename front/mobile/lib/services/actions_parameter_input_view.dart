@@ -10,7 +10,7 @@ import 'connect_service_view.dart';
 import 'dart:ui';
 
 Future<String?> fetchServiceColor(String serviceName) async {
-  const String url = 'https://api.techparisarea.com/about/about.json';
+  const String url = 'https://api.techparisarea.com/about.json';
   SharedPreferences prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
 
@@ -152,7 +152,8 @@ class ActionParameterInputPageState extends State<ActionParameterInputPage> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
-                              borderSide: const BorderSide(color: Colors.white54),
+                              borderSide:
+                                  const BorderSide(color: Colors.white54),
                             ),
                           ),
                         ),
@@ -233,12 +234,12 @@ class ActionParameterInputPageState extends State<ActionParameterInputPage> {
                                                     return Padding(
                                                       padding: const EdgeInsets
                                                           .symmetric(
-                                                          vertical:
-                                                              5.0),
+                                                          vertical: 5.0),
                                                       child: ListTile(
                                                         title: Container(
-                                                          padding: EdgeInsets.all(
-                                                              12.0),
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  12.0),
                                                           decoration:
                                                               BoxDecoration(
                                                             color: Color(int.parse(
@@ -329,7 +330,8 @@ class ActionParameterInputPageState extends State<ActionParameterInputPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 50, vertical: 16.0),
               ),
               child: const Text("Add", style: TextStyle(fontSize: 18)),
             ),

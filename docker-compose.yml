@@ -1,14 +1,14 @@
 version: '3'
 
 services:
-  # mobile:
-  #   privileged: true
-  #   image: mobile:latest
-  #   build:
-  #     context: ./front/mobile
-  #     dockerfile: ./Dockerfile
-  #   volumes:
-  #     - apk-volume:/apk
+  mobile:
+    privileged: true
+    image: mobile:latest
+    build:
+      context: ./front/mobile
+      dockerfile: ./Dockerfile
+    volumes:
+      - apk-volume:/apk
 
   server:
     build: ./server/

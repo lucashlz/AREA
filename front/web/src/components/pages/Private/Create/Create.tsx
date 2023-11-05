@@ -161,7 +161,7 @@ const Create: React.FC<CreateProps> = ({ setCurrentPage }) => {
     const fetchAboutJSON = async () => {
       let token = localStorage.getItem('userToken');
       try {
-        const response = await axios.get('http://localhost:8080/about/about.json', { headers: { Authorization: `Bearer ${token}` } });
+        const response = await axios.get('http://localhost:8080/about.json', { headers: { Authorization: `Bearer ${token}` } });
         if (response.data) {
           let service = response.data.server.services;
           setServices(service);
