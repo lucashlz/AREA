@@ -93,7 +93,7 @@ exports.generateDescription = async function (area) {
             {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer`,
+                    Authorization: `Bearer ???`,
                 },
             }
         );
